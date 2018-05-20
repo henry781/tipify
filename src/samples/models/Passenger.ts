@@ -23,7 +23,6 @@ export class Passenger {
     private _informations: object;
 
     constructor(options?: PassengerOptions) {
-
         if (options) {
             this._pid = options.pid;
             this._gender = options.gender;
