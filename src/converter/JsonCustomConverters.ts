@@ -16,15 +16,13 @@ export class JsonCustomConverters {
      * Instantiate converter
      * @param converterType
      */
-    public static instantiateConverter(converterType: any): JsonCustomConverters {
+    public static instantiateConverter(converterType: any) {
 
         let instance = JsonCustomConverters.CONVERTERS.find(c => c instanceof converterType);
 
         if (!instance) {
-            instance = new converterType.constructor();
+            instance = new converterType();
             JsonCustomConverters.CONVERTERS.push(instance);
         }
-
-        return instance;
     }
 }

@@ -6,22 +6,6 @@ export class JsonConverterMapper {
     public static MAPPING: TypeMapping[] = [];
 
     /**
-     * Get mapping for type
-     * @param type
-     */
-    public static getMappingForType(type: any): TypeMapping {
-        return this.MAPPING.find(m => m.type === type);
-    }
-
-    /**
-     * List mapping for extending type
-     * @param type
-     */
-    public static listMappingForExtendingType(type: any): TypeMapping[] {
-        return this.MAPPING.filter(m => m.type.prototype instanceof type);
-    }
-
-    /**
      * Create mapping for type
      * @param type
      */
@@ -38,6 +22,22 @@ export class JsonConverterMapper {
         }
 
         return typeMapping;
+    }
+
+    /**
+     * Get mapping for type
+     * @param type
+     */
+    public static getMappingForType(type: any): TypeMapping {
+        return this.MAPPING.find(m => m.type === type);
+    }
+
+    /**
+     * List mapping for extending type
+     * @param type
+     */
+    public static listMappingForExtendingType(type: any): TypeMapping[] {
+        return this.MAPPING.filter(m => m.type.prototype instanceof type);
     }
 
     /**

@@ -1,4 +1,4 @@
-# jsontypescript
+# tipify
 
 Inspired by : https://github.com/dhlab-basel/json2typescript
 ## Usage
@@ -106,10 +106,10 @@ export class PidConverter implements JsonCustomConverter<Pid> {
 }
 ```
 
-### Transient
+## Transient
 
 WIP
 
-### Logging
+## Logging
 
 WIP
