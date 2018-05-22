@@ -1,4 +1,4 @@
-import {jsonObject} from "../../decorators/JsonObject";
+import {jsonObject} from "../../decorators/jsonObject";
 
 @jsonObject()
 export class Planet {

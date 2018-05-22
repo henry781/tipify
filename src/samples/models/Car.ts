@@ -1,6 +1,6 @@
 import {Vehicle} from "./Vehicle";
-import {jsonObject} from "../../decorators/JsonObject";
-import {jsonProperty} from "../../decorators/JsonProperty";
+import {jsonObject} from "../../decorators/jsonObject";
+import {jsonProperty} from "../../decorators/jsonProperty";
 import {CarOptions} from "./CarOptions";
 
 @jsonObject({discriminatorValue: 'car'})

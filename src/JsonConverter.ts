@@ -3,6 +3,7 @@ import {JsonConverterMapper} from "./mapping/JsonConverterMapper";
 import {JsonConverterUtil} from "./JsonConverterUtil";
 import {Any} from "./type/Any";
 import {EnumOptions, EnumStrategy} from "./type/Enum";
+import {JsonCustomConverter} from "./converter/JsonCustomConverter";
 
 export class JsonConverter {
 
@@ -14,7 +15,7 @@ export class JsonConverter {
     public serialize(obj: any, type?: any): any {
 
         // when obj is null or undefined, return null or undefined
-        if (typeof obj === 'undefined' || obj === null) {
+        if (JsonConverterUtil.isNullOrUndefined(obj)) {
             return obj;
         }
 
@@ -22,7 +23,7 @@ export class JsonConverter {
             JsonConverterUtil.checkConsistency(obj, type);
 
             // when custom converter is provided, use custom provider
-            if (type instanceof JsonConverter) {
+            if (type.prototype instanceof JsonCustomConverter) {
                 const converterInstance = JsonCustomConverters.getConverterInstance(type);
                 return converterInstance.serialize(obj);
             }
@@ -44,7 +45,7 @@ export class JsonConverter {
             if (!_type) {
                 throw Error('error (to define)');
             }
-            return this.serializeArray(obj, type);
+            return this.serializeArray(obj, _type);
         }
 
         // when obj is an object, serialize as an obj
@@ -64,14 +65,14 @@ export class JsonConverter {
     public deserialize<T>(obj: any, type: any): T | T[] {
 
         // when obj is null or undefined, return null or undefined
-        if (typeof obj === 'undefined' || obj === null) {
+        if (JsonConverterUtil.isNullOrUndefined(obj)) {
             return obj;
         }
 
         JsonConverterUtil.checkConsistency(obj, type);
 
         // when custom converter is provided, use custom provider
-        if (type instanceof JsonConverter) {
+        if (type.prototype instanceof JsonCustomConverter) {
             const converterInstance = JsonCustomConverters.getConverterInstance(type);
             return converterInstance.deserialize(obj);
         }

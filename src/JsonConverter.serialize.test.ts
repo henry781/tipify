@@ -4,6 +4,8 @@ import {Color} from "./samples/models/Color";
 import * as chai from 'chai';
 import {Passenger} from "./samples/models/Passenger";
 import {Enum, EnumStrategy} from "./type/Enum";
+import {Any} from "./type/Any";
+import {Gender} from "./samples/models/Gender";
 
 const converter = new JsonConverter();
 
@@ -60,47 +62,58 @@ describe('JsonConverter.serialize', () => {
         });
     });
 
-    /**
-     * With an object property
-     */
-    describe('with Object property', () => {
+    it('should return object', () => {
 
-        it('should serialize as is', () => {
-
-            const informations = {
-                age: 21,
-                languages: ['french', 'english', 'german']
-            };
-
-            const passenger = new Passenger({
-                informations: informations
-            });
-
-            const json = converter.serialize(passenger);
-            chai.expect(json.informations).deep.equal(informations);
-        })
-    });
-
-    it('should return object json', () => {
-
-        const car = new Car({
-            id: 12,
-            color: Color.BLUE,
-            name: 'A5',
-            passengers: [],
-            brand: 'Audi'
-        });
-        const actualJson = converter.serialize(car);
-
-        const expectedJson = {
-            id: 12,
-            color: 'BLUE',
-            name: 'A5',
-            passengers: <any>[],
-            brand: 'Audi',
-            type: 'car'
+        const informations = {
+            age: 21,
+            languages: ['french', 'english', 'german']
         };
 
-        chai.expect(actualJson).deep.equal(expectedJson);
+        const json = converter.serialize(informations, Any);
+        chai.expect(json).deep.equal(informations);
+    });
+
+    describe('samples', () => {
+
+        it('should return car json', () => {
+
+            const passenger1 = new Passenger({
+                pid: {
+                    id: 12
+                },
+                gender: Gender.MALE,
+                name: 'steve',
+                informations: {
+                    age: 21
+                }
+            });
+
+            const car = new Car({
+                id: 12,
+                color: Color.BLUE,
+                name: 'A5',
+                passengers: [passenger1],
+                brand: 'Audi'
+            });
+            const actualJson = converter.serialize(car);
+
+            const expectedJson = {
+                id: 12,
+                color: 'BLUE',
+                name: 'A5',
+                passengers: [{
+                    pid: 12,
+                    gender: 'MALE',
+                    name: 'steve',
+                    informations: {
+                        age: 21
+                    }
+                }],
+                brand: 'Audi',
+                type: 'car'
+            };
+
+            chai.expect(actualJson).deep.equal(expectedJson);
+        });
     });
 });

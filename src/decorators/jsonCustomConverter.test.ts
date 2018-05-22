@@ -1,5 +1,5 @@
 import {JsonCustomConverter} from "../converter/JsonCustomConverter";
-import {jsonCustomConverter} from "./JsonCustomConverter";
+import {jsonCustomConverter} from "./jsonCustomConverter";
 import {JsonCustomConverters} from "../converter/JsonCustomConverters";
 import * as chai from 'chai';
 

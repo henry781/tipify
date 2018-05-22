@@ -1,5 +1,5 @@
-import {jsonObject} from "../../decorators/JsonObject";
-import {jsonProperty} from "../../decorators/JsonProperty";
+import {jsonObject} from "../../decorators/jsonObject";
+import {jsonProperty} from "../../decorators/jsonProperty";
 import {Passenger} from "./Passenger";
 import {Color} from "./Color";
 import {VehicleOptions} from "./VehicleOptions";

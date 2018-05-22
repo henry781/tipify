@@ -1,6 +1,6 @@
-import {jsonObject} from "../../decorators/JsonObject";
+import {jsonObject} from "../../decorators/jsonObject";
 import {Pid} from "./Pid";
-import {jsonProperty} from "../../decorators/JsonProperty";
+import {jsonProperty} from "../../decorators/jsonProperty";
 import {PidConverter} from "../converter/PidConverter";
 import {Gender} from "./Gender";
 import {Enum, EnumStrategy} from "../../type/Enum";
@@ -13,7 +13,7 @@ export class Passenger {
     @jsonProperty('pid', PidConverter)
     private _pid: Pid;
 
-    @jsonProperty('gender', Enum(Gender, EnumStrategy.INDEX_COMPATIBLE))
+    @jsonProperty('gender', Enum(Gender, EnumStrategy.NAME))
     private _gender: Gender;
 
     @jsonProperty('name', String)

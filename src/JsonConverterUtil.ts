@@ -1,5 +1,9 @@
 export class JsonConverterUtil {
 
+    public static isNullOrUndefined(obj: any) {
+        return typeof obj === 'undefined' || obj === null
+    }
+
     public static checkConsistency(obj: any, type: any) {
 
         if (type === String &&
