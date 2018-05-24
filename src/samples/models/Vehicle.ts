@@ -20,7 +20,7 @@ export abstract class Vehicle {
     @jsonProperty('passengers', [Passenger])
     private _passengers: Passenger[];
 
-    @jsonProperty('color', Enum(Color, EnumStrategy.NAME_COMPATIBLE))
+    @jsonProperty('color', Enum(Color, EnumStrategy.NAME))
     private _color: Color;
 
     constructor(type?: string, options?: VehicleOptions) {

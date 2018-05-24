@@ -18,6 +18,8 @@
   },
   "homepage": "https://github.com/henry781/tipify#readme",
   "dependencies": {
+    "@types/sinon": "^4.3.3",
+    "sinon": "^5.0.10",
     "typescript": "^2.7.2"
   },
   "devDependencies": {

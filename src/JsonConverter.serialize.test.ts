@@ -1,119 +1,247 @@
 import {JsonConverter} from "./JsonConverter";
-import {Car} from "./samples/models/Car";
 import {Color} from "./samples/models/Color";
 import * as chai from 'chai';
-import {Passenger} from "./samples/models/Passenger";
-import {Enum, EnumStrategy} from "./type/Enum";
+import {Enum, EnumOptions, EnumStrategy} from "./type/Enum";
 import {Any} from "./type/Any";
-import {Gender} from "./samples/models/Gender";
-
-const converter = new JsonConverter();
+import {Pid} from "./samples/models/Pid";
+import {PidConverter} from "./samples/converter/PidConverter";
+import {JsonCustomConverter} from "./converter/JsonCustomConverter";
+import {JsonConverterError} from "./JsonConverterError";
+import {jsonObject} from "./decorators/jsonObject";
+import {jsonProperty} from "./decorators/jsonProperty";
+import * as sinon from 'sinon';
+import {JsonConverterUtil} from "./JsonConverterUtil";
 
 describe('JsonConverter.serialize', () => {
 
-    it('should return null', () => {
-        const result = converter.serialize(null);
-        chai.expect(result).to.be.null;
-    });
+    const converter = new JsonConverter();
+    const sandbox = sinon.createSandbox();
 
-    it('should return undefined', () => {
-        const result = converter.serialize(undefined);
-        chai.expect(result).to.be.undefined;
-    });
-
-    it('should return number', () => {
-        const result = converter.serialize(-1);
-        chai.expect(result).to.equal(-1);
-    });
-
-    it('should return string', () => {
-        const result = converter.serialize('test');
-        chai.expect(result).to.equal('test');
-    });
-
-    it('should return boolean', () => {
-        const result = converter.serialize(true);
-        chai.expect(result).to.equal(true);
+    afterEach(() => {
+        sandbox.restore();
     });
 
     /**
-     * With an enum property
+     * Process
      */
-    describe('with Enum property', () => {
+    describe('process', () => {
 
-        it('should return enum as name', () => {
-            const result = converter.serialize(Color.BLUE, Enum(Color, EnumStrategy.NAME));
-            chai.expect(result).equal('BLUE');
+        it('should throw error E00 when something wrong happened', () => {
+
+            const processSerialize = sandbox.stub(converter, 'processSerialize').withArgs('Steve', Number)
+                .throws(new JsonConverterError(''));
+
+            chai.expect(() => converter.serialize('Steve', Number))
+                .to.throw(JsonConverterError, 'E00');
+            chai.expect(processSerialize.calledOnce).to.be.true;
         });
 
-        it('should return enum as name (2)', () => {
-            const result = converter.serialize(Color.BLUE, Enum(Color, EnumStrategy.NAME_COMPATIBLE));
+        it('should serialize', () => {
+
+            const processSerialize = sandbox.stub(converter, 'processSerialize').withArgs('Steve', String)
+                .returns('Steve');
+
+            const result = converter.serialize('Steve', String);
+            chai.expect(result).equal('Steve');
+            chai.expect(processSerialize.calledOnce).to.be.true;
+        });
+    });
+
+    /**
+     * Process serialize
+     */
+    describe('processSerialize', () => {
+
+        it('should return null', () => {
+            const result = converter.processSerialize(null);
+            chai.expect(result).to.be.null;
+        });
+
+        it('should return undefined', () => {
+            const result = converter.processSerialize(undefined);
+            chai.expect(result).to.be.undefined;
+        });
+
+        it('should return number', () => {
+            const result = converter.processSerialize(-1);
+            chai.expect(result).to.equal(-1);
+        });
+
+        it('should return string', () => {
+            const result = converter.processSerialize('test');
+            chai.expect(result).to.equal('test');
+        });
+
+        it('should return boolean', () => {
+            const result = converter.processSerialize(true);
+            chai.expect(result).to.equal(true);
+        });
+
+        it('should check consistency', () => {
+
+            const obj = 'test';
+            const checkConsistency = sandbox.stub(JsonConverterUtil, 'checkConsistency').withArgs('test', Number)
+                .throws(new JsonConverterError(''));
+
+            chai.expect(() => converter.processSerialize(obj, Number)).throw(JsonConverterError);
+            chai.expect(checkConsistency.calledOnce).to.be.true;
+        });
+
+        describe('when given type is a custom converter', () => {
+
+            const pid: Pid = {
+                id: 12
+            };
+
+            it('should serialize', () => {
+                const result = converter.processSerialize(pid, PidConverter);
+                chai.expect(result).equal(12);
+            });
+
+            it('should throw error E01 when custom converter is not instantiated', () => {
+
+                class SomeConverter extends JsonCustomConverter<Pid> {
+                    public deserialize(obj: any): Pid {
+                        return undefined;
+                    }
+
+                    public serialize(obj: Pid): any {
+                    }
+                }
+
+                chai.expect(() => converter.processSerialize(pid, SomeConverter))
+                    .to.throw(JsonConverterError, 'E01');
+            });
+        });
+
+        describe('when obj is an array', () => {
+
+            it('should throw error E02 when type is an empty array', () => {
+                const json = ['a', 'b', 'c'];
+                chai.expect(() => converter.processSerialize(json, []))
+                    .to.throw(JsonConverterError, 'E02');
+            });
+        });
+
+        describe('when given type is Any', () => {
+
+            it('should return object as is', () => {
+
+                const informations = {
+                    age: 21,
+                    languages: ['french', 'english', 'german']
+                };
+
+                const json = converter.processSerialize(informations, Any);
+                chai.expect(json).deep.equal(informations);
+            });
+        });
+    });
+
+    /**
+     * Serialize an enum
+     */
+    describe('serializeEnum', () => {
+
+        it('should return enum as name', () => {
+            const result = converter.serializeEnum(Color.BLUE, Enum(Color, EnumStrategy.NAME));
             chai.expect(result).equal('BLUE');
         });
 
         it('should return enum as index', () => {
-            const result = converter.serialize(Color.BLUE, Enum(Color, EnumStrategy.INDEX));
+            const result = converter.serializeEnum(Color.BLUE, Enum(Color, EnumStrategy.INDEX));
             chai.expect(result).equal(2);
         });
 
-        it('should return enum as index (2)', () => {
-            const result = converter.serialize(Color.BLUE, Enum(Color, EnumStrategy.INDEX_COMPATIBLE));
-            chai.expect(result).equal(2);
+        it('should throw error E12 when strategy is not defined', () => {
+            const options = new EnumOptions(Color);
+            options.strategy = undefined;
+            chai.expect(() => converter.serializeEnum(Color.BLUE, options))
+                .throw(JsonConverterError, 'E12');
+        });
+
+        it('should throw error E10 when enum value does not exist (1)', () => {
+            chai.expect(() => converter.serializeEnum(14, Enum(Color, EnumStrategy.INDEX)))
+                .throw(JsonConverterError, 'E10');
         });
     });
 
-    it('should return object', () => {
+    /**
+     * Serialize an object
+     */
+    describe('serializeObject', () => {
 
-        const informations = {
-            age: 21,
-            languages: ['french', 'english', 'german']
-        };
+        @jsonObject()
+        class Actor {
+            @jsonProperty('name', String)
+            public _name: string;
 
-        const json = converter.serialize(informations, Any);
-        chai.expect(json).deep.equal(informations);
-    });
+            constructor(name: string) {
+                this._name = name;
+            }
+        }
 
-    describe('samples', () => {
+        const actor = new Actor('Steve');
 
-        it('should return car json', () => {
+        it('should throw error E09 when type mapping is missing', () => {
 
-            const passenger1 = new Passenger({
-                pid: {
-                    id: 12
-                },
-                gender: Gender.MALE,
-                name: 'steve',
-                informations: {
-                    age: 21
-                }
-            });
+            class Movie {
+            }
 
-            const car = new Car({
-                id: 12,
-                color: Color.BLUE,
-                name: 'A5',
-                passengers: [passenger1],
-                brand: 'Audi'
-            });
-            const actualJson = converter.serialize(car);
+            const movie = new Movie();
+            chai.expect(() => converter.serializeObject(movie)).throw(JsonConverterError, 'E09');
+        });
+
+        it('should throw error E08 when serializing property fail', () => {
+
+            const serialize = sandbox.stub(converter, 'serialize').withArgs('Steve', String)
+                .throws(new JsonConverterError(''));
+
+            chai.expect(() => converter.serializeObject(actor)).throw(JsonConverterError, 'E08');
+            chai.expect(serialize.calledOnce).to.be.true;
+        });
+
+        it('should return serialized object', () => {
+
+            const serialize = sandbox.stub(converter, 'serialize').withArgs('Steve', String)
+                .returns('Steve');
 
             const expectedJson = {
-                id: 12,
-                color: 'BLUE',
-                name: 'A5',
-                passengers: [{
-                    pid: 12,
-                    gender: 'MALE',
-                    name: 'steve',
-                    informations: {
-                        age: 21
-                    }
-                }],
-                brand: 'Audi',
-                type: 'car'
+                name: 'Steve'
             };
 
-            chai.expect(actualJson).deep.equal(expectedJson);
+            const result = converter.serializeObject(actor);
+            chai.expect(result).deep.equal(expectedJson);
+            chai.expect(serialize.calledOnce).to.be.true;
+        });
+    });
+
+    /**
+     * Serialize an array
+     */
+    describe('serializeArray', () => {
+
+        it('should throw error E20 when serializing an item fail', () => {
+
+            const arr = ['abc'];
+
+            const serialize = sandbox.stub(converter, 'serialize').withArgs('abc', String)
+                .throws(new JsonConverterError(''));
+
+            chai.expect(() => converter.serializeArray(arr, String)).throw(JsonConverterError, 'E20');
+            chai.expect(serialize.calledOnce).to.be.true;
+        });
+
+        it('should return serialized array', () => {
+
+            const arr = ['abc'];
+
+            const serialize = sandbox.stub(converter, 'serialize').withArgs('abc', String)
+                .returns('abc');
+
+            const result = converter.serializeArray(arr, String);
+            chai.expect(result).deep.equal(arr);
+            chai.expect(serialize.calledOnce).to.be.true;
         });
     });
 });

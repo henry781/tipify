@@ -1,3 +1,5 @@
+import {JsonConverterError} from "./JsonConverterError";
+
 export class JsonConverterUtil {
 
     public static isNullOrUndefined(obj: any) {
@@ -8,21 +10,25 @@ export class JsonConverterUtil {
 
         if (type === String &&
             typeof obj !== 'string' && obj instanceof String === false) {
-            throw Error('consistency error');
+            const errorMessage = '(E03) Expected type is <String>, but obj is not';
+            throw new JsonConverterError(errorMessage);
         }
 
         if (type === Boolean &&
             typeof obj !== 'boolean' && obj instanceof Boolean === false) {
-            throw Error('consistency error');
+            const errorMessage = '(E03) Expected type is <Boolean>, but obj is not';
+            throw new JsonConverterError(errorMessage);
         }
 
         if (type === Number &&
             typeof obj !== 'number' && obj instanceof Number === false) {
-            throw Error('consistency error');
+            const errorMessage = '(E03) Expected type is <Number>, but obj is not';
+            throw new JsonConverterError(errorMessage);
         }
 
         if (Array.isArray(obj) !== Array.isArray(type)) {
-            throw Error('consistency error');
+            const errorMessage = '(E03) Expected type is an array, but given obj is not';
+            throw new JsonConverterError(errorMessage);
         }
     }
 

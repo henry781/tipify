@@ -4,6 +4,7 @@ import {JsonConverterUtil} from "./JsonConverterUtil";
 import {Any} from "./type/Any";
 import {EnumOptions, EnumStrategy} from "./type/Enum";
 import {JsonCustomConverter} from "./converter/JsonCustomConverter";
+import {JsonConverterError} from "./JsonConverterError";
 
 export class JsonConverter {
 
@@ -13,6 +14,22 @@ export class JsonConverter {
      * @param type
      */
     public serialize(obj: any, type?: any): any {
+
+        try {
+            return this.processSerialize(obj, type);
+        } catch (err) {
+            const errorMessage = '(E00) cannot serialize object :\n'
+                + JSON.stringify(obj, null, 2);
+            throw new JsonConverterError(errorMessage, err);
+        }
+    }
+
+    /**
+     * Process serialize
+     * @param obj
+     * @param type
+     */
+    public processSerialize(obj: any, type?: any): any {
 
         // when obj is null or undefined, return null or undefined
         if (JsonConverterUtil.isNullOrUndefined(obj)) {
@@ -25,6 +42,12 @@ export class JsonConverter {
             // when custom converter is provided, use custom provider
             if (type.prototype instanceof JsonCustomConverter) {
                 const converterInstance = JsonCustomConverters.getConverterInstance(type);
+                if (!converterInstance) {
+                    const errorMessage = `(E01) Cannot get instance of custom converter <${type.name}>, this may occur when :\n`
+                        + '   -  decorator @jsonCustomConverter is missing\n'
+                        + '   -  class does not extends JsonCustomConverter';
+                    throw new JsonConverterError(errorMessage);
+                }
                 return converterInstance.serialize(obj);
             }
 
@@ -41,9 +64,14 @@ export class JsonConverter {
 
         // when obj is an array, serialize as an array
         if (Array.isArray(obj)) {
-            const _type = type[0];
-            if (!_type) {
-                throw Error('error (to define)');
+
+            let _type;
+            if (type) {
+                const _type = type[0];
+                if (!_type) {
+                    const errorMessage = `(E02) Given type is not valid, it should an array like [String]`;
+                    throw new JsonConverterError(errorMessage);
+                }
             }
             return this.serializeArray(obj, _type);
         }
@@ -55,6 +83,82 @@ export class JsonConverter {
 
         // return obj, should match only cases [number, boolean, string]
         return obj;
+    }
+
+    /**
+     * Serialize enum
+     * @param obj
+     * @param options
+     */
+    public serializeEnum(obj: number, options: EnumOptions): number | string {
+
+        if (JsonConverterUtil.isNullOrUndefined(options.type[obj])) {
+            const errorMessage = `(E10) <${obj}> for enum <${options.type.name}> does not exist`;
+            throw new JsonConverterError(errorMessage);
+        }
+
+        if (options.strategy === EnumStrategy.INDEX) {
+            return obj;
+        }
+
+        else if (options.strategy === EnumStrategy.NAME) {
+            return options.type[obj];
+        }
+
+        else {
+            const errorMessage = `(E12) strategy for enum <${options.type.name}> is not defined`;
+            throw new JsonConverterError(errorMessage);
+        }
+    }
+
+    /**
+     * Serialize object
+     * @param obj
+     */
+    public serializeObject(obj: any): any {
+
+        const typeMapping = JsonConverterMapper.getMappingForType(obj.constructor);
+        if (!typeMapping) {
+            const errorMessage = `(E09) Cannot get mapping for <${obj.constructor.name}>, this may occur when :\n`
+                + '   -  decorator @jsonObject is missing\n';
+            throw new JsonConverterError(errorMessage);
+        }
+
+        const properties = JsonConverterMapper.getAllPropertiesForTypeMapping(typeMapping);
+
+        const instance: any = {};
+
+        // serialize each property
+        properties.forEach(property => {
+            try {
+                instance[property.serializedName] = this.serialize(obj[property.name], property.type);
+            } catch (err) {
+                const errorMessage = `(E08) error serializing property <${property.name}>, type <${property.type.name}>`;
+                throw new JsonConverterError(errorMessage, err);
+            }
+        });
+
+        return instance;
+    }
+
+    /**
+     * Serialize array
+     * @param obj
+     * @param type
+     */
+    public serializeArray(obj: any[], type?: any): any[] {
+        const instance: any[] = [];
+
+        obj.forEach((entry, index) => {
+            try {
+                instance.push(this.serialize(entry, type));
+            } catch (err) {
+                const errorMessage = `(E20) error serializing index <${index}>, type <${type ? type.name : undefined}>`;
+                throw new JsonConverterError(errorMessage, err);
+            }
+        });
+
+        return instance;
     }
 
     /**
@@ -93,7 +197,7 @@ export class JsonConverter {
             if (!_type) {
                 throw Error('');
             }
-            return this.deserializeArray(obj, type);
+            return this.deserializeArray(obj, _type);
         }
 
         if (obj === Object(obj)) {
@@ -103,66 +207,25 @@ export class JsonConverter {
         return obj;
     }
 
-    /**
-     * Serialize array
-     * @param obj
-     * @param type
-     */
-    protected serializeArray(obj: any[], type?: any): any[] {
-        const instance: any[] = [];
-        obj.forEach(entry => instance.push(this.serialize(entry, type)));
-        return instance;
-    }
-
-    /**
-     * Serialize object
-     * @param obj
-     */
-    protected serializeObject(obj: any): any {
-
-        const typeMapping = JsonConverterMapper.getMappingForType(obj.constructor);
-        const properties = JsonConverterMapper.getAllPropertiesForTypeMapping(typeMapping);
-
-        const instance: any = {};
-
-        // serialize each property
-        properties.forEach(property => {
-            instance[property.serializedName] = this.serialize(obj[property.name], property.type);
+    protected deserializeArray<T>(obj: any[], type: any): T[] {
+        const instance: T[] = [];
+        obj.forEach(entry => {
+            instance.push(<T>this.deserialize(entry, type));
         });
-
         return instance;
-    }
-
-    /**
-     * Serialize enum
-     * @param obj
-     * @param options
-     */
-    protected serializeEnum(obj: number, options: EnumOptions): number | string {
-
-        if (options.strategy === EnumStrategy.INDEX || options.strategy === EnumStrategy.INDEX_COMPATIBLE) {
-
-            if ((typeof options.type[obj] === 'undefined' || options.type[obj] === null)) {
-                throw new Error('consistency error');
-            }
-            return obj;
-
-        } else {
-
-            if ((typeof options.type[obj] === 'undefined' || options.type[obj] === null)) {
-                throw new Error('consistency error');
-            }
-            return options.type[obj];
-        }
-    }
-
-    protected deserializeArray<T>(obj: any, type: any): T[] {
-        return undefined;
-        // TODO
     }
 
     protected deserializeEnum(obj: any, options: EnumOptions): any {
-        // TODO
+
+        if (JsonConverterUtil.isNullOrUndefined(options.type[obj])) {
+            throw new Error('consistency error');
+        }
+
+        if (typeof obj === 'number' || obj instanceof Number) {
+            return obj;
+        }
+
+        return options.type[obj];
     }
 
     /**
@@ -176,16 +239,16 @@ export class JsonConverter {
         const properties = JsonConverterMapper.getAllPropertiesForTypeMapping(typeMapping);
 
         // when polymorphism is defined
-        if (typeMapping.options.discriminatorProperty) {
+        if (typeMapping.options && typeMapping.options.discriminatorProperty) {
             const discriminatorValue = obj[typeMapping.options.discriminatorProperty];
             const subType = JsonConverterMapper.listMappingForExtendingType(type)
-                .find(m => m.options.discriminatorValue === discriminatorValue);
+                .find(m => m.options && m.options.discriminatorValue === discriminatorValue);
 
             if (!subType) {
                 throw Error('');
             }
 
-            return this.deserializeObject(obj, subType);
+            return this.deserializeObject(obj, subType.type);
         }
 
         // new instance of type

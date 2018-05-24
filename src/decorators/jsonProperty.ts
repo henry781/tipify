@@ -1,7 +1,7 @@
 import {PropertyMapping} from "../mapping/PropertyMapping";
 import {JsonConverterMapper} from "../mapping/JsonConverterMapper";
 
-export function jsonProperty(serializedName?: string, type?: any) {
+export function jsonProperty(serializedName: string, type: any) {
 
     return (cls: any, property: string) => {
 

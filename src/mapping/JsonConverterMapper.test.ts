@@ -3,7 +3,7 @@ import {JsonConverterMapper} from "./JsonConverterMapper";
 import {Vehicle} from "../samples/models/Vehicle";
 import * as chai from 'chai';
 
-describe('JsonConverter', () => {
+describe('JsonConverterMapper', () => {
 
     class Asteroid {
     }
