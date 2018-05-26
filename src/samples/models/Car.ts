@@ -7,7 +7,7 @@ import {CarOptions} from "./CarOptions";
 export class Car extends Vehicle {
 
     @jsonProperty('brand', String)
-    private _brand: string;
+    public _brand: string;
 
     constructor(options?: CarOptions) {
         super('car', options);

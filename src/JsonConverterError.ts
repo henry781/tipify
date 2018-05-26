@@ -6,4 +6,14 @@ export class JsonConverterError extends Error {
         super(message);
         this.parent = parent;
     }
+
+    public toString(): string {
+        let message = this.message;
+
+        if (this.parent) {
+            message = message + '\n' + this.parent.toString();
+        }
+
+        return message;
+    }
 }

@@ -9,19 +9,19 @@ import {Enum, EnumStrategy} from "../../type/Enum";
 export abstract class Vehicle {
 
     @jsonProperty('type', String)
-    private _type: string;
+    public _type: string;
 
     @jsonProperty('id', Number)
-    private _id: number;
+    public _id: number;
 
     @jsonProperty('name', String)
-    private _name: string;
+    public _name: string;
 
     @jsonProperty('passengers', [Passenger])
-    private _passengers: Passenger[];
+    public _passengers: Passenger[];
 
     @jsonProperty('color', Enum(Color, EnumStrategy.NAME))
-    private _color: Color;
+    public _color: Color;
 
     constructor(type?: string, options?: VehicleOptions) {
         this._type = type;

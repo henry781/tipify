@@ -53,7 +53,7 @@ export class JsonConverter {
 
             // when an enum is provided
             else if (type instanceof EnumOptions) {
-                return this.serializeEnum(obj, type);
+                return this.processSerializeEnum(obj, type);
             }
 
             // when any type is provided, copy object
@@ -67,18 +67,18 @@ export class JsonConverter {
 
             let _type;
             if (type) {
-                const _type = type[0];
+                _type = type[0];
                 if (!_type) {
                     const errorMessage = `(E02) Given type is not valid, it should an array like [String]`;
                     throw new JsonConverterError(errorMessage);
                 }
             }
-            return this.serializeArray(obj, _type);
+            return this.processSerializeArray(obj, _type);
         }
 
         // when obj is an object, serialize as an obj
         if (obj === Object(obj)) {
-            return this.serializeObject(obj);
+            return this.processSerializeObject(obj);
         }
 
         // return obj, should match only cases [number, boolean, string]
@@ -90,7 +90,7 @@ export class JsonConverter {
      * @param obj
      * @param options
      */
-    public serializeEnum(obj: number, options: EnumOptions): number | string {
+    public processSerializeEnum(obj: number, options: EnumOptions): number | string {
 
         if (JsonConverterUtil.isNullOrUndefined(options.type[obj])) {
             const errorMessage = `(E10) <${obj}> for enum <${options.type.name}> does not exist`;
@@ -115,7 +115,7 @@ export class JsonConverter {
      * Serialize object
      * @param obj
      */
-    public serializeObject(obj: any): any {
+    public processSerializeObject(obj: any): any {
 
         const typeMapping = JsonConverterMapper.getMappingForType(obj.constructor);
         if (!typeMapping) {
@@ -146,7 +146,7 @@ export class JsonConverter {
      * @param obj
      * @param type
      */
-    public serializeArray(obj: any[], type?: any): any[] {
+    public processSerializeArray(obj: any[], type?: any): any[] {
         const instance: any[] = [];
 
         obj.forEach((entry, index) => {
@@ -166,7 +166,22 @@ export class JsonConverter {
      * @param obj
      * @param type
      */
-    public deserialize<T>(obj: any, type: any): T | T[] {
+    public deserialize<T>(obj: any, type: any): T {
+        try {
+            return this.processDeserialize<T>(obj, type);
+        } catch (err) {
+            const errorMessage = '(E40) cannot derialize object :\n'
+                + JSON.stringify(obj, null, 2);
+            throw new JsonConverterError(errorMessage, err);
+        }
+    }
+
+    /**
+     * Process deserialize
+     * @param obj
+     * @param type
+     */
+    public processDeserialize<T>(obj: any, type: any): T {
 
         // when obj is null or undefined, return null or undefined
         if (JsonConverterUtil.isNullOrUndefined(obj)) {
@@ -178,12 +193,18 @@ export class JsonConverter {
         // when custom converter is provided, use custom provider
         if (type.prototype instanceof JsonCustomConverter) {
             const converterInstance = JsonCustomConverters.getConverterInstance(type);
+            if (!converterInstance) {
+                const errorMessage = `(E01) Cannot get instance of custom converter <${type.name}>, this may occur when :\n`
+                    + '   -  decorator @jsonCustomConverter is missing\n'
+                    + '   -  class does not extends JsonCustomConverter';
+                throw new JsonConverterError(errorMessage);
+            }
             return converterInstance.deserialize(obj);
         }
 
         // when an enum is provided
         else if (type instanceof EnumOptions) {
-            return this.deserializeEnum(obj, type);
+            return this.processDeserializeEnum(obj, type);
         }
 
         // when any type is provided, copy object
@@ -197,28 +218,46 @@ export class JsonConverter {
             if (!_type) {
                 throw Error('');
             }
-            return this.deserializeArray(obj, _type);
+            return <any>this.processDeserializeArray(obj, _type);
         }
 
         if (obj === Object(obj)) {
-            return this.deserializeObject<T>(obj, type);
+            return this.processDeserializeObject<T>(obj, type);
         }
 
         return obj;
     }
 
-    protected deserializeArray<T>(obj: any[], type: any): T[] {
+    /**
+     * Deserialize array
+     * @param json
+     * @param type
+     */
+    public processDeserializeArray<T>(json: any[], type: any): T[] {
         const instance: T[] = [];
-        obj.forEach(entry => {
-            instance.push(<T>this.deserialize(entry, type));
+
+        json.forEach((entry, index) => {
+            try {
+                instance.push(<T>this.processDeserialize(entry, type));
+            } catch (err) {
+                const errorMessage = `(E30) error deserializing index <${index}>, type <${type.name}>`;
+                throw new JsonConverterError(errorMessage, err);
+            }
         });
+
         return instance;
     }
 
-    protected deserializeEnum(obj: any, options: EnumOptions): any {
+    /**
+     * Deserialize enum
+     * @param obj
+     * @param options
+     */
+    public processDeserializeEnum(obj: any, options: EnumOptions): any {
 
         if (JsonConverterUtil.isNullOrUndefined(options.type[obj])) {
-            throw new Error('consistency error');
+            const errorMessage = `(E31) error deserializing, enum value <${obj}> cannot be found`;
+            throw new JsonConverterError(errorMessage);
         }
 
         if (typeof obj === 'number' || obj instanceof Number) {
@@ -233,9 +272,15 @@ export class JsonConverter {
      * @param obj
      * @param type
      */
-    protected deserializeObject<T>(obj: any, type: any): T {
+    public processDeserializeObject<T>(obj: any, type: any): T {
 
         const typeMapping = JsonConverterMapper.getMappingForType(type);
+        if (!typeMapping) {
+            const errorMessage = `(E09) Cannot get mapping for <${obj.constructor.name}>, this may occur when :\n`
+                + '   -  decorator @jsonObject is missing\n';
+            throw new JsonConverterError(errorMessage);
+        }
+
         const properties = JsonConverterMapper.getAllPropertiesForTypeMapping(typeMapping);
 
         // when polymorphism is defined
@@ -248,7 +293,7 @@ export class JsonConverter {
                 throw Error('');
             }
 
-            return this.deserializeObject(obj, subType.type);
+            return this.processDeserializeObject(obj, subType.type);
         }
 
         // new instance of type
@@ -256,7 +301,12 @@ export class JsonConverter {
 
         // deserialize each property
         properties.forEach(property => {
-            instance[property.name] = this.deserialize(obj[property.serializedName], property.type);
+            try {
+                instance[property.name] = this.processDeserialize(obj[property.serializedName], property.type);
+            } catch (err) {
+                const errorMessage = `(E32) error deserializing property <${property.name}>, type <${property.type.name}>`;
+                throw new JsonConverterError(errorMessage, err);
+            }
         });
 
         return instance;

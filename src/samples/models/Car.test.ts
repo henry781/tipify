@@ -4,6 +4,7 @@ import {Passenger} from "./Passenger";
 import {Car} from "./Car";
 import * as chai from "chai";
 import {JsonConverter} from "../../JsonConverter";
+import {Vehicle} from "./Vehicle";
 
 describe('Car', () => {
 
@@ -31,6 +32,7 @@ describe('Car', () => {
                 passengers: [passenger1],
                 brand: 'Audi'
             });
+
             const actualJson = converter.serialize(car);
 
             const expectedJson = {
@@ -50,6 +52,32 @@ describe('Car', () => {
             };
 
             chai.expect(actualJson).deep.equal(expectedJson);
+        });
+    });
+
+    describe('deserialize', () => {
+
+        it('should return car object', () => {
+
+            const json = {
+                id: 12,
+                color: 'BLUE',
+                name: 'A5',
+                passengers: [{
+                    pid: 12,
+                    gender: 'MALE',
+                    name: 'steve',
+                    informations: {
+                        age: 21
+                    }
+                }],
+                brand: 'Audi',
+                type: 'car'
+            };
+
+            const car = converter.deserialize<Vehicle>(json, Vehicle);
+
+            chai.expect(car._id);
         });
 
     });

@@ -22,9 +22,9 @@ describe('JsonConverter.serialize', () => {
     });
 
     /**
-     * Process
+     * Serialize
      */
-    describe('process', () => {
+    describe('serialize', () => {
 
         it('should throw error E00 when something wrong happened', () => {
 
@@ -141,27 +141,27 @@ describe('JsonConverter.serialize', () => {
     /**
      * Serialize an enum
      */
-    describe('serializeEnum', () => {
+    describe('processSerializeEnum', () => {
 
         it('should return enum as name', () => {
-            const result = converter.serializeEnum(Color.BLUE, Enum(Color, EnumStrategy.NAME));
+            const result = converter.processSerializeEnum(Color.BLUE, Enum(Color, EnumStrategy.NAME));
             chai.expect(result).equal('BLUE');
         });
 
         it('should return enum as index', () => {
-            const result = converter.serializeEnum(Color.BLUE, Enum(Color, EnumStrategy.INDEX));
+            const result = converter.processSerializeEnum(Color.BLUE, Enum(Color, EnumStrategy.INDEX));
             chai.expect(result).equal(2);
         });
 
         it('should throw error E12 when strategy is not defined', () => {
             const options = new EnumOptions(Color);
             options.strategy = undefined;
-            chai.expect(() => converter.serializeEnum(Color.BLUE, options))
+            chai.expect(() => converter.processSerializeEnum(Color.BLUE, options))
                 .throw(JsonConverterError, 'E12');
         });
 
         it('should throw error E10 when enum value does not exist (1)', () => {
-            chai.expect(() => converter.serializeEnum(14, Enum(Color, EnumStrategy.INDEX)))
+            chai.expect(() => converter.processSerializeEnum(14, Enum(Color, EnumStrategy.INDEX)))
                 .throw(JsonConverterError, 'E10');
         });
     });
@@ -169,7 +169,7 @@ describe('JsonConverter.serialize', () => {
     /**
      * Serialize an object
      */
-    describe('serializeObject', () => {
+    describe('processSerializeObject', () => {
 
         @jsonObject()
         class Actor {
@@ -189,28 +189,28 @@ describe('JsonConverter.serialize', () => {
             }
 
             const movie = new Movie();
-            chai.expect(() => converter.serializeObject(movie)).throw(JsonConverterError, 'E09');
+            chai.expect(() => converter.processSerializeObject(movie)).throw(JsonConverterError, 'E09');
         });
 
         it('should throw error E08 when serializing property fail', () => {
 
-            const serialize = sandbox.stub(converter, 'serialize').withArgs('Steve', String)
+            const serialize = sandbox.stub(converter, 'processSerialize').withArgs('Steve', String)
                 .throws(new JsonConverterError(''));
 
-            chai.expect(() => converter.serializeObject(actor)).throw(JsonConverterError, 'E08');
+            chai.expect(() => converter.processSerializeObject(actor)).throw(JsonConverterError, 'E08');
             chai.expect(serialize.calledOnce).to.be.true;
         });
 
         it('should return serialized object', () => {
 
-            const serialize = sandbox.stub(converter, 'serialize').withArgs('Steve', String)
+            const serialize = sandbox.stub(converter, 'processSerialize').withArgs('Steve', String)
                 .returns('Steve');
 
             const expectedJson = {
                 name: 'Steve'
             };
 
-            const result = converter.serializeObject(actor);
+            const result = converter.processSerializeObject(actor);
             chai.expect(result).deep.equal(expectedJson);
             chai.expect(serialize.calledOnce).to.be.true;
         });
@@ -219,16 +219,16 @@ describe('JsonConverter.serialize', () => {
     /**
      * Serialize an array
      */
-    describe('serializeArray', () => {
+    describe('processSerializeArray', () => {
 
         it('should throw error E20 when serializing an item fail', () => {
 
             const arr = ['abc'];
 
-            const serialize = sandbox.stub(converter, 'serialize').withArgs('abc', String)
+            const serialize = sandbox.stub(converter, 'processSerialize').withArgs('abc', String)
                 .throws(new JsonConverterError(''));
 
-            chai.expect(() => converter.serializeArray(arr, String)).throw(JsonConverterError, 'E20');
+            chai.expect(() => converter.processSerializeArray(arr, String)).throw(JsonConverterError, 'E20');
             chai.expect(serialize.calledOnce).to.be.true;
         });
 
@@ -236,10 +236,10 @@ describe('JsonConverter.serialize', () => {
 
             const arr = ['abc'];
 
-            const serialize = sandbox.stub(converter, 'serialize').withArgs('abc', String)
+            const serialize = sandbox.stub(converter, 'processSerialize').withArgs('abc', String)
                 .returns('abc');
 
-            const result = converter.serializeArray(arr, String);
+            const result = converter.processSerializeArray(arr, String);
             chai.expect(result).deep.equal(arr);
             chai.expect(serialize.calledOnce).to.be.true;
         });
