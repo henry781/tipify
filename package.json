@@ -6,7 +6,7 @@
   "scripts": {
     "test": "./node_modules/.bin/mocha --require ts-node/register --exit \"**/*.test.ts\"",
     "build": "rm -rf dist && node ./node_modules/.bin/webpack --config webpack.config.js",
-    "release": "npm run test && npm run build && npm bump patch && npm publish"
+    "release": "npm run test && npm run build && npm version patch && npm publish"
   },
   "repository": {
     "type": "git",
