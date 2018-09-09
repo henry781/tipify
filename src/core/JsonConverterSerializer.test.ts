@@ -1,20 +1,20 @@
-import {JsonConverter} from "./JsonConverter";
-import {Color} from "./samples/models/Color";
+import {Color} from "../samples/models/Color";
 import * as chai from 'chai';
-import {Enum, EnumOptions, EnumStrategy} from "./type/Enum";
-import {Any} from "./type/Any";
-import {Pid} from "./samples/models/Pid";
-import {PidConverter} from "./samples/converter/PidConverter";
-import {JsonCustomConverter} from "./converter/JsonCustomConverter";
-import {JsonConverterError} from "./JsonConverterError";
-import {jsonObject} from "./decorators/jsonObject";
-import {jsonProperty} from "./decorators/jsonProperty";
+import {Enum, EnumOptions, EnumStrategy} from "../type/Enum";
+import {Any} from "../type/Any";
+import {Pid} from "../samples/models/Pid";
+import {PidConverter} from "../samples/converter/PidConverter";
+import {JsonCustomConverter} from "../converter/JsonCustomConverter";
+import {JsonConverterError} from "../JsonConverterError";
+import {jsonObject} from "../decorators/jsonObject";
+import {jsonProperty} from "../decorators/jsonProperty";
 import * as sinon from 'sinon';
-import {JsonConverterUtil} from "./JsonConverterUtil";
+import {JsonConverterUtil} from "../JsonConverterUtil";
+import {JsonConverterSerializer} from "./JsonConverterSerializer";
 
-describe('JsonConverter.serialize', () => {
+describe('JsonConverteSerialize', () => {
 
-    const converter = new JsonConverter();
+    const converter = new JsonConverterSerializer();
     const sandbox = sinon.createSandbox();
 
     afterEach(() => {
@@ -31,7 +31,7 @@ describe('JsonConverter.serialize', () => {
             const processSerialize = sandbox.stub(converter, 'processSerialize').withArgs('Steve', Number)
                 .throws(new JsonConverterError(''));
 
-            chai.expect(() => converter.serialize('Steve', Number))
+            chai.expect(() => converter.serialize('Steve', <any>Number))
                 .to.throw(JsonConverterError, 'E00');
             chai.expect(processSerialize.calledOnce).to.be.true;
         });
@@ -144,24 +144,24 @@ describe('JsonConverter.serialize', () => {
     describe('processSerializeEnum', () => {
 
         it('should return enum as name', () => {
-            const result = converter.processSerializeEnum(Color.BLUE, Enum(Color, EnumStrategy.NAME));
+            const result = (<any>converter).processSerializeEnum(Color.BLUE, Enum(Color, EnumStrategy.NAME));
             chai.expect(result).equal('BLUE');
         });
 
         it('should return enum as index', () => {
-            const result = converter.processSerializeEnum(Color.BLUE, Enum(Color, EnumStrategy.INDEX));
+            const result = (<any>converter).processSerializeEnum(Color.BLUE, Enum(Color, EnumStrategy.INDEX));
             chai.expect(result).equal(2);
         });
 
         it('should throw error E12 when strategy is not defined', () => {
             const options = new EnumOptions(Color);
             options.strategy = undefined;
-            chai.expect(() => converter.processSerializeEnum(Color.BLUE, options))
+            chai.expect(() => (<any>converter).processSerializeEnum(Color.BLUE, options))
                 .throw(JsonConverterError, 'E12');
         });
 
         it('should throw error E10 when enum value does not exist (1)', () => {
-            chai.expect(() => converter.processSerializeEnum(14, Enum(Color, EnumStrategy.INDEX)))
+            chai.expect(() => (<any>converter).processSerializeEnum(14, Enum(Color, EnumStrategy.INDEX)))
                 .throw(JsonConverterError, 'E10');
         });
     });

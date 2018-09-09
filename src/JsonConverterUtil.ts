@@ -1,12 +1,14 @@
 import {JsonConverterError} from "./JsonConverterError";
 
+export type Instantiable<T> = { new(...args: any[]): T };
+
 export class JsonConverterUtil {
 
     public static isNullOrUndefined(obj: any) {
         return typeof obj === 'undefined' || obj === null
     }
 
-    public static checkConsistency(obj: any, type: any) {
+    public static checkConsistency<T>(obj: any, type: any) {
 
         if (type === String &&
             typeof obj !== 'string' && obj instanceof String === false) {

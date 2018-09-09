@@ -1,20 +1,20 @@
-import {JsonConverter} from "./JsonConverter";
 import * as chai from 'chai';
-import {Enum, EnumOptions, EnumStrategy} from "./type/Enum";
-import {Color} from "./samples/models/Color";
-import {Any} from "./type/Any";
+import {Enum} from "../type/Enum";
+import {Color} from "../samples/models/Color";
+import {Any} from "../type/Any";
 import * as sinon from 'sinon';
-import {JsonConverterError} from "./JsonConverterError";
-import {jsonObject} from "./decorators/jsonObject";
-import {jsonProperty} from "./decorators/jsonProperty";
-import {JsonConverterUtil} from "./JsonConverterUtil";
-import {JsonCustomConverter} from "./converter/JsonCustomConverter";
-import {Pid} from "./samples/models/Pid";
-import {PidConverter} from "./samples/converter/PidConverter";
+import {JsonConverterError} from "../JsonConverterError";
+import {jsonObject} from "../decorators/jsonObject";
+import {jsonProperty} from "../decorators/jsonProperty";
+import {JsonConverterUtil} from "../JsonConverterUtil";
+import {JsonCustomConverter} from "../converter/JsonCustomConverter";
+import {Pid} from "../samples/models/Pid";
+import {PidConverter} from "../samples/converter/PidConverter";
+import {JsonConverterDeserializer} from "./JsonConverterDeserializer";
 
-describe('JsonConverter.deserialize', () => {
+describe('JsonConverterDeserializer', () => {
 
-    const converter = new JsonConverter();
+    const converter = new JsonConverterDeserializer();
     const sandbox = sinon.createSandbox();
 
     afterEach(() => {
@@ -116,7 +116,7 @@ describe('JsonConverter.deserialize', () => {
 
             it('should throw error E02 when type is an empty array', () => {
                 const json = ['a', 'b', 'c'];
-                chai.expect(() => converter.processSerialize(json, []))
+                chai.expect(() => converter.processDeserialize(json, []))
                     .to.throw(JsonConverterError, 'E02');
             });
         });
