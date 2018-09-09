@@ -4,6 +4,8 @@ const DtsBundleWebpack = require('dts-bundle-webpack');
 module.exports = {
     entry: './src/api.ts',
     target: 'node',
+    devtool: 'source-map',
+    stats: 'verbose',
     module: {
         rules: [
             {
