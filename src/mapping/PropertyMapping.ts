@@ -1,4 +1,4 @@
-import {JsonValidator} from "../decorators/jsonProperty";
+import {JsonValidator} from "./JsonValidators";
 
 export interface PropertyMapping {
     name: string;
