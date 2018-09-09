@@ -11,16 +11,16 @@ import {PassengerOptions} from "./PassengerOptions";
 export class Passenger {
 
     @jsonProperty('pid', PidConverter)
-    private _pid: Pid;
+    public _pid: Pid;
 
     @jsonProperty('gender', Enum(Gender, EnumStrategy.NAME))
-    private _gender: Gender;
+    public _gender: Gender;
 
     @jsonProperty('name', String)
-    private _name: string;
+    public _name: string;
 
     @jsonProperty('informations', Any)
-    private _informations: object;
+    public _informations: object;
 
     constructor(options?: PassengerOptions) {
         if (options) {

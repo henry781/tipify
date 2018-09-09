@@ -21,7 +21,9 @@ module.exports = {
     output: {
         filename: 'tipify.bundle.js',
         library: 'tipify',
-        path: path.resolve(__dirname, 'dist')
+        path: path.resolve(__dirname, 'dist'),
+        libraryTarget: 'umd',
+        umdNamedDefine: true
     },
     plugins: [
         new DtsBundleWebpack({

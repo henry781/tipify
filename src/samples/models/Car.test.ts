@@ -106,9 +106,21 @@ describe('Car', () => {
                 type: 'car'
             };
 
-            const car = converter.deserialize<Vehicle>(json, Vehicle);
+            const vehicle = converter.deserialize<Vehicle>(json, Vehicle);
 
-            chai.expect(car._id);
+            chai.expect(vehicle).instanceOf(Car);
+
+            const car = <Car>vehicle;
+            chai.expect(car._id).equal(12);
+            chai.expect(car._color).equal(Color.BLUE);
+            chai.expect(car._name).equal('A5');
+            chai.expect(car._type).equal('car');
+            chai.expect(car._brand).equal('Audi');
+            chai.expect(car._passengers).length(1);
+            chai.expect(car._passengers[0]._name).equal('steve');
+            chai.expect(car._passengers[0]._gender).equal(Gender.MALE);
+            chai.expect(car._passengers[0]._pid.id).equal(12);
+            chai.expect((<any>car._passengers[0]._informations)['age']).equal(21);
         });
 
     });
