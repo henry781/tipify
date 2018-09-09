@@ -8,27 +8,17 @@ import {Any} from "../type/Any";
 
 export class JsonConverterDeserializer {
 
-    /**
-     * Deserialize
-     * @param obj
-     * @param type
-     * @returns {T}
-     */
+
     public deserialize<T>(obj: any, type: any): T {
         try {
             return this.processDeserialize<T>(obj, type);
         } catch (err) {
-            const errorMessage = '(E40) cannot derialize object :\n'
+            const errorMessage = '(E40) cannot derialize :\n'
                 + JSON.stringify(obj, null, 2);
             throw new JsonConverterError(errorMessage, err);
         }
     }
 
-    /**
-     * Process deserialize
-     * @param obj
-     * @param type
-     */
     public processDeserialize<T>(obj: any, type: any): T {
 
         // when obj is null or undefined, return null or undefined
@@ -151,7 +141,8 @@ export class JsonConverterDeserializer {
         // deserialize each property
         properties.forEach(property => {
             try {
-                instance[property.name] = this.processDeserialize(obj[property.serializedName], property.type);
+                JsonConverterUtil.validate(obj, property.serializedName, property.validators);
+                instance[property.name] = this.deserialize(obj[property.serializedName], property.type);
             } catch (err) {
                 const errorMessage = `(E32) error deserializing property <${property.name}>, type <${property.type.name}>`;
                 throw new JsonConverterError(errorMessage, err);

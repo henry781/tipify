@@ -24,7 +24,7 @@ export abstract class Vehicle {
     @jsonProperty('color', Enum(Color, EnumStrategy.NAME))
     public _color: Color;
 
-    constructor(type?: string, options?: VehicleOptions) {
+    protected constructor(type?: string, options?: VehicleOptions) {
         this._type = type;
 
         if (options) {

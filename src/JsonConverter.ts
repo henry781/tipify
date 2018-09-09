@@ -37,14 +37,6 @@ export class JsonConverter {
         return this.serializer.serialize(obj, type);
     }
 
-    /**
-     * Deserialize
-     * @param obj
-     * @param {Instantiable<T> | JsonCustomConverter<T>} type
-     * @returns {T}
-     */
-    public deserialize<T>(obj: any, type: Instantiable<T> | JsonCustomConverter<T>): T;
-
 
     /**
      * Deserialize

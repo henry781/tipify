@@ -1,8 +1,22 @@
 import {JsonConverterError} from "./JsonConverterError";
+import {JsonValidator} from "./mapping/JsonValidators";
 
 export type Instantiable<T> = { new(...args: any[]): T };
 
 export class JsonConverterUtil {
+
+    public static validate(obj: any, serializedName: string, validators: JsonValidator[]) {
+
+        if (!validators) {
+            return;
+        }
+
+        try {
+            validators.forEach(validator => validator(obj, serializedName));
+        } catch (err) {
+            throw new JsonConverterError('(E50) property invalid', err);
+        }
+    }
 
     public static isNullOrUndefined(obj: any) {
         return typeof obj === 'undefined' || obj === null
@@ -35,7 +49,7 @@ export class JsonConverterUtil {
     }
 
     public static deepCopy(obj: any): any {
-        // TODO
+        // TODO : to implement
         return obj;
     }
 }
