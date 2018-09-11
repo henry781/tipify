@@ -41,8 +41,31 @@ export class JsonConverterMapper {
     }
 
     /**
+     * Get discriminator property for type mapping
+     * @param {TypeMapping} typeMapping
+     * @returns {string}
+     */
+    public static getDiscriminatorPropertyForTypeMapping(typeMapping: TypeMapping): string {
+
+        if (typeMapping.options && typeMapping.options.discriminatorValue) {
+            return;
+        }
+
+        let current = typeMapping;
+
+        do {
+            if (current.options && current.options.discriminatorProperty) {
+                return current.options.discriminatorProperty;
+            }
+
+            current = current.parent;
+        } while (current);
+    }
+
+    /**
      * Get all properties for type mapping
-     * @param typeMapping
+     * @param {TypeMapping} typeMapping
+     * @returns {PropertyMapping[]}
      */
     public static getAllPropertiesForTypeMapping(typeMapping: TypeMapping): PropertyMapping[] {
 
@@ -56,6 +79,7 @@ export class JsonConverterMapper {
                     properties.push(property);
                 }
             });
+
             current = current.parent;
         } while (current);
 

@@ -120,16 +120,17 @@ export class JsonConverterDeserializer {
             throw new JsonConverterError(errorMessage);
         }
 
-        const properties = JsonConverterMapper.getAllPropertiesForTypeMapping(typeMapping);
 
         // when polymorphism is defined
-        if (typeMapping.options && typeMapping.options.discriminatorProperty) {
-            const discriminatorValue = obj[typeMapping.options.discriminatorProperty];
+        const discriminatorProperty = JsonConverterMapper.getDiscriminatorPropertyForTypeMapping(typeMapping);
+        if (discriminatorProperty) {
+            const discriminatorValue = obj[discriminatorProperty];
             const subType = JsonConverterMapper.listMappingForExtendingType(type)
                 .find(m => m.options && m.options.discriminatorValue === discriminatorValue);
 
             if (!subType) {
-                throw Error('');
+                const errorMessage = `(E80) Polymorphism error : Cannot get subtype for <${obj.constructor.name}>`;
+                throw new JsonConverterError(errorMessage);
             }
 
             return this.processDeserializeObject(obj, subType.type);
@@ -139,6 +140,8 @@ export class JsonConverterDeserializer {
         const instance = new typeMapping.type();
 
         // deserialize each property
+        const properties = JsonConverterMapper.getAllPropertiesForTypeMapping(typeMapping);
+
         properties.forEach(property => {
             try {
                 JsonConverterUtil.validate(obj, property.serializedName, property.validators);
