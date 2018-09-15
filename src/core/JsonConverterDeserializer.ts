@@ -130,7 +130,7 @@ export class JsonConverterDeserializer {
 
             if (!subType) {
                 const errorMessage = `(E80) Polymorphism error : Cannot get subtype for <${type.name}> `
-                    + `got only subtypes <${subTypes.map(t => t.type.name).toString()}>`;
+                    + `got only subtypes <${subTypes.map(t => t.options ? t.options.discriminatorValue : t.type.name).toString()}>`;
                 throw new JsonConverterError(errorMessage);
             }
 
