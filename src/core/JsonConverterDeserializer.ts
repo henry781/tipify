@@ -115,7 +115,7 @@ export class JsonConverterDeserializer {
 
         const typeMapping = JsonConverterMapper.getMappingForType(type);
         if (!typeMapping) {
-            const errorMessage = `(E09) Cannot get mapping for <${obj.constructor.name}>, this may occur when :\n`
+            const errorMessage = `(E09) Cannot get mapping for <${type.name}>, this may occur when :\n`
                 + '   -  decorator @jsonObject is missing\n';
             throw new JsonConverterError(errorMessage);
         }
@@ -125,11 +125,12 @@ export class JsonConverterDeserializer {
         const discriminatorProperty = JsonConverterMapper.getDiscriminatorPropertyForTypeMapping(typeMapping);
         if (discriminatorProperty) {
             const discriminatorValue = obj[discriminatorProperty];
-            const subType = JsonConverterMapper.listMappingForExtendingType(type)
-                .find(m => m.options && m.options.discriminatorValue === discriminatorValue);
+            const subTypes = JsonConverterMapper.listMappingForExtendingType(type);
+            const subType = subTypes.find(m => m.options && m.options.discriminatorValue === discriminatorValue);
 
             if (!subType) {
-                const errorMessage = `(E80) Polymorphism error : Cannot get subtype for <${obj.constructor.name}>`;
+                const errorMessage = `(E80) Polymorphism error : Cannot get subtype for <${type.name}> `
+                    + `got only subtypes <${subTypes.map(t => t.type.name).toString()}>`;
                 throw new JsonConverterError(errorMessage);
             }
 
