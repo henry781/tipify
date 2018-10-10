@@ -33,4 +33,8 @@ export class PidConverter extends JsonCustomConverter<Pid> {
 
         return obj.id;
     }
+
+    constructor() {
+        super();
+    }
 }

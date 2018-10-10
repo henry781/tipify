@@ -4,12 +4,16 @@ import * as chai from 'chai';
 
 describe('JsonCustomConverters', () => {
 
-    class DateConverter implements JsonCustomConverter<Date> {
+    class DateConverter extends JsonCustomConverter<Date> {
         public deserialize(obj: any): Date {
             return undefined;
         }
 
         public serialize(obj: Date): any {
+        }
+
+        constructor() {
+            super();
         }
     }
 
