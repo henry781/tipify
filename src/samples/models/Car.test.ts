@@ -5,7 +5,6 @@ import {Car} from "./Car";
 import * as chai from "chai";
 import {JsonConverter} from "../../JsonConverter";
 import {Vehicle} from "./Vehicle";
-import {JsonConverterError} from "../../JsonConverterError";
 
 describe('Car', () => {
 
@@ -60,32 +59,32 @@ describe('Car', () => {
 
         describe('validation', () => {
 
-            it('should throw an error when name is not set', () => {
-
-                const json = {
-                    id: 12,
-                    color: 'BLUE',
-                    // name: 'A5',
-                    passengers: [{
-                        pid: 12,
-                        gender: 'MALE',
-                        name: 'steve',
-                        informations: {
-                            age: 21
-                        }
-                    }],
-                    brand: 'Audi',
-                    type: 'car'
-                };
-
-                try {
-                    converter.deserialize(json, Vehicle);
-                    chai.expect.fail();
-                } catch (err) {
-                    chai.expect(err).instanceOf(JsonConverterError);
-                    chai.expect(err.toString()).contains('E50');
-                }
-            });
+            //     it('should throw an error when name is not set', () => {
+            //
+            //         const json = {
+            //             id: 12,
+            //             color: 'BLUE',
+            //             // name: 'A5',
+            //             passengers: [{
+            //                 pid: 12,
+            //                 gender: 'MALE',
+            //                 name: 'steve',
+            //                 informations: {
+            //                     age: 21
+            //                 }
+            //             }],
+            //             brand: 'Audi',
+            //             type: 'car'
+            //         };
+            //
+            //         try {
+            //             converter.deserialize(json, Vehicle);
+            //             chai.expect.fail();
+            //         } catch (err) {
+            //             chai.expect(err).instanceOf(JsonConverterError);
+            //             chai.expect(err.toString()).contains('E50');
+            //         }
+            //     });
         });
 
         it('should return car object', () => {
