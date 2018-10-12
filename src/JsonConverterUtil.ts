@@ -1,5 +1,6 @@
 import {JsonConverterError} from "./JsonConverterError";
 import {JsonValidator} from "./mapping/JsonValidators";
+import {Any} from "./type/Any";
 
 export type Instantiable<T> = { new(...args: any[]): T };
 
@@ -23,6 +24,10 @@ export class JsonConverterUtil {
     }
 
     public static checkConsistency<T>(obj: any, type: any) {
+
+        if (type === Any) {
+            return;
+        }
 
         if (type === String &&
             typeof obj !== 'string' && obj instanceof String === false) {
