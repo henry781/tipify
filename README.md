@@ -1,8 +1,18 @@
 # tipify
 
-Inspired by : https://github.com/dhlab-basel/json2typescript
+
 ## Usage
 
+Enable decorators in tsconfig.
+```
+{
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    ...
+```
+
+Instantiate a new converter.
 ```
 const car = new Car();
 
@@ -52,6 +62,28 @@ export class Passenger {
 | [PidConverter] |   |
 | Enum(...)      |   |
 
+
+## Implicit type mapping
+When type is not specified in `@jsonProperty` decorator, mapper will try to get type information from emitted metadata.
+Warning : It does not works with array and generics.
+
+```
+@jsonObject()
+export class Passenger {
+
+    @jsonProperty('id')
+    private _id: number;
+
+    @jsonProperty('name')
+    private _name: string;
+
+    @jsonProperty('active')
+    private _active: boolean;
+    
+    @jsonProperty('airline')
+    private _airline: Airline;
+}
+```
 
 ## Polymorphism
 
@@ -143,7 +175,3 @@ public static required: JsonValidator = (obj: any, serializedName: string) => {
     }
 };
 ```
-
-## Transient
-
-WIP
