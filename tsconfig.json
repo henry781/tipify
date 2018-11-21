@@ -11,7 +11,7 @@
       "dom"
     ],
     "outDir": "dist/",
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "removeComments": true,
     "preserveConstEnums": true,
     "sourceMap": true,

@@ -10,12 +10,12 @@ describe('jsonProperty', () => {
     }
 
     it('should create type mapping', () => {
-        const foundTypeMapping = JsonConverterMapper.MAPPING.find(m => m.type === Person);
+        const foundTypeMapping = JsonConverterMapper.getMapping().find(m => m.type === Person);
         chai.expect(foundTypeMapping).not.undefined;
     });
 
     it('should add property mapping', () => {
-        const foundTypeMapping = JsonConverterMapper.MAPPING.find(m => m.type === Person);
+        const foundTypeMapping = JsonConverterMapper.getMapping().find(m => m.type === Person);
 
         const foundPropertyMapping = foundTypeMapping.properties.find(m => m.name === '_name');
         chai.expect(foundPropertyMapping).not.undefined;
@@ -47,7 +47,7 @@ describe('jsonProperty', () => {
         }
 
         it('should add property mapping (string)', () => {
-            const foundTypeMapping = JsonConverterMapper.MAPPING.find(m => m.type === Smartphone);
+            const foundTypeMapping = JsonConverterMapper.getMapping().find(m => m.type === Smartphone);
 
             const foundPropertyMapping = foundTypeMapping.properties.find(m => m.name === '_name');
             chai.expect(foundPropertyMapping).not.undefined;
@@ -56,7 +56,7 @@ describe('jsonProperty', () => {
         });
 
         it('should add property mapping (number)', () => {
-            const foundTypeMapping = JsonConverterMapper.MAPPING.find(m => m.type === Smartphone);
+            const foundTypeMapping = JsonConverterMapper.getMapping().find(m => m.type === Smartphone);
 
             const foundPropertyMapping = foundTypeMapping.properties.find(m => m.name === '_id');
             chai.expect(foundPropertyMapping).not.undefined;
@@ -65,7 +65,7 @@ describe('jsonProperty', () => {
         });
 
         it('should add property mapping (boolean)', () => {
-            const foundTypeMapping = JsonConverterMapper.MAPPING.find(m => m.type === Smartphone);
+            const foundTypeMapping = JsonConverterMapper.getMapping().find(m => m.type === Smartphone);
 
             const foundPropertyMapping = foundTypeMapping.properties.find(m => m.name === '_active');
             chai.expect(foundPropertyMapping).not.undefined;
@@ -74,7 +74,7 @@ describe('jsonProperty', () => {
         });
 
         it('should add property mapping (class)', () => {
-            const foundTypeMapping = JsonConverterMapper.MAPPING.find(m => m.type === Smartphone);
+            const foundTypeMapping = JsonConverterMapper.getMapping().find(m => m.type === Smartphone);
 
             const foundPropertyMapping = foundTypeMapping.properties.find(m => m.name === '_company');
             chai.expect(foundPropertyMapping).not.undefined;
