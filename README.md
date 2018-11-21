@@ -1,8 +1,11 @@
 # tipify
 [![Build Status](https://travis-ci.com/henry781/tipify.svg?branch=master)](https://travis-ci.com/henry781/tipify)
 
-
 ## Usage
+
+```
+npm install --save tipify
+```
 
 Enable decorators in tsconfig.
 ```
