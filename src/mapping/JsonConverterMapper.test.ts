@@ -27,7 +27,7 @@ describe('JsonConverterMapper', () => {
 
         it('should create mapping', () => {
             JsonConverterMapper.createMappingForType(Asteroid);
-            const mapping = JsonConverterMapper.MAPPING.find(m => m.type === Asteroid);
+            const mapping = JsonConverterMapper.getMapping().find(m => m.type === Asteroid);
 
             chai.expect(mapping.type).equal(Asteroid);
         });

@@ -1,9 +1,20 @@
 import {TypeMapping} from "./TypeMapping";
 import {PropertyMapping} from "./PropertyMapping";
 
+const JSONCONVERTER_MAPPING = Symbol.for('tipify.mapping');
+
+const globalSymbols = Object.getOwnPropertySymbols(global);
+const mappingInitialized = (globalSymbols.indexOf(JSONCONVERTER_MAPPING) > -1);
+
+if (!mappingInitialized) {
+    global[JSONCONVERTER_MAPPING] = [];
+}
+
 export class JsonConverterMapper {
 
-    public static MAPPING: TypeMapping[] = [];
+    public static getMapping(): TypeMapping[] {
+        return global[JSONCONVERTER_MAPPING];
+    }
 
     /**
      * Create mapping for type
@@ -18,7 +29,7 @@ export class JsonConverterMapper {
                 type: type,
                 properties: []
             };
-            this.MAPPING.push(typeMapping);
+            this.getMapping().push(typeMapping);
         }
 
         return typeMapping;
@@ -29,7 +40,7 @@ export class JsonConverterMapper {
      * @param type
      */
     public static getMappingForType(type: any): TypeMapping {
-        return this.MAPPING.find(m => m.type === type);
+        return this.getMapping().find(m => m.type === type);
     }
 
     /**
@@ -37,7 +48,7 @@ export class JsonConverterMapper {
      * @param type
      */
     public static listMappingForExtendingType(type: any): TypeMapping[] {
-        return this.MAPPING.filter(m => m.type.prototype instanceof type);
+        return this.getMapping().filter(m => m.type.prototype instanceof type);
     }
 
     /**
