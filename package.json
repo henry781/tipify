@@ -1,6 +1,6 @@
 {
   "name": "tipify",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "",
   "main": "dist/tipify.bundle.js",
   "typings": "dist/tipify.d.ts",
