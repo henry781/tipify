@@ -4,7 +4,7 @@
   "description": "",
   "main": "dist/tipify.bundle.js",
   "module": "dist/tipify.es.js",
-  "typings": "dist/tipify.d.ts",
+  "typings": "dist/api.d.ts",
   "scripts": {
     "test": "cross-env TS_NODE_COMPILER_OPTIONS={\\\"module\\\":\\\"commonjs\\\"} ./node_modules/.bin/mocha --require ts-node/register/transpile-only --exit \"src/**/*.test.ts\"",
     "build": "rm -rf dist/* && rollup -c",
