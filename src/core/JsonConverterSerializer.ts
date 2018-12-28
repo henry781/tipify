@@ -132,7 +132,10 @@ export class JsonConverterSerializer {
         // serialize each property
         properties.forEach(property => {
             try {
-                instance[property.serializedName] = this.serialize(obj[property.name], property.type);
+                const value = this.serialize(obj[property.name], property.type);
+                if (value !== undefined && value !== null) {
+                    instance[property.serializedName] = value;
+                }
             } catch (err) {
                 const errorMessage = `(E08) error serializing property <${property.name}>, type <${property.type.name}>`;
                 throw new JsonConverterError(errorMessage, err);

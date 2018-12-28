@@ -211,6 +211,30 @@ describe('JsonConverteSerialize', () => {
             chai.expect(result).deep.equal(expectedJson);
             chai.expect(serialize.calledOnce).to.be.true;
         });
+
+        it('should not return null properties', () => {
+
+            const serialize = sandbox.stub(converter, 'processSerialize').withArgs('Steve', String)
+                .returns(null);
+
+            const expectedJson = {};
+
+            const result = converter.processSerializeObject(actor);
+            chai.expect(result).deep.equal(expectedJson);
+            chai.expect(serialize.calledOnce).to.be.true;
+        });
+
+        it('should not return undefined properties', () => {
+
+            const serialize = sandbox.stub(converter, 'processSerialize').withArgs('Steve', String)
+                .returns(undefined);
+
+            const expectedJson = {};
+
+            const result = converter.processSerializeObject(actor);
+            chai.expect(result).deep.equal(expectedJson);
+            chai.expect(serialize.calledOnce).to.be.true;
+        });
     });
 
     /**
