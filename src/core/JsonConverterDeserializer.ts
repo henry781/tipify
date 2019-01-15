@@ -5,13 +5,19 @@ import {JsonConverterError} from "../JsonConverterError";
 import {JsonCustomConverter} from "../converter/JsonCustomConverter";
 import {JsonConverterMapper} from "../mapping/JsonConverterMapper";
 import {Any} from "../type/Any";
+import {DEFAULT_DESERIALIZER_OPTIONS, DeserializerOptions} from "./DeserializerOptions";
 
 export class JsonConverterDeserializer {
 
-
-    public deserialize<T>(obj: any, type: any): T {
+    /**
+     * Deserialize
+     * @param obj
+     * @param type
+     * @param options
+     */
+    public deserialize<T>(obj: any, type: any, options = DEFAULT_DESERIALIZER_OPTIONS): T {
         try {
-            return this.processDeserialize<T>(obj, type);
+            return this.processDeserialize<T>(obj, type, options);
         } catch (err) {
             const errorMessage = '(E40) cannot derialize :\n'
                 + JSON.stringify(obj, null, 2);
@@ -19,14 +25,20 @@ export class JsonConverterDeserializer {
         }
     }
 
-    public processDeserialize<T>(obj: any, type: any): T {
+    /**
+     * Process deserialize
+     * @param obj
+     * @param type
+     * @param options
+     */
+    public processDeserialize<T>(obj: any, type: any, options: DeserializerOptions): T {
 
         // when obj is null or undefined, return null or undefined
         if (JsonConverterUtil.isNullOrUndefined(obj)) {
             return obj;
         }
 
-        JsonConverterUtil.checkConsistency(obj, type);
+        JsonConverterUtil.checkConsistency(obj, type, !options.parseString);
 
         // when custom converter is provided, use custom provider
         if (type.prototype instanceof JsonCustomConverter) {
@@ -51,17 +63,30 @@ export class JsonConverterDeserializer {
         }
 
         // when obj is an array, deserialize as an array
-        if (Array.isArray(obj)) {
+        else if (Array.isArray(obj)) {
             const _type = type[0];
             if (!_type) {
                 const errorMessage = `(E02) Given type is not valid, it should be an array like [String]`;
                 throw new JsonConverterError(errorMessage);
             }
-            return <any>this.processDeserializeArray(obj, _type);
+            return <any>this.processDeserializeArray(obj, _type, options);
         }
 
-        if (obj === Object(obj)) {
-            return this.processDeserializeObject<T>(obj, type);
+        // when obj is an object
+        else if (obj === Object(obj)) {
+            return this.processDeserializeObject<T>(obj, type, options);
+
+        }
+
+        // when obj is a string and parseString is enabled
+        else if (typeof obj === 'string' && options.parseString) {
+
+            if (type === Number) {
+                return <any>JsonConverterUtil.tryParseNumber(obj);
+
+            } else if (type === Boolean) {
+                return <any>JsonConverterUtil.tryParseBoolean(obj);
+            }
         }
 
         return obj;
@@ -71,13 +96,14 @@ export class JsonConverterDeserializer {
      * Deserialize array
      * @param json
      * @param type
+     * @param options
      */
-    public processDeserializeArray<T>(json: any[], type: any): T[] {
+    public processDeserializeArray<T>(json: any[], type: any, options: DeserializerOptions): T[] {
         const instance: T[] = [];
 
         json.forEach((entry, index) => {
             try {
-                instance.push(<T>this.processDeserialize(entry, type));
+                instance.push(<T>this.processDeserialize(entry, type, options));
             } catch (err) {
                 const errorMessage = `(E30) error deserializing index <${index}>, type <${type.name}>`;
                 throw new JsonConverterError(errorMessage, err);
@@ -110,8 +136,9 @@ export class JsonConverterDeserializer {
      * Deserialize object
      * @param obj
      * @param type
+     * @param options
      */
-    public processDeserializeObject<T>(obj: any, type: any): T {
+    public processDeserializeObject<T>(obj: any, type: any, options: DeserializerOptions): T {
 
         const typeMapping = JsonConverterMapper.getMappingForType(type);
         if (!typeMapping) {
@@ -134,7 +161,7 @@ export class JsonConverterDeserializer {
                 throw new JsonConverterError(errorMessage);
             }
 
-            return this.processDeserializeObject(obj, subType.type);
+            return this.processDeserializeObject(obj, subType.type, options);
         }
 
         // new instance of type
@@ -146,7 +173,7 @@ export class JsonConverterDeserializer {
         properties.forEach(property => {
             try {
                 JsonConverterUtil.validate(obj, property.serializedName, property.validators);
-                instance[property.name] = this.deserialize(obj[property.serializedName], property.type);
+                instance[property.name] = this.deserialize(obj[property.serializedName], property.type, options);
             } catch (err) {
                 const errorMessage = `(E32) error deserializing property <${property.name}>, type <${property.type.name}>`;
                 throw new JsonConverterError(errorMessage, err);
