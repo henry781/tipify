@@ -1,6 +1,6 @@
-import {jsonProperty} from "./jsonProperty";
-import {JsonConverterMapper} from "../mapping/JsonConverterMapper";
-import * as chai from "chai";
+import * as chai from 'chai';
+import {JsonConverterMapper} from '../mapping/JsonConverterMapper';
+import {jsonProperty} from './jsonProperty';
 
 describe('jsonProperty', () => {
 
@@ -10,14 +10,14 @@ describe('jsonProperty', () => {
     }
 
     it('should create type mapping', () => {
-        const foundTypeMapping = JsonConverterMapper.getMapping().find(m => m.type === Person);
+        const foundTypeMapping = JsonConverterMapper.getMapping().find((m) => m.type === Person);
         chai.expect(foundTypeMapping).not.undefined;
     });
 
     it('should add property mapping', () => {
-        const foundTypeMapping = JsonConverterMapper.getMapping().find(m => m.type === Person);
+        const foundTypeMapping = JsonConverterMapper.getMapping().find((m) => m.type === Person);
 
-        const foundPropertyMapping = foundTypeMapping.properties.find(m => m.name === '_name');
+        const foundPropertyMapping = foundTypeMapping.properties.find((m) => m.name === '_name');
         chai.expect(foundPropertyMapping).not.undefined;
         chai.expect(foundPropertyMapping.serializedName).equal('name');
         chai.expect(foundPropertyMapping.type).equal(String);
@@ -47,36 +47,36 @@ describe('jsonProperty', () => {
         }
 
         it('should add property mapping (string)', () => {
-            const foundTypeMapping = JsonConverterMapper.getMapping().find(m => m.type === Smartphone);
+            const foundTypeMapping = JsonConverterMapper.getMapping().find((m) => m.type === Smartphone);
 
-            const foundPropertyMapping = foundTypeMapping.properties.find(m => m.name === '_name');
+            const foundPropertyMapping = foundTypeMapping.properties.find((m) => m.name === '_name');
             chai.expect(foundPropertyMapping).not.undefined;
             chai.expect(foundPropertyMapping.serializedName).equal('name');
             chai.expect(foundPropertyMapping.type).equal(String);
         });
 
         it('should add property mapping (number)', () => {
-            const foundTypeMapping = JsonConverterMapper.getMapping().find(m => m.type === Smartphone);
+            const foundTypeMapping = JsonConverterMapper.getMapping().find((m) => m.type === Smartphone);
 
-            const foundPropertyMapping = foundTypeMapping.properties.find(m => m.name === '_id');
+            const foundPropertyMapping = foundTypeMapping.properties.find((m) => m.name === '_id');
             chai.expect(foundPropertyMapping).not.undefined;
             chai.expect(foundPropertyMapping.serializedName).equal('id');
             chai.expect(foundPropertyMapping.type).equal(Number);
         });
 
         it('should add property mapping (boolean)', () => {
-            const foundTypeMapping = JsonConverterMapper.getMapping().find(m => m.type === Smartphone);
+            const foundTypeMapping = JsonConverterMapper.getMapping().find((m) => m.type === Smartphone);
 
-            const foundPropertyMapping = foundTypeMapping.properties.find(m => m.name === '_active');
+            const foundPropertyMapping = foundTypeMapping.properties.find((m) => m.name === '_active');
             chai.expect(foundPropertyMapping).not.undefined;
             chai.expect(foundPropertyMapping.serializedName).equal('active');
             chai.expect(foundPropertyMapping.type).equal(Boolean);
         });
 
         it('should add property mapping (class)', () => {
-            const foundTypeMapping = JsonConverterMapper.getMapping().find(m => m.type === Smartphone);
+            const foundTypeMapping = JsonConverterMapper.getMapping().find((m) => m.type === Smartphone);
 
-            const foundPropertyMapping = foundTypeMapping.properties.find(m => m.name === '_company');
+            const foundPropertyMapping = foundTypeMapping.properties.find((m) => m.name === '_company');
             chai.expect(foundPropertyMapping).not.undefined;
             chai.expect(foundPropertyMapping.serializedName).equal('company');
             chai.expect(foundPropertyMapping.type).equal(Company);

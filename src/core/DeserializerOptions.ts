@@ -1,7 +1,7 @@
 export const DEFAULT_DESERIALIZER_OPTIONS: DeserializerOptions = {
-    parseString: false
+    tryParse: false,
 };
 
 export interface DeserializerOptions {
-    parseString: boolean;
+    tryParse: boolean;
 }

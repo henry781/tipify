@@ -1,4 +1,4 @@
-import {JsonConverterError} from "../JsonConverterError";
+import {JsonConverterError} from '../JsonConverterError';
 
 export type JsonValidator = (obj: any, serializedName: string) => void;
 
@@ -8,5 +8,5 @@ export class JsonValidators {
         if (!obj.hasOwnProperty(serializedName)) {
             throw new JsonConverterError('value is required');
         }
-    };
+    }
 }

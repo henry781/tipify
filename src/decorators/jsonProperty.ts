@@ -1,7 +1,7 @@
-import {PropertyMapping} from "../mapping/PropertyMapping";
-import {JsonConverterMapper} from "../mapping/JsonConverterMapper";
-import {JsonValidator} from "../mapping/JsonValidators";
 import 'reflect-metadata';
+import {JsonConverterMapper} from '../mapping/JsonConverterMapper';
+import {JsonValidator} from '../mapping/JsonValidators';
+import {PropertyMapping} from '../mapping/PropertyMapping';
 
 export function jsonProperty(serializedName: string, type?: any, validators?: JsonValidator[]) {
 
@@ -15,9 +15,9 @@ export function jsonProperty(serializedName: string, type?: any, validators?: Js
 
         const propertyMapping: PropertyMapping = {
             name: property,
-            serializedName: serializedName,
-            type: type,
-            validators: validators
+            serializedName,
+            type,
+            validators,
         };
 
         typeMapping.properties.push(propertyMapping);

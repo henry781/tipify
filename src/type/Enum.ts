@@ -1,6 +1,6 @@
 export enum EnumStrategy {
     INDEX,
-    NAME
+    NAME,
 }
 
 export function Enum(type: any, strategy?: EnumStrategy) {
@@ -14,6 +14,6 @@ export class EnumOptions {
 
     constructor(type: any, strategy?: EnumStrategy) {
         this.type = type;
-        this.strategy = strategy ? strategy : EnumStrategy.INDEX
+        this.strategy = strategy ? strategy : EnumStrategy.INDEX;
     }
 }

@@ -1,7 +1,7 @@
-import {JsonCustomConverter} from "../../converter/JsonCustomConverter";
-import {Pid} from "../models/Pid";
-import {jsonCustomConverter} from "../../decorators/jsonCustomConverter";
-import {JsonConverterUtil} from "../../JsonConverterUtil";
+import {JsonCustomConverter} from '../../converter/JsonCustomConverter';
+import {jsonCustomConverter} from '../../decorators/jsonCustomConverter';
+import {JsonConverterUtil} from '../../JsonConverterUtil';
+import {Pid} from '../models/Pid';
 
 @jsonCustomConverter()
 export class PidConverter extends JsonCustomConverter<Pid> {
@@ -16,9 +16,9 @@ export class PidConverter extends JsonCustomConverter<Pid> {
             return obj;
         }
 
-        return <Pid>{
-            id: parseInt(obj, 10)
-        };
+        return {
+            id: parseInt(obj, 10),
+        } as Pid;
     }
 
     /**

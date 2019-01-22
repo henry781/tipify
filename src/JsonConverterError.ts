@@ -1,19 +1,23 @@
-export class JsonConverterError extends Error {
+export function JsonConverterError(message: string, parent?: Error) {
 
-    public parent: Error;
+    this.message = message;
+    this.parent = parent;
 
-    constructor(message: string, parent?: JsonConverterError) {
-        super(message);
-        this.parent = parent;
-    }
-
-    public toString(): string {
-        let message = this.message;
+    this.toString = function (): string {
+        let m = this.message;
 
         if (this.parent) {
-            message = message + '\n' + this.parent.toString();
+            m = m + '\n' + this.parent.toString();
         }
 
-        return message;
-    }
+        return m;
+    };
 }
+
+JsonConverterError.prototype = Object.create(Error.prototype, {
+    constructor: {
+        configurable: true,
+        value: JsonConverterError,
+        writable: true,
+    },
+});

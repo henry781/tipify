@@ -1,5 +1,5 @@
-import {TypeMapping} from "./TypeMapping";
-import {PropertyMapping} from "./PropertyMapping";
+import {PropertyMapping} from './PropertyMapping';
+import {TypeMapping} from './TypeMapping';
 
 const JSONCONVERTER_MAPPING = Symbol.for('tipify.mapping');
 
@@ -26,8 +26,8 @@ export class JsonConverterMapper {
 
         if (!typeMapping) {
             typeMapping = {
-                type: type,
-                properties: []
+                properties: [],
+                type,
             };
             this.getMapping().push(typeMapping);
         }
@@ -40,7 +40,7 @@ export class JsonConverterMapper {
      * @param type
      */
     public static getMappingForType(type: any): TypeMapping {
-        return this.getMapping().find(m => m.type === type);
+        return this.getMapping().find((m) => m.type === type);
     }
 
     /**
@@ -48,7 +48,7 @@ export class JsonConverterMapper {
      * @param type
      */
     public static listMappingForExtendingType(type: any): TypeMapping[] {
-        return this.getMapping().filter(m => m.type.prototype instanceof type);
+        return this.getMapping().filter((m) => m.type.prototype instanceof type);
     }
 
     /**
@@ -85,8 +85,8 @@ export class JsonConverterMapper {
         let current = typeMapping;
 
         do {
-            current.properties.forEach(property => {
-                if (!properties.some(p => p.name === property.name)) {
+            current.properties.forEach((property) => {
+                if (!properties.some((p) => p.name === property.name)) {
                     properties.push(property);
                 }
             });

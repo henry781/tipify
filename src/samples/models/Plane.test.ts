@@ -1,7 +1,7 @@
-import * as chai from "chai";
-import {JsonConverter} from "../../JsonConverter";
-import {Jet} from "./Jet";
-import {Plane} from "./Plane";
+import * as chai from 'chai';
+import {JsonConverter} from '../../JsonConverter';
+import {Jet} from './Jet';
+import {Plane} from './Plane';
 
 describe('Plane', () => {
 
@@ -16,10 +16,10 @@ describe('Plane', () => {
         it('should return an instance of jet', () => {
 
             const json = {
-                id: 12,
                 color: 'BLUE',
+                id: 12,
                 name: 'dassault',
-                type: 'jet'
+                type: 'jet',
             };
 
             const plane = converter.deserialize<Plane>(json, Plane);

@@ -1,11 +1,11 @@
-import {jsonObject} from "../../decorators/jsonObject";
-import {Pid} from "./Pid";
-import {jsonProperty} from "../../decorators/jsonProperty";
-import {PidConverter} from "../converter/PidConverter";
-import {Gender} from "./Gender";
-import {Enum, EnumStrategy} from "../../type/Enum";
-import {Any} from "../../type/Any";
-import {PassengerOptions} from "./PassengerOptions";
+import {jsonObject} from '../../decorators/jsonObject';
+import {jsonProperty} from '../../decorators/jsonProperty';
+import {Any} from '../../type/Any';
+import {Enum, EnumStrategy} from '../../type/Enum';
+import {PidConverter} from '../converter/PidConverter';
+import {Gender} from './Gender';
+import {PassengerOptions} from './PassengerOptions';
+import {Pid} from './Pid';
 
 @jsonObject()
 export class Passenger {

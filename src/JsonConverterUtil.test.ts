@@ -1,5 +1,5 @@
 import * as chai from 'chai';
-import {JsonConverterUtil} from "./JsonConverterUtil";
+import {JsonConverterUtil} from './JsonConverterUtil';
 
 /**
  * JsonConverterUtil
@@ -55,7 +55,6 @@ describe('JsonConverterUtil', () => {
             const result = JsonConverterUtil.tryParseNumber('12');
             chai.expect(result).to.equal(12);
         });
-
 
         it('should return 12.12 when string is 12.12', () => {
             const result = JsonConverterUtil.tryParseNumber('12.12');

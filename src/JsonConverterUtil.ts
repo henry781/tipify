@@ -1,8 +1,8 @@
-import {JsonConverterError} from "./JsonConverterError";
-import {JsonValidator} from "./mapping/JsonValidators";
-import {Any} from "./type/Any";
+import {JsonConverterError} from './JsonConverterError';
+import {JsonValidator} from './mapping/JsonValidators';
+import {Any} from './type/Any';
 
-export type Instantiable<T> = { new(...args: any[]): T };
+export type Instantiable<T> = new(...args: any[]) => T;
 
 export class JsonConverterUtil {
 
@@ -47,14 +47,14 @@ export class JsonConverterUtil {
         }
 
         try {
-            validators.forEach(validator => validator(obj, serializedName));
+            validators.forEach((validator) => validator(obj, serializedName));
         } catch (err) {
             throw new JsonConverterError('(E50) property invalid', err);
         }
     }
 
     public static isNullOrUndefined(obj: any) {
-        return typeof obj === 'undefined' || obj === null
+        return typeof obj === 'undefined' || obj === null;
     }
 
     public static checkConsistency<T>(obj: any, type: any, strict = false) {
@@ -70,13 +70,15 @@ export class JsonConverterUtil {
         }
 
         if (type === Boolean &&
-            typeof obj !== 'boolean' && obj instanceof Boolean === false) {
+            ((typeof obj !== 'boolean' && obj instanceof Boolean === false)
+                && (!strict && typeof obj !== 'string' && obj instanceof String === false))) {
             const errorMessage = '(E03) Expected type is <Boolean>, but obj is not';
             throw new JsonConverterError(errorMessage);
         }
 
         if (type === Number &&
-            typeof obj !== 'number' && obj instanceof Number === false) {
+            ((typeof obj !== 'number' && obj instanceof Number === false)
+                && (!strict && typeof obj !== 'string' && obj instanceof String === false))) {
             const errorMessage = '(E03) Expected type is <Number>, but obj is not';
             throw new JsonConverterError(errorMessage);
         }
