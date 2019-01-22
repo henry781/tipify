@@ -1,7 +1,7 @@
-import {Vehicle} from "./Vehicle";
-import {jsonObject} from "../../decorators/jsonObject";
-import {jsonProperty} from "../../decorators/jsonProperty";
-import {CarOptions} from "./CarOptions";
+import {jsonObject} from '../../decorators/jsonObject';
+import {jsonProperty} from '../../decorators/jsonProperty';
+import {CarOptions} from './CarOptions';
+import {Vehicle} from './Vehicle';
 
 @jsonObject({discriminatorValue: 'car'})
 export class Car extends Vehicle {

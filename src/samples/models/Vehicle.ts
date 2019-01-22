@@ -1,10 +1,10 @@
-import {jsonObject} from "../../decorators/jsonObject";
-import {jsonProperty} from "../../decorators/jsonProperty";
-import {Passenger} from "./Passenger";
-import {Color} from "./Color";
-import {VehicleOptions} from "./VehicleOptions";
-import {Enum, EnumStrategy} from "../../type/Enum";
-import {JsonValidators} from "../../mapping/JsonValidators";
+import {jsonObject} from '../../decorators/jsonObject';
+import {jsonProperty} from '../../decorators/jsonProperty';
+import {JsonValidators} from '../../mapping/JsonValidators';
+import {Enum, EnumStrategy} from '../../type/Enum';
+import {Color} from './Color';
+import {Passenger} from './Passenger';
+import {VehicleOptions} from './VehicleOptions';
 
 @jsonObject({discriminatorProperty: 'type'})
 export abstract class Vehicle {

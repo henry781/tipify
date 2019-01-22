@@ -1,7 +1,7 @@
-import {Instantiable} from "./JsonConverterUtil";
-import {JsonCustomConverter} from "./converter/JsonCustomConverter";
-import {JsonConverterSerializer} from "./core/JsonConverterSerializer";
-import {JsonConverterDeserializer} from "./core/JsonConverterDeserializer";
+import {JsonCustomConverter} from './converter/JsonCustomConverter';
+import {JsonConverterDeserializer} from './core/JsonConverterDeserializer';
+import {JsonConverterSerializer} from './core/JsonConverterSerializer';
+import {Instantiable} from './JsonConverterUtil';
 
 export class JsonConverter {
 
@@ -17,7 +17,7 @@ export class JsonConverter {
      * @param {Instantiable<T>[] | JsonCustomConverter<T>[]} type
      * @returns {any}
      */
-    public serialize<T>(obj: T[], type?: Instantiable<T>[] | JsonCustomConverter<T>[]): any;
+    public serialize<T>(obj: T[], type?: Array<Instantiable<T>> | Array<JsonCustomConverter<T>>): any;
 
     /**
      * Serialize
@@ -36,7 +36,6 @@ export class JsonConverter {
     public serialize<T>(obj: T, type?: any): any {
         return this.serializer.serialize(obj, type);
     }
-
 
     /**
      * Deserialize

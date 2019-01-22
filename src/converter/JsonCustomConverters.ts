@@ -1,15 +1,15 @@
-import {JsonCustomConverter} from "./JsonCustomConverter";
+import {JsonCustomConverter} from './JsonCustomConverter';
 
 export class JsonCustomConverters {
 
-    public static CONVERTERS: JsonCustomConverter<any>[] = [];
+    public static CONVERTERS: Array<JsonCustomConverter<any>> = [];
 
     /**
      * Get converter type
      * @param converterType
      */
     public static getConverterInstance(converterType: any): JsonCustomConverter<any> {
-        return JsonCustomConverters.CONVERTERS.find(c => c instanceof converterType);
+        return JsonCustomConverters.CONVERTERS.find((c) => c instanceof converterType);
     }
 
     /**
@@ -18,7 +18,7 @@ export class JsonCustomConverters {
      */
     public static instantiateConverter(converterType: any) {
 
-        let instance = JsonCustomConverters.CONVERTERS.find(c => c instanceof converterType);
+        let instance = JsonCustomConverters.CONVERTERS.find((c) => c instanceof converterType);
 
         if (!instance) {
             instance = new converterType();

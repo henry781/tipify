@@ -1,6 +1,6 @@
 {
   "name": "tipify",
-  "version": "1.5.0",
+  "version": "1.5.2",
   "description": "",
   "main": "dist/tipify.bundle.js",
   "module": "dist/tipify.es.js",
@@ -8,7 +8,8 @@
   "scripts": {
     "test": "cross-env TS_NODE_COMPILER_OPTIONS={\\\"module\\\":\\\"commonjs\\\"} ./node_modules/.bin/mocha --require ts-node/register/transpile-only --exit \"src/**/*.test.ts\"",
     "build": "rm -rf dist/* && rollup -c",
-    "release-patch": "npm run test && npm run build && npm version patch && npm publish",
+    "lint": "tslint -c tslint.json 'src/**/*.ts'",
+    "release-patch": "npm run test && npm run lint && npm run build && npm version patch && npm publish",
     "release": "npm run test && npm run build && npm version minor && npm publish"
   },
   "repository": {
@@ -36,6 +37,7 @@
     "rollup-plugin-typescript2": "^0.18.0",
     "sinon": "5.1.1",
     "ts-loader": "5.0.0",
-    "ts-node": "7.0.1"
+    "ts-node": "7.0.1",
+    "tslint": "^5.11.0"
   }
 }

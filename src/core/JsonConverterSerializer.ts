@@ -1,10 +1,10 @@
-import {JsonConverterUtil} from "../JsonConverterUtil";
-import {EnumOptions, EnumStrategy} from "../type/Enum";
-import {JsonCustomConverters} from "../converter/JsonCustomConverters";
-import {JsonCustomConverter} from "../converter/JsonCustomConverter";
-import {JsonConverterError} from "../JsonConverterError";
-import {JsonConverterMapper} from "../mapping/JsonConverterMapper";
-import {Any} from "../type/Any";
+import {JsonCustomConverter} from '../converter/JsonCustomConverter';
+import {JsonCustomConverters} from '../converter/JsonCustomConverters';
+import {JsonConverterError} from '../JsonConverterError';
+import {JsonConverterUtil} from '../JsonConverterUtil';
+import {JsonConverterMapper} from '../mapping/JsonConverterMapper';
+import {Any} from '../type/Any';
+import {EnumOptions, EnumStrategy} from '../type/Enum';
 
 export class JsonConverterSerializer {
 
@@ -51,30 +51,23 @@ export class JsonConverterSerializer {
                     throw new JsonConverterError(errorMessage);
                 }
                 return converterInstance.serialize(obj);
-            }
-
-            // when an enum is provided
-            else if (type instanceof EnumOptions) {
+            } else if (type instanceof EnumOptions) {
                 return this.processSerializeEnum(obj, type);
-            }
-
-            // when any type is provided, copy object
-            else if (type === Any) {
+            } else if (type === Any) {
                 return JsonConverterUtil.deepCopy(obj);
             }
         }
 
         // when obj is an array, serialize as an array
         if (Array.isArray(obj)) {
-            let _type;
 
             // if type is provided, it should be an array
-            if (type &&
-                (!Array.isArray(type) || !(_type = type[0]))) {
-                const errorMessage = `(E02) Given type is not valid, it should be an array like [String]`;
+            if (type && (!Array.isArray(type) || !type[0])) {
+                const errorMessage = '(E02) Given type is not valid, it should be an array like [String]';
                 throw new JsonConverterError(errorMessage);
             }
-            return this.processSerializeArray(obj, _type);
+
+            return this.processSerializeArray(obj, type[0]);
         }
 
         // when obj is an object, serialize as an obj
@@ -100,13 +93,9 @@ export class JsonConverterSerializer {
 
         if (options.strategy === EnumStrategy.INDEX) {
             return obj;
-        }
-
-        else if (options.strategy === EnumStrategy.NAME) {
+        } else if (options.strategy === EnumStrategy.NAME) {
             return options.type[obj];
-        }
-
-        else {
+        } else {
             const errorMessage = `(E12) strategy for enum <${options.type.name}> is not defined`;
             throw new JsonConverterError(errorMessage);
         }
@@ -130,7 +119,7 @@ export class JsonConverterSerializer {
         const instance: any = {};
 
         // serialize each property
-        properties.forEach(property => {
+        properties.forEach((property) => {
             try {
                 const value = this.serialize(obj[property.name], property.type);
                 if (value !== undefined && value !== null) {

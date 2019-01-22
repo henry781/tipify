@@ -1,32 +1,45 @@
-import {JsonConverterUtil} from "../JsonConverterUtil";
-import {EnumOptions} from "../type/Enum";
-import {JsonCustomConverters} from "../converter/JsonCustomConverters";
-import {JsonConverterError} from "../JsonConverterError";
-import {JsonCustomConverter} from "../converter/JsonCustomConverter";
-import {JsonConverterMapper} from "../mapping/JsonConverterMapper";
-import {Any} from "../type/Any";
+import {JsonCustomConverter} from '../converter/JsonCustomConverter';
+import {JsonCustomConverters} from '../converter/JsonCustomConverters';
+import {JsonConverterError} from '../JsonConverterError';
+import {JsonConverterUtil} from '../JsonConverterUtil';
+import {JsonConverterMapper} from '../mapping/JsonConverterMapper';
+import {Any} from '../type/Any';
+import {EnumOptions} from '../type/Enum';
+import {DEFAULT_DESERIALIZER_OPTIONS} from './DeserializerOptions';
 
 export class JsonConverterDeserializer {
 
-
-    public deserialize<T>(obj: any, type: any): T {
+    /**
+     * Deserialize
+     * @param obj
+     * @param type
+     * @param options
+     */
+    public deserialize<T>(obj: any, type: any, options = DEFAULT_DESERIALIZER_OPTIONS): T {
         try {
-            return this.processDeserialize<T>(obj, type);
+            return this.processDeserialize<T>(obj, type, options);
         } catch (err) {
-            const errorMessage = '(E40) cannot derialize :\n'
+            const errorMessage = '(E40) cannot deserialize :\n'
                 + JSON.stringify(obj, null, 2);
             throw new JsonConverterError(errorMessage, err);
         }
     }
 
-    public processDeserialize<T>(obj: any, type: any): T {
+    /**
+     * Process deserialize
+     * @param obj
+     * @param type
+     * @param options
+     */
+    public processDeserialize<T>(obj: any, type: any, options = DEFAULT_DESERIALIZER_OPTIONS): T {
 
         // when obj is null or undefined, return null or undefined
         if (JsonConverterUtil.isNullOrUndefined(obj)) {
             return obj;
         }
 
-        JsonConverterUtil.checkConsistency(obj, type);
+        const strictMode = !options.tryParse;
+        JsonConverterUtil.checkConsistency(obj, type, strictMode);
 
         // when custom converter is provided, use custom provider
         if (type.prototype instanceof JsonCustomConverter) {
@@ -38,30 +51,28 @@ export class JsonConverterDeserializer {
                 throw new JsonConverterError(errorMessage);
             }
             return converterInstance.deserialize(obj);
-        }
-
-        // when an enum is provided
-        else if (type instanceof EnumOptions) {
+        } else if (type instanceof EnumOptions) {
             return this.processDeserializeEnum(obj, type);
-        }
-
-        // when any type is provided, copy object
-        else if (type === Any) {
+        } else if (type === Any) {
             return JsonConverterUtil.deepCopy(obj);
-        }
-
-        // when obj is an array, deserialize as an array
-        if (Array.isArray(obj)) {
+        } else if (Array.isArray(obj)) {
             const _type = type[0];
             if (!_type) {
-                const errorMessage = `(E02) Given type is not valid, it should be an array like [String]`;
+                const errorMessage = '(E02) Given type is not valid, it should be an array like [String]';
                 throw new JsonConverterError(errorMessage);
             }
-            return <any>this.processDeserializeArray(obj, _type);
-        }
+            return this.processDeserializeArray(obj, _type, options) as any;
+        } else if (obj === Object(obj)) {
+            return this.processDeserializeObject<T>(obj, type, options);
 
-        if (obj === Object(obj)) {
-            return this.processDeserializeObject<T>(obj, type);
+        } else if (typeof obj === 'string' && options.tryParse) {
+
+            if (type === Number) {
+                return JsonConverterUtil.tryParseNumber(obj) as any;
+
+            } else if (type === Boolean) {
+                return JsonConverterUtil.tryParseBoolean(obj) as any;
+            }
         }
 
         return obj;
@@ -71,13 +82,14 @@ export class JsonConverterDeserializer {
      * Deserialize array
      * @param json
      * @param type
+     * @param options
      */
-    public processDeserializeArray<T>(json: any[], type: any): T[] {
+    public processDeserializeArray<T>(json: any[], type: any, options = DEFAULT_DESERIALIZER_OPTIONS): T[] {
         const instance: T[] = [];
 
         json.forEach((entry, index) => {
             try {
-                instance.push(<T>this.processDeserialize(entry, type));
+                instance.push(this.processDeserialize(entry, type, options) as T);
             } catch (err) {
                 const errorMessage = `(E30) error deserializing index <${index}>, type <${type.name}>`;
                 throw new JsonConverterError(errorMessage, err);
@@ -110,8 +122,9 @@ export class JsonConverterDeserializer {
      * Deserialize object
      * @param obj
      * @param type
+     * @param options
      */
-    public processDeserializeObject<T>(obj: any, type: any): T {
+    public processDeserializeObject<T>(obj: any, type: any, options = DEFAULT_DESERIALIZER_OPTIONS): T {
 
         const typeMapping = JsonConverterMapper.getMappingForType(type);
         if (!typeMapping) {
@@ -120,21 +133,20 @@ export class JsonConverterDeserializer {
             throw new JsonConverterError(errorMessage);
         }
 
-
         // when polymorphism is defined
         const discriminatorProperty = JsonConverterMapper.getDiscriminatorPropertyForTypeMapping(typeMapping);
         if (discriminatorProperty) {
             const discriminatorValue = obj[discriminatorProperty];
             const subTypes = JsonConverterMapper.listMappingForExtendingType(type);
-            const subType = subTypes.find(m => m.options && m.options.discriminatorValue === discriminatorValue);
+            const subType = subTypes.find((m) => m.options && m.options.discriminatorValue === discriminatorValue);
 
             if (!subType) {
                 const errorMessage = `(E80) Polymorphism error : Cannot get subtype for <${type.name}> `
-                    + `got only subtypes <${subTypes.map(t => t.options ? t.options.discriminatorValue : t.type.name).toString()}>`;
+                    + `got only subtypes <${subTypes.map((t) => t.options ? t.options.discriminatorValue : t.type.name).toString()}>`;
                 throw new JsonConverterError(errorMessage);
             }
 
-            return this.processDeserializeObject(obj, subType.type);
+            return this.processDeserializeObject(obj, subType.type, options);
         }
 
         // new instance of type
@@ -143,10 +155,10 @@ export class JsonConverterDeserializer {
         // deserialize each property
         const properties = JsonConverterMapper.getAllPropertiesForTypeMapping(typeMapping);
 
-        properties.forEach(property => {
+        properties.forEach((property) => {
             try {
                 JsonConverterUtil.validate(obj, property.serializedName, property.validators);
-                instance[property.name] = this.deserialize(obj[property.serializedName], property.type);
+                instance[property.name] = this.deserialize(obj[property.serializedName], property.type, options);
             } catch (err) {
                 const errorMessage = `(E32) error deserializing property <${property.name}>, type <${property.type.name}>`;
                 throw new JsonConverterError(errorMessage, err);

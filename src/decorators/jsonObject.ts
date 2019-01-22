@@ -1,5 +1,5 @@
-import {JsonObjectOptions} from "./JsonObjectOptions";
-import {JsonConverterMapper} from "../mapping/JsonConverterMapper";
+import {JsonConverterMapper} from '../mapping/JsonConverterMapper';
+import {JsonObjectOptions} from './JsonObjectOptions';
 
 /**
  * jsonObject annotation
@@ -7,7 +7,7 @@ import {JsonConverterMapper} from "../mapping/JsonConverterMapper";
  */
 export function jsonObject(options?: JsonObjectOptions) {
 
-    return (constructor: Function) => {
+    return (constructor: () => any) => {
         const mapping = JsonConverterMapper.createMappingForType(constructor);
         mapping.options = options;
 
@@ -15,5 +15,5 @@ export function jsonObject(options?: JsonObjectOptions) {
         if (parentType.name) {
             mapping.parent = JsonConverterMapper.getMappingForType(parentType);
         }
-    }
+    };
 }

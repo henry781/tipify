@@ -1,7 +1,7 @@
-import {Car} from "../samples/models/Car";
-import {JsonConverterMapper} from "./JsonConverterMapper";
-import {Vehicle} from "../samples/models/Vehicle";
 import * as chai from 'chai';
+import {Car} from '../samples/models/Car';
+import {Vehicle} from '../samples/models/Vehicle';
+import {JsonConverterMapper} from './JsonConverterMapper';
 
 describe('JsonConverterMapper', () => {
 
@@ -27,7 +27,7 @@ describe('JsonConverterMapper', () => {
 
         it('should create mapping', () => {
             JsonConverterMapper.createMappingForType(Asteroid);
-            const mapping = JsonConverterMapper.getMapping().find(m => m.type === Asteroid);
+            const mapping = JsonConverterMapper.getMapping().find((m) => m.type === Asteroid);
 
             chai.expect(mapping.type).equal(Asteroid);
         });
@@ -68,7 +68,6 @@ describe('JsonConverterMapper', () => {
             const mapping1 = JsonConverterMapper.getMappingForType(AsteroidA);
             const mapping2 = JsonConverterMapper.getMappingForType(AsteroidB);
             const mapping3 = JsonConverterMapper.getMappingForType(AsteroidA1);
-
 
             chai.expect(mappings).length(3);
             chai.expect(mappings).contains(mapping1);

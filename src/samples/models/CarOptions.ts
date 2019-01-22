@@ -1,4 +1,4 @@
-import {VehicleOptions} from "./VehicleOptions";
+import {VehicleOptions} from './VehicleOptions';
 
 export interface CarOptions extends VehicleOptions {
     brand?: string;

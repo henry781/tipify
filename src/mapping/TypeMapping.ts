@@ -1,5 +1,5 @@
-import {PropertyMapping} from "./PropertyMapping";
-import {JsonObjectOptions} from "../decorators/JsonObjectOptions";
+import {JsonObjectOptions} from '../decorators/JsonObjectOptions';
+import {PropertyMapping} from './PropertyMapping';
 
 export interface TypeMapping {
     type: any;

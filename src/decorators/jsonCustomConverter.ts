@@ -1,8 +1,8 @@
-import {JsonCustomConverters} from "../converter/JsonCustomConverters";
+import {JsonCustomConverters} from '../converter/JsonCustomConverters';
 
 export function jsonCustomConverter() {
 
-    return (constructor: Function) => {
+    return (constructor: () => any) => {
         JsonCustomConverters.instantiateConverter(constructor);
-    }
+    };
 }

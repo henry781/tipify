@@ -1,19 +1,19 @@
-import {JsonCustomConverters} from "./JsonCustomConverters";
-import {JsonCustomConverter} from "./JsonCustomConverter";
 import * as chai from 'chai';
+import {JsonCustomConverter} from './JsonCustomConverter';
+import {JsonCustomConverters} from './JsonCustomConverters';
 
 describe('JsonCustomConverters', () => {
 
     class DateConverter extends JsonCustomConverter<Date> {
+
+        constructor() {
+            super();
+        }
         public deserialize(obj: any): Date {
             return undefined;
         }
 
         public serialize(obj: Date): any {
-        }
-
-        constructor() {
-            super();
         }
     }
 
@@ -25,7 +25,7 @@ describe('JsonCustomConverters', () => {
         it('should instantiate DateConverter', () => {
 
             JsonCustomConverters.instantiateConverter(DateConverter);
-            const foundConverter = JsonCustomConverters.CONVERTERS.find(c => c instanceof DateConverter);
+            const foundConverter = JsonCustomConverters.CONVERTERS.find((c) => c instanceof DateConverter);
 
             chai.expect(foundConverter).not.undefined;
         });
@@ -35,10 +35,10 @@ describe('JsonCustomConverters', () => {
             JsonCustomConverters.instantiateConverter(DateConverter);
             JsonCustomConverters.instantiateConverter(DateConverter);
 
-            const foundConverters = JsonCustomConverters.CONVERTERS.filter(c => c instanceof DateConverter);
+            const foundConverters = JsonCustomConverters.CONVERTERS.filter((c) => c instanceof DateConverter);
 
             chai.expect(foundConverters).length(1);
-        })
+        });
     });
 
     /**
@@ -52,6 +52,6 @@ describe('JsonCustomConverters', () => {
 
             chai.expect(foundConverter).not.undefined;
             chai.expect(foundConverter).is.instanceOf(DateConverter);
-        })
+        });
     });
 });
