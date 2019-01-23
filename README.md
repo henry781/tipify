@@ -7,7 +7,7 @@
 npm install --save tipify
 ```
 
-Enable decorators in tsconfig.
+Enable experimental decorators in tsconfig.
 ```
 {
   "compilerOptions": {
@@ -28,6 +28,13 @@ const car2 = converter.deserialize(car, Car);
 ```
 
 ## Mapping
+
+`@jsonObject()` should be set on each class;
+
+`@jsonProperty('name', String)` should be set on each class field;
+
+
+### Example
 
 ```
 @jsonObject()
@@ -56,20 +63,25 @@ export class Passenger {
 }
 ```
 
-|                |   |
-|----------------|---|
-| String         |   |
-| Number         |   |
-| Boolean        |   |
-| Any            |   |
-| [String]       |   |
-| [PidConverter] |   |
-| Enum(...)      |   |
+Type defined with `@jsonProperty()` can be :
+* A class with `@jsonObject()`
+* A custom converter
+* A standard type defined below
+* An array of class, custom converter or standard type, like `[String]`
+
+
+|                | 
+|----------------|
+| String         |
+| Number         |
+| Boolean        |
+| Any            |
+| Enum(...)      |
 
 
 ## Implicit type mapping
 When type is not specified in `@jsonProperty` decorator, mapper will try to get type information from emitted metadata.
-Warning : It does not works with array and generics.
+_Warning_ : It does not works with array and generics.
 
 ```
 @jsonObject()
@@ -91,6 +103,9 @@ export class Passenger {
 
 ## Polymorphism
 
+With `discriminatorProperty` and `discriminatorValue`, tipify can manage polymorphism.
+
+#### Parent class
 ```
 @jsonObject({discriminatorProperty: 'type'})
 export abstract class Vehicle {
@@ -102,7 +117,9 @@ export abstract class Vehicle {
         this._type = type;
     }
 }
-
+```
+#### Children class
+```
 @jsonObject({discriminatorValue: 'car'})
 export class Car extends Vehicle {
 
@@ -111,6 +128,12 @@ export class Car extends Vehicle {
     }
 }
 ```
+#### Usage
+```
+const result = converter.deserialize({ "type" : "car" }, Vehicle);
+chai.expect(result).instanceof(Car);
+```
+
 
 ## Enum
 
@@ -140,6 +163,14 @@ export class PidConverter implements JsonCustomConverter<Pid> {
         return undefined;
     }
 }
+```
+
+## Parsing
+
+Tipify can parse boolean and numbers when option `tryParse` is enabed.
+
+```
+const result = converter.deserialize('true', Boolean, {tryParse: true});
 ```
 
 ## Validation
