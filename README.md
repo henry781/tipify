@@ -103,7 +103,7 @@ export class Passenger {
 
 ## Polymorphism
 
-With `discriminatorProperty` and `discriminatorValue`, tipify can manage polymorphism.
+Tipify can manage polymorphism when `discriminatorProperty` and `discriminatorValue` are defined.
 
 #### Parent class
 ```
@@ -118,7 +118,7 @@ export abstract class Vehicle {
     }
 }
 ```
-#### Children class
+#### Child class
 ```
 @jsonObject({discriminatorValue: 'car'})
 export class Car extends Vehicle {
