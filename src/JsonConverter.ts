@@ -45,6 +45,6 @@ export class JsonConverter {
      * @param options
      */
     public deserialize<T>(obj: any, type: any, options?: DeserializerOptions): T {
-        return this.deserializer.deserialize(obj, type);
+        return this.deserializer.deserialize(obj, type, options);
     }
 }
