@@ -136,14 +136,17 @@ describe('JsonConverterDeserializer', () => {
             });
         });
 
-        it('should parse boolean', () => {
-            const result = converter.processDeserialize('true', Boolean, {tryParse: true});
-            chai.expect(result).to.equal(true);
-        });
+        describe('when parsing is enabled', () => {
 
-        it('should parse boolean', () => {
-            const result = converter.processDeserialize('-10.20', Number, {tryParse: true});
-            chai.expect(result).to.equal(-10.20);
+            it('should parse boolean', () => {
+                const result = converter.processDeserialize('true', Boolean, {tryParse: true});
+                chai.expect(result).to.equal(true);
+            });
+
+            it('should parse number', () => {
+                const result = converter.processDeserialize('-10.20', Number, {tryParse: true});
+                chai.expect(result).to.equal(-10.20);
+            });
         });
     });
 

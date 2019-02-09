@@ -1,4 +1,5 @@
 import * as chai from 'chai';
+import {JsonConverterError} from './JsonConverterError';
 import {JsonConverterUtil} from './JsonConverterUtil';
 
 /**
@@ -42,7 +43,8 @@ describe('JsonConverterUtil', () => {
         });
 
         it('should throw an error when string is unknown', () => {
-            chai.expect(() => JsonConverterUtil.tryParseBoolean('something')).to.throw();
+            chai.expect(() => JsonConverterUtil.tryParseBoolean('something'))
+                .throw(JsonConverterError, 'E03');
         });
     });
 
@@ -62,7 +64,74 @@ describe('JsonConverterUtil', () => {
         });
 
         it('should return 12.12 when string is 12.12', () => {
-            chai.expect(() => JsonConverterUtil.tryParseNumber('something')).to.throw();
+            chai.expect(() => JsonConverterUtil.tryParseNumber('something'))
+                .throw(JsonConverterError, 'E03');
+        });
+    });
+
+    /**
+     * Check consistency
+     */
+    describe('checkConsistency', () => {
+
+        describe('when strict mode is enabled', () => {
+
+            it('should throw an error when expecting string and got obj', () => {
+                chai.expect(() => JsonConverterUtil.checkConsistency({}, String, true))
+                    .throw(JsonConverterError, 'E03');
+            });
+
+            it('should throw an error when expecting number and got string', () => {
+                chai.expect(() => JsonConverterUtil.checkConsistency('12', Number, true))
+                    .throw(JsonConverterError, 'E03');
+            });
+
+            it('should throw an error when expecting boolean and got string', () => {
+                chai.expect(() => JsonConverterUtil.checkConsistency('true', Boolean, true))
+                    .throw(JsonConverterError, 'E03');
+            });
+
+            it('should throw an error when expecting array and got not an array', () => {
+                chai.expect(() => JsonConverterUtil.checkConsistency('', [String], true))
+                    .throw(JsonConverterError, 'E03');
+            });
+
+            it('should do nothing when got string and expecting string', () => {
+                JsonConverterUtil.checkConsistency('', String, true);
+            });
+
+            it('should do nothing when got number and expecting number', () => {
+                JsonConverterUtil.checkConsistency(1, Number, true);
+            });
+
+            it('should do nothing when got boolean and expecting boolean', () => {
+                JsonConverterUtil.checkConsistency(true, Boolean, true);
+            });
+
+            it('should do nothing when got array and expecting array', () => {
+                JsonConverterUtil.checkConsistency([''], [String], true);
+            });
+        });
+
+        describe('when strict mode is disabled', () => {
+
+            it('should do nothing when expecting number and got string', () => {
+                JsonConverterUtil.checkConsistency('12', Number, false);
+            });
+
+            it('should do nothing when expecting boolean and got string', () => {
+                JsonConverterUtil.checkConsistency('true', Boolean, false);
+            });
+
+            it('should throw an error when expecting number and got object', () => {
+                chai.expect(() => JsonConverterUtil.checkConsistency({}, Number, false))
+                    .throw(JsonConverterError, 'E03');
+            });
+
+            it('should throw an error when expecting boolean and got not an array', () => {
+                chai.expect(() => JsonConverterUtil.checkConsistency({}, Boolean, false))
+                    .throw(JsonConverterError, 'E03');
+            });
         });
     });
 });

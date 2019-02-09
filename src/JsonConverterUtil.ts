@@ -57,28 +57,43 @@ export class JsonConverterUtil {
         return typeof obj === 'undefined' || obj === null;
     }
 
+    public static isString(obj: any): boolean {
+        return typeof obj === 'string' || obj instanceof String;
+    }
+
+    public static isBoolean(obj: any): boolean {
+        return typeof obj === 'boolean' || obj instanceof Boolean;
+    }
+
+    public static isNumber(obj: any): boolean {
+        return typeof obj === 'number' || obj instanceof Number;
+    }
+
+    /**
+     * Check consistency
+     * @param obj
+     * @param type
+     * @param strict
+     */
     public static checkConsistency<T>(obj: any, type: any, strict = false) {
 
         if (type === Any) {
             return;
         }
 
-        if (type === String &&
-            typeof obj !== 'string' && obj instanceof String === false) {
+        if (type === String && !JsonConverterUtil.isString(obj)) {
             const errorMessage = '(E03) Expected type is <String>, but obj is not';
             throw new JsonConverterError(errorMessage);
         }
 
-        if (type === Boolean &&
-            ((typeof obj !== 'boolean' && obj instanceof Boolean === false)
-                && (!strict && typeof obj !== 'string' && obj instanceof String === false))) {
+        const isParsable = !strict && JsonConverterUtil.isString(obj);
+
+        if (type === Boolean && !JsonConverterUtil.isBoolean(obj) && !isParsable) {
             const errorMessage = '(E03) Expected type is <Boolean>, but obj is not';
             throw new JsonConverterError(errorMessage);
         }
 
-        if (type === Number &&
-            ((typeof obj !== 'number' && obj instanceof Number === false)
-                && (!strict && typeof obj !== 'string' && obj instanceof String === false))) {
+        if (type === Number && !JsonConverterUtil.isNumber(obj) && !isParsable) {
             const errorMessage = '(E03) Expected type is <Number>, but obj is not';
             throw new JsonConverterError(errorMessage);
         }
