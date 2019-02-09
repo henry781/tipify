@@ -1,4 +1,5 @@
 import {JsonCustomConverter} from './converter/JsonCustomConverter';
+import {DeserializerOptions} from './core/DeserializerOptions';
 import {JsonConverterDeserializer} from './core/JsonConverterDeserializer';
 import {JsonConverterSerializer} from './core/JsonConverterSerializer';
 import {Instantiable} from './JsonConverterUtil';
@@ -41,8 +42,9 @@ export class JsonConverter {
      * Deserialize
      * @param obj
      * @param type
+     * @param options
      */
-    public deserialize<T>(obj: any, type: any): T {
+    public deserialize<T>(obj: any, type: any, options?: DeserializerOptions): T {
         return this.deserializer.deserialize(obj, type);
     }
 }
