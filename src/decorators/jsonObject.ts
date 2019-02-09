@@ -7,7 +7,7 @@ import {JsonObjectOptions} from './JsonObjectOptions';
  */
 export function jsonObject(options?: JsonObjectOptions) {
 
-    return (constructor: () => any) => {
+    return (constructor: Function) => {
         const mapping = JsonConverterMapper.createMappingForType(constructor);
         mapping.options = options;
 

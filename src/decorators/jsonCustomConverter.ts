@@ -2,7 +2,7 @@ import {JsonCustomConverters} from '../converter/JsonCustomConverters';
 
 export function jsonCustomConverter() {
 
-    return (constructor: () => any) => {
+    return (constructor: Function) => {
         JsonCustomConverters.instantiateConverter(constructor);
     };
 }
