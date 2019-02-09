@@ -3,7 +3,7 @@ export function JsonConverterError(message: string, parent?: Error) {
     this.message = message;
     this.parent = parent;
 
-    this.toString = function (): string {
+    this.toString = function(): string {
         let m = this.message;
 
         if (this.parent) {
