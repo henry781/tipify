@@ -60,14 +60,18 @@ export class JsonConverterSerializer {
 
         // when obj is an array, serialize as an array
         if (Array.isArray(obj)) {
+            let _type;
 
             // if type is provided, it should be an array
-            if (type && (!Array.isArray(type) || !type[0])) {
-                const errorMessage = '(E02) Given type is not valid, it should be an array like [String]';
-                throw new JsonConverterError(errorMessage);
+            if (type) {
+                if (!Array.isArray(type) || !type[0]) {
+                    const errorMessage = '(E02) Given type is not valid, it should be an array like [String]';
+                    throw new JsonConverterError(errorMessage);
+                }
+                _type = type[0];
             }
 
-            return this.processSerializeArray(obj, type[0]);
+            return this.processSerializeArray(obj, _type);
         }
 
         // when obj is an object, serialize as an obj

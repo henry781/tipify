@@ -121,6 +121,30 @@ describe('JsonConverteSerialize', () => {
                 chai.expect(() => converter.processSerialize(json, []))
                     .to.throw(JsonConverterError, 'E02');
             });
+
+            it('should call processSerializeArray (type specified)', () => {
+                const json = ['a', 'b', 'c'];
+                const expectedResult = ['sa', 'sb', 'sc'];
+
+                sandbox.stub(converter, 'processSerializeArray')
+                    .withArgs(json, String)
+                    .returns(expectedResult);
+
+                const result = converter.processSerialize(json, [String]);
+                chai.expect(result).equal(expectedResult);
+            });
+
+            it('should call processSerializeArray (type not specified)', () => {
+                const json = ['a', 'b', 'c'];
+                const expectedResult = ['sa', 'sb', 'sc'];
+
+                sandbox.stub(converter, 'processSerializeArray')
+                    .withArgs(json)
+                    .returns(expectedResult);
+
+                const result = converter.processSerialize(json);
+                chai.expect(result).equal(expectedResult);
+            });
         });
 
         describe('when given type is Any', () => {
