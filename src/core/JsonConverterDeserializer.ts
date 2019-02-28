@@ -157,7 +157,6 @@ export class JsonConverterDeserializer {
 
         properties.forEach((property) => {
             try {
-                JsonConverterUtil.validate(obj, property.serializedName, property.validators);
                 instance[property.name] = this.deserialize(obj[property.serializedName], property.type, options);
             } catch (err) {
                 const errorMessage = `(E32) error deserializing property <${property.name}>, type <${property.type.name}>`;

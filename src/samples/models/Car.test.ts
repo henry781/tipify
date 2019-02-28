@@ -1,6 +1,5 @@
 import * as chai from 'chai';
 import {JsonConverter} from '../../JsonConverter';
-import {JsonConverterError} from '../../JsonConverterError';
 import {Car} from './Car';
 import {Color} from './Color';
 import {Gender} from './Gender';
@@ -58,36 +57,6 @@ describe('Car', () => {
     });
 
     describe('deserialize', () => {
-
-        describe('validation', () => {
-
-            it('should throw an error when name is not set', () => {
-
-                const json = {
-                    brand: 'Audi',
-                    color: 'BLUE',
-                    id: 12,
-                    // name: 'A5',
-                    passengers: [{
-                        gender: 'MALE',
-                        informations: {
-                            age: 21,
-                        },
-                        name: 'steve',
-                        pid: 12,
-                    }],
-                    type: 'car',
-                };
-
-                try {
-                    converter.deserialize(json, Vehicle);
-                    chai.expect.fail();
-                } catch (err) {
-                    chai.expect(err).instanceOf(JsonConverterError);
-                    chai.expect(err.toString()).contains('E50');
-                }
-            });
-        });
 
         it('should return car object', () => {
 

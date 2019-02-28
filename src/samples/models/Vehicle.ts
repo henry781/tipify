@@ -1,6 +1,5 @@
 import {jsonObject} from '../../decorators/jsonObject';
 import {jsonProperty} from '../../decorators/jsonProperty';
-import {JsonValidators} from '../../mapping/JsonValidators';
 import {Enum, EnumStrategy} from '../../type/Enum';
 import {Color} from './Color';
 import {Passenger} from './Passenger';
@@ -9,13 +8,13 @@ import {VehicleOptions} from './VehicleOptions';
 @jsonObject({discriminatorProperty: 'type'})
 export abstract class Vehicle {
 
-    @jsonProperty('type', String, [JsonValidators.required])
+    @jsonProperty('type', String)
     public _type: string;
 
-    @jsonProperty('id', Number, [JsonValidators.required])
+    @jsonProperty('id', Number)
     public _id: number;
 
-    @jsonProperty('name', String, [JsonValidators.required])
+    @jsonProperty('name', String)
     public _name: string;
 
     @jsonProperty('passengers', [Passenger])

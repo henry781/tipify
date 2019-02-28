@@ -1,5 +1,4 @@
 import {JsonConverterError} from './JsonConverterError';
-import {JsonValidator} from './mapping/JsonValidators';
 import {Any} from './type/Any';
 
 export type Instantiable<T> = new(...args: any[]) => T;
@@ -38,19 +37,6 @@ export class JsonConverterUtil {
             throw new JsonConverterError(errorMessage);
         }
         return n;
-    }
-
-    public static validate(obj: any, serializedName: string, validators: JsonValidator[]) {
-
-        if (!validators) {
-            return;
-        }
-
-        try {
-            validators.forEach((validator) => validator(obj, serializedName));
-        } catch (err) {
-            throw new JsonConverterError('(E50) property invalid', err);
-        }
     }
 
     public static isNullOrUndefined(obj: any) {
