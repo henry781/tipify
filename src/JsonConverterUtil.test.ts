@@ -76,6 +76,14 @@ describe('JsonConverterUtil', () => {
 
         describe('when strict mode is enabled', () => {
 
+            class Item {
+            }
+
+            it('should throw an error when expecting obj and got string', () => {
+                chai.expect(() => JsonConverterUtil.checkConsistency('', Item, true))
+                    .throw(JsonConverterError, 'E03');
+            });
+
             it('should throw an error when expecting string and got obj', () => {
                 chai.expect(() => JsonConverterUtil.checkConsistency({}, String, true))
                     .throw(JsonConverterError, 'E03');

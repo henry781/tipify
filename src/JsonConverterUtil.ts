@@ -1,5 +1,7 @@
+import {JsonCustomConverter} from './converter/JsonCustomConverter';
 import {JsonConverterError} from './JsonConverterError';
 import {Any} from './type/Any';
+import {EnumOptions} from './type/Enum';
 
 export type Instantiable<T> = new(...args: any[]) => T;
 
@@ -63,30 +65,49 @@ export class JsonConverterUtil {
      */
     public static checkConsistency<T>(obj: any, type: any, strict = false) {
 
-        if (type === Any) {
+        const byPassConsistency = type === Any
+            || type.prototype instanceof JsonCustomConverter
+            || type instanceof EnumOptions;
+
+        if (byPassConsistency) {
             return;
-        }
 
-        if (type === String && !JsonConverterUtil.isString(obj)) {
-            const errorMessage = '(E03) Expected type is <String>, but obj is not';
-            throw new JsonConverterError(errorMessage);
-        }
+        } else if (type === String) {
 
-        const isParsable = !strict && JsonConverterUtil.isString(obj);
+            if (!JsonConverterUtil.isString(obj)) {
+                const errorMessage = '(E03) Expected type is <String>, but obj is not';
+                throw new JsonConverterError(errorMessage);
+            }
 
-        if (type === Boolean && !JsonConverterUtil.isBoolean(obj) && !isParsable) {
-            const errorMessage = '(E03) Expected type is <Boolean>, but obj is not';
-            throw new JsonConverterError(errorMessage);
-        }
+        } else if (type === Boolean) {
 
-        if (type === Number && !JsonConverterUtil.isNumber(obj) && !isParsable) {
-            const errorMessage = '(E03) Expected type is <Number>, but obj is not';
-            throw new JsonConverterError(errorMessage);
-        }
+            const isParsable = !strict && JsonConverterUtil.isString(obj);
+            if (!JsonConverterUtil.isBoolean(obj) && !isParsable) {
+                const errorMessage = '(E03) Expected type is <Boolean>, but obj is not';
+                throw new JsonConverterError(errorMessage);
+            }
 
-        if (Array.isArray(obj) !== Array.isArray(type)) {
-            const errorMessage = '(E03) Expected type is an array, but given obj is not';
-            throw new JsonConverterError(errorMessage);
+        } else if (type === Number) {
+
+            const isParsable = !strict && JsonConverterUtil.isString(obj);
+            if (!JsonConverterUtil.isNumber(obj) && !isParsable) {
+                const errorMessage = '(E03) Expected type is <Number>, but obj is not';
+                throw new JsonConverterError(errorMessage);
+            }
+
+        } else if (Array.isArray(type)) {
+
+            if (!Array.isArray(obj)) {
+                const errorMessage = '(E03) Expected type is an array, but given obj is not';
+                throw new JsonConverterError(errorMessage);
+            }
+
+        } else {
+
+            if (obj !== Object(obj)) {
+                const errorMessage = '(E03) Expected type is an obj, but given obj is not';
+                throw new JsonConverterError(errorMessage);
+            }
         }
     }
 
