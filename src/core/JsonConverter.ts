@@ -60,7 +60,7 @@ export class JsonConverter {
         try {
             return this.processSerialize<T>(obj, type);
         } catch (err) {
-            const errorMessage = this.buildErrorMessage('Error: Fail to serialize json at ', err);
+            const errorMessage = this.buildErrorMessage('Fail to serialize json at ', err);
             throw new JsonConverterError(errorMessage);
         }
     }
@@ -88,7 +88,7 @@ export class JsonConverter {
         try {
             return this.processDeserialize<T>(json, type);
         } catch (err) {
-            const errorMessage = this.buildErrorMessage('Error: Fail to deserialize json at ', err);
+            const errorMessage = this.buildErrorMessage('Fail to deserialize json at ', err);
             throw new JsonConverterError(errorMessage);
         }
     }
