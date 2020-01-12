@@ -1,7 +1,7 @@
 export class JsonConverterError extends Error {
 
-    private segment: string | number;
-    private parent: Error;
+    public segment: string | number;
+    public parent: Error;
 
     constructor(message: string, segment?: string | number, parent?: Error) {
         super(message);

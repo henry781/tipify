@@ -1,4 +1,4 @@
-import * as chai from 'chai';
+import {expect} from 'chai';
 import {JsonConverter} from '../../core/JsonConverter';
 import {Planet} from './Planet';
 
@@ -23,15 +23,15 @@ describe('Planet', () => {
 
             const planet = converter.deserialize<Planet>(json, Planet);
 
-            chai.expect(planet).instanceOf(Planet);
+            expect(planet).instanceOf(Planet);
 
-            chai.expect(Object.keys(planet.seas).length).equal(2);
-            chai.expect(planet.seas.atlantic).equal(1);
-            chai.expect(planet.seas.pacific).equal(2);
+            expect(Object.keys(planet.seas).length).equal(2);
+            expect(planet.seas.atlantic).equal(1);
+            expect(planet.seas.pacific).equal(2);
 
-            chai.expect(Object.keys(planet.seasCoordinates).length).equal(2);
-            chai.expect(planet.seasCoordinates.atlantic.length).equal(2);
-            chai.expect(planet.seasCoordinates.pacific.length).equal(2);
+            expect(Object.keys(planet.seasCoordinates).length).equal(2);
+            expect(planet.seasCoordinates.atlantic.length).equal(2);
+            expect(planet.seasCoordinates.pacific.length).equal(2);
         });
 
     });

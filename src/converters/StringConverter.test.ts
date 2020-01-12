@@ -32,7 +32,7 @@ describe('StringConverter', () => {
                 fail();
             } catch (err) {
                 expect(err).instanceOf(JsonConverterError);
-                expect(err.message).equal('Fail to deserialize string, expected type is <String>, but obj is not');
+                expect(err.message).equal('Fail to deserialize string, expected type is <String>, but json is not');
             }
         });
     });

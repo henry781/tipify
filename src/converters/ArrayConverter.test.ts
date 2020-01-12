@@ -34,8 +34,8 @@ describe('ArrayConverter', () => {
         it('should deserialize each item', () => {
 
             const json = ['toto', 'titi'];
-            converter.deserialize.withArgs('toto', stringConverterDefinition).returns('toto1');
-            converter.deserialize.withArgs('titi', stringConverterDefinition).returns('titi1');
+            converter.processDeserialize.withArgs('toto', stringConverterDefinition).returns('toto1');
+            converter.processDeserialize.withArgs('titi', stringConverterDefinition).returns('titi1');
 
             const obj = arrayConverter.deserialize(json, {itemConverter: stringConverterDefinition});
 
@@ -47,8 +47,8 @@ describe('ArrayConverter', () => {
         it('when deserialization of item <1> fail, should throw an error', () => {
 
             const json = ['toto', 'titi'];
-            converter.deserialize.withArgs('toto', stringConverterDefinition).returns('toto1');
-            converter.deserialize.withArgs('titi', stringConverterDefinition).throws(new Error('unexpected'));
+            converter.processDeserialize.withArgs('toto', stringConverterDefinition).returns('toto1');
+            converter.processDeserialize.withArgs('titi', stringConverterDefinition).throws(new Error('unexpected'));
 
             try {
                 arrayConverter.deserialize(json, {itemConverter: stringConverterDefinition});
@@ -65,8 +65,8 @@ describe('ArrayConverter', () => {
         it('should serialize each item', () => {
 
             const obj = ['toto', 'titi'];
-            converter.serialize.withArgs('toto', stringConverterDefinition).returns('toto1');
-            converter.serialize.withArgs('titi', stringConverterDefinition).returns('titi1');
+            converter.processSerialize.withArgs('toto', stringConverterDefinition).returns('toto1');
+            converter.processSerialize.withArgs('titi', stringConverterDefinition).returns('titi1');
 
             const json = arrayConverter.serialize(obj, {itemConverter: stringConverterDefinition});
 
@@ -78,8 +78,8 @@ describe('ArrayConverter', () => {
         it('when serialization of item <1> fail, should throw an error', () => {
 
             const obj = ['toto', 'titi'];
-            converter.serialize.withArgs('toto', stringConverterDefinition).returns('toto1');
-            converter.serialize.withArgs('titi', stringConverterDefinition).throws(new Error('unexpected'));
+            converter.processSerialize.withArgs('toto', stringConverterDefinition).returns('toto1');
+            converter.processSerialize.withArgs('titi', stringConverterDefinition).throws(new Error('unexpected'));
 
             try {
                 arrayConverter.serialize(obj, {itemConverter: stringConverterDefinition});

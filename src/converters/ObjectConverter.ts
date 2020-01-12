@@ -38,13 +38,15 @@ export class ObjectConverter extends CustomConverter<any, ObjectJsonConverterOpt
         // new instance of type
         const instance = new typeMapping.type();
 
-        // deserialize each property
+        // processDeserialize each property
         const properties = JsonConverterMapper.getAllPropertiesForTypeMapping(typeMapping);
 
         properties.forEach((property) => {
             try {
                 if (!this.converter.options.keepObjectFieldValues || json.hasOwnProperty(property.serializedName)) {
-                    instance[property.name] = this.converter.deserialize(json[property.serializedName], property.converterDefinition);
+                    instance[property.name] = this.converter.processDeserialize(
+                        json[property.serializedName],
+                        property.converterDefinition);
                 }
             } catch (err) {
                 const errorMessage = `Fail to deserialize property <${property.serializedName}>`;
@@ -67,10 +69,10 @@ export class ObjectConverter extends CustomConverter<any, ObjectJsonConverterOpt
 
         const instance: any = {};
 
-        // serialize each property
+        // processSerialize each property
         properties.forEach((property) => {
             try {
-                const value = this.converter.serialize(obj[property.name], property.converterDefinition);
+                const value = this.converter.processSerialize(obj[property.name], property.converterDefinition);
                 if (value !== undefined && value !== null) {
                     instance[property.serializedName] = value;
                 }

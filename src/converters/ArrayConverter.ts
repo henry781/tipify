@@ -14,7 +14,7 @@ export class ArrayConverter extends CustomConverter<any[], ArrayConverterOptions
 
         return json.map((entry, index) => {
             try {
-                return this.converter.deserialize(entry, options.itemConverter) as T;
+                return this.converter.processDeserialize(entry, options.itemConverter) as T;
             } catch (err) {
                 const errorMessage = `Fail to deserialize index <${index}> of array`;
                 throw new JsonConverterError(errorMessage, index, err);
@@ -26,7 +26,7 @@ export class ArrayConverter extends CustomConverter<any[], ArrayConverterOptions
 
         return obj.map((entry, index) => {
             try {
-                return this.converter.serialize(entry, options.itemConverter);
+                return this.converter.processSerialize(entry, options.itemConverter);
             } catch (err) {
                 const errorMessage = `Fail to serialize index <${index}> of array`;
                 throw new JsonConverterError(errorMessage, index, err);

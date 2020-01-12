@@ -7,7 +7,7 @@ export class StringConverter extends CustomConverter<string> {
     public deserialize(json: any, options: CustomConverterOptions): string {
 
         if (!isString(json)) {
-            throw new JsonConverterError('Fail to deserialize string, expected type is <String>, but obj is not');
+            throw new JsonConverterError('Fail to deserialize string, expected type is <String>, but json is not');
         }
         return json as string;
     }

@@ -1,4 +1,3 @@
-import {Enum} from '../../dist/type/Enum';
 import {JsonConverterError} from '../core/JsonConverterError';
 import {isNullOrUndefined, isNumber} from '../util/JsonConverterUtil';
 import {ConverterDefinition, CustomConverter, CustomConverterOptions} from './CustomConverter';
@@ -10,7 +9,7 @@ export class EnumConverter extends CustomConverter<StringOrNumber, EnumJsonConve
     public deserialize(json: any, options: EnumJsonConverterOptions): StringOrNumber {
 
         if (isNullOrUndefined(options.type[json])) {
-            const errorMessage = `Enum value <${json}> cannot be found`;
+            const errorMessage = `Enum value <${json}> cannot be found in [${Object.keys(options.type)}]`;
             throw new JsonConverterError(errorMessage);
         }
 

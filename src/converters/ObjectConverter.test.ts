@@ -55,7 +55,7 @@ describe('ObjectConverter', () => {
         });
 
         it('when deserialization of one field fail should throw an error', () => {
-            const deserialize = converter.deserialize
+            const deserialize = converter.processDeserialize
                 .withArgs('Steve', {converter: StringConverter})
                 .throws(new JsonConverterError(''));
 
@@ -65,7 +65,7 @@ describe('ObjectConverter', () => {
         });
 
         it('should deserialize', () => {
-            converter.deserialize
+            converter.processDeserialize
                 .withArgs('Steve', {converter: StringConverter})
                 .returns('Steve1');
 
@@ -76,7 +76,7 @@ describe('ObjectConverter', () => {
 
         it('should set name to undefined (keepObjectFieldValues = false)', () => {
             const actorJson2 = {};
-            converter.deserialize
+            converter.processDeserialize
                 .withArgs(undefined, {converter: StringConverter})
                 .returns(undefined);
 
@@ -107,7 +107,7 @@ describe('ObjectConverter', () => {
 
         it('when serializing property fail should throw an error', () => {
 
-            const serialize = converter.serialize
+            const serialize = converter.processSerialize
                 .withArgs('Steve', {converter: StringConverter})
                 .throws(new JsonConverterError(''));
 
@@ -118,7 +118,7 @@ describe('ObjectConverter', () => {
 
         it('should return serialized object', () => {
 
-            const serialize = converter.serialize
+            const serialize = converter.processSerialize
                 .withArgs('Steve', {converter: StringConverter})
                 .returns('Steve');
 
@@ -133,7 +133,7 @@ describe('ObjectConverter', () => {
 
         it('should not return null properties', () => {
 
-            const serialize = converter.serialize
+            const serialize = converter.processSerialize
                 .withArgs('Steve', {converter: StringConverter})
                 .returns(null);
 
@@ -146,7 +146,7 @@ describe('ObjectConverter', () => {
 
         it('should not return undefined properties', () => {
 
-            const serialize = converter.serialize
+            const serialize = converter.processSerialize
                 .withArgs('Steve', {converter: StringConverter})
                 .returns(undefined);
 

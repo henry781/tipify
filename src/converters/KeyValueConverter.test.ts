@@ -32,7 +32,7 @@ describe('KeyValueConverter', () => {
 
         it('when fail to deserialize a value, should throw an error', () => {
             const json = {titi: 'toto'};
-            converter.deserialize
+            converter.processDeserialize
                 .withArgs('toto', stringConverterDefinition)
                 .throws(new JsonConverterError(''));
 
@@ -42,7 +42,7 @@ describe('KeyValueConverter', () => {
 
         it('should deserialize map', () => {
             const json = {titi: 'toto'};
-            converter.deserialize
+            converter.processDeserialize
                 .withArgs('toto', stringConverterDefinition)
                 .returns('toto1');
 
@@ -55,7 +55,7 @@ describe('KeyValueConverter', () => {
 
         it('when fail to serialize a value, should throw an error', () => {
             const json = {titi: 'toto'};
-            converter.serialize
+            converter.processSerialize
                 .withArgs('toto', stringConverterDefinition)
                 .throws(new JsonConverterError(''));
 
@@ -65,7 +65,7 @@ describe('KeyValueConverter', () => {
 
         it('should serialize map', () => {
             const json = {titi: 'toto'};
-            converter.serialize
+            converter.processSerialize
                 .withArgs('toto', stringConverterDefinition)
                 .returns('toto1');
 

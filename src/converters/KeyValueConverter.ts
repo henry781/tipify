@@ -28,7 +28,7 @@ export class KeyValueConverter extends CustomConverter<object, MapConverterOptio
             }
 
             try {
-                instance[key] = this.converter.deserialize(json[key], options.valueConverter);
+                instance[key] = this.converter.processDeserialize(json[key], options.valueConverter);
             } catch (err) {
                 const errorMessage = `Fail to deserialize map value with key <${key}>`;
                 throw new JsonConverterError(errorMessage, key, err);
@@ -42,7 +42,7 @@ export class KeyValueConverter extends CustomConverter<object, MapConverterOptio
         const instance = {};
         Object.keys(obj).forEach((key) => {
             try {
-                instance[key] = this.converter.serialize(obj[key], options.valueConverter);
+                instance[key] = this.converter.processSerialize(obj[key], options.valueConverter);
             } catch (err) {
                 const errorMessage = `Fail to serialize map value with key <${key}>`;
                 throw new JsonConverterError(errorMessage, key, err);

@@ -57,6 +57,15 @@ export class JsonConverter {
     }
 
     public serialize<T>(obj: T, type?: Type | ConverterDefinition): any {
+        try {
+            return this.processSerialize<T>(obj, type);
+        } catch (err) {
+            const errorMessage = this.buildErrorMessage('Error: Fail to serialize json at ', err);
+            throw new JsonConverterError(errorMessage);
+        }
+    }
+
+    public processSerialize<T>(obj: T, type?: Type | ConverterDefinition): any {
 
         if (isNullOrUndefined(obj)) {
             return obj;
@@ -66,17 +75,25 @@ export class JsonConverter {
         const converterInstance = this.getConverterInstance(converterDefinition.converter);
 
         if (!converterInstance) {
-            const errorMessage = '(E01) Cannot get instance of custom converter'
-                + ` <${converterDefinition.converter.name}>, this may occur when :\n`
-                + '   -  decorator @jsonCustomConverter is missing\n'
-                + '   -  class does not extends CustomConverter';
+            const errorMessage = 'Cannot get instance of converter'
+                + ` <${converterDefinition.converter.name}>,`
+                + ` use jsonConverter.register(${converterDefinition.converter.name}) to register converter`;
             throw new JsonConverterError(errorMessage);
         }
 
         return converterInstance.serialize(obj, converterDefinition.options);
     }
 
-    public deserialize<T>(json: any, type?: Type | ConverterDefinition): any {
+    public deserialize<T>(json: any, type?: Type | ConverterDefinition): T {
+        try {
+            return this.processDeserialize<T>(json, type);
+        } catch (err) {
+            const errorMessage = this.buildErrorMessage('Error: Fail to deserialize json at ', err);
+            throw new JsonConverterError(errorMessage);
+        }
+    }
+
+    public processDeserialize<T>(json: any, type?: Type | ConverterDefinition): T {
 
         // when json is null or undefined, return null or undefined
         if (isNullOrUndefined(json)) {
@@ -87,13 +104,33 @@ export class JsonConverter {
         const converterInstance = this.getConverterInstance(converterDefinition.converter);
 
         if (!converterInstance) {
-            const errorMessage = '(E01) Cannot get instance of custom converter'
-                + ` <${converterDefinition.converter.name}>, this may occur when :\n`
-                + '   -  decorator @jsonCustomConverter is missing\n'
-                + '   -  class does not extends CustomConverter';
+            const errorMessage = 'Cannot get instance of converter'
+                + ` <${converterDefinition.converter.name}>,`
+                + ` use jsonConverter.register(${converterDefinition.converter.name}) to register converter`;
             throw new JsonConverterError(errorMessage);
         }
+
         return converterInstance.deserialize(json, converterDefinition.options);
+    }
+
+    private buildErrorMessage(message: string, err: Error) {
+        let errorMessage = '';
+        let segment = '/';
+
+        while (err) {
+            errorMessage += '\n    -> ' + err.message;
+
+            if (err instanceof JsonConverterError) {
+                if (!isNullOrUndefined(err.segment)) {
+                    segment += '/' + err.segment;
+                }
+                err = err.parent;
+            } else {
+                break;
+            }
+        }
+
+        return message + segment + errorMessage;
     }
 }
 
