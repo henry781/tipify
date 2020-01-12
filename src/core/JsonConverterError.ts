@@ -1,14 +1,12 @@
 export class JsonConverterError extends Error {
 
-    private path: Array<string | number> = [];
+    private segment: string | number;
+    private parent: Error;
 
-    constructor(message: string, error?: Error, segment?: string | number) {
-        super(error ? message + '\n caused by : ' + error.message : message);
-
-        if (error && error instanceof JsonConverterError) {
-            this.path = segment !== undefined ? [segment, ...error.path] : error.path;
-        }
-
+    constructor(message: string, segment?: string | number, parent?: Error) {
+        super(message);
+        this.segment = segment;
+        this.parent = parent;
         Object.setPrototypeOf(this, JsonConverterError.prototype);
     }
 }

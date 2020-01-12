@@ -5,12 +5,13 @@ import {
     ConverterDefinition,
     CustomConverter,
     EnumConverter,
-    MapConverter,
+    KeyValueConverter,
     NumberConverter,
     ObjectConverter,
     StringConverter,
 } from '../converters/api';
-import {ensureConverterDefinition, Instantiable, isNullOrUndefined, Type} from '../util/JsonConverterUtil';
+import {ensureConverterDefinition} from '../util/ConverterDefinitionUtil';
+import {Instantiable, isNullOrUndefined, Type} from '../util/JsonConverterUtil';
 import {JsonConverterError} from './JsonConverterError';
 
 export class JsonConverter {
@@ -40,7 +41,7 @@ export class JsonConverter {
         this.registerConverter(AnyConverter);
         this.registerConverter(ArrayConverter);
         this.registerConverter(EnumConverter);
-        this.registerConverter(MapConverter);
+        this.registerConverter(KeyValueConverter);
         this.registerConverter(ObjectConverter);
         this.registerConverter(BooleanConverter);
         this.registerConverter(StringConverter);

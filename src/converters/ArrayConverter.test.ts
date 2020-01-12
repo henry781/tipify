@@ -27,7 +27,7 @@ describe('ArrayConverter', () => {
                 fail();
             } catch (err) {
                 expect(err).instanceOf(JsonConverterError);
-                expect(err.message).contains('Fail to deserialize array, given obj is not an array');
+                expect(err.message).contains('Fail to deserialize, given json is not an array');
             }
         });
 

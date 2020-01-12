@@ -11,7 +11,8 @@ export class NumberConverter extends CustomConverter<number> {
         } else if (this.converter.options.tryParse && isString(json)) {
             return tryParseNumber(json);
         } else {
-            throw new JsonConverterError('Fail to deserialize number, expected type is <Number>, but obj is not');
+            const errorMessage = 'Fail to deserialize, expected type is <Number>, but json is not';
+            throw new JsonConverterError(errorMessage);
         }
     }
 

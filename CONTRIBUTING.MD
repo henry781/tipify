@@ -5,7 +5,7 @@
 Clone repository
 
 ```
-cd jsontypescript && npm install
+cd tipify && npm install
 ```
 
 ## Build
@@ -18,4 +18,10 @@ npm run build
 
 ```
 npm run test
+```
+
+## Lint
+
+```
+npm run lint
 ```

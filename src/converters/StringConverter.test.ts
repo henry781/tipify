@@ -17,12 +17,12 @@ describe('StringConverter', () => {
 
     describe('deserialize', () => {
 
-        it('when value is <titi>, should return titi', () => {
+        it('when value is titi, should return titi', () => {
             const obj = stringConverter.deserialize('titi', {});
             expect(obj).equal('titi');
         });
 
-        it('when value is <10>, should throw an error', () => {
+        it('when value is 10 (number), should throw an error', () => {
             stub(converter, 'options').get(() => {
                 return {tryParse: false};
             });

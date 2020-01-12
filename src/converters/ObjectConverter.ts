@@ -46,7 +46,7 @@ export class ObjectConverter extends CustomConverter<any, ObjectJsonConverterOpt
                 instance[property.name] = this.converter.deserialize(json[property.serializedName], property.converterDefinition);
             } catch (err) {
                 const errorMessage = `Fail to deserialize property <${property.serializedName}>`;
-                throw new JsonConverterError(errorMessage, err, property.serializedName);
+                throw new JsonConverterError(errorMessage, property.serializedName, err);
             }
         });
         return instance;
@@ -56,7 +56,7 @@ export class ObjectConverter extends CustomConverter<any, ObjectJsonConverterOpt
 
         const typeMapping = JsonConverterMapper.getMappingForType(obj.constructor);
         if (!typeMapping) {
-            const errorMessage = `Cannot get mapping <${options.type.name}>, `
+            const errorMessage = `Cannot get mapping <${obj.constructor.name}>, `
                 + 'this may occur when decorator @jsonObject is missing';
             throw new JsonConverterError(errorMessage);
         }
@@ -74,7 +74,7 @@ export class ObjectConverter extends CustomConverter<any, ObjectJsonConverterOpt
                 }
             } catch (err) {
                 const errorMessage = `Fail to serialize property <${property.serializedName}>`;
-                throw new JsonConverterError(errorMessage, err, property.serializedName);
+                throw new JsonConverterError(errorMessage, property.serializedName, err);
             }
         });
 

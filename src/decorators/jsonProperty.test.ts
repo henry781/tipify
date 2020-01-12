@@ -1,26 +1,30 @@
-import * as chai from 'chai';
+import {expect} from 'chai';
+import {BooleanConverter} from '../converters/BooleanConverter';
+import {NumberConverter} from '../converters/NumberConverter';
+import {ObjectConverter} from '../converters/ObjectConverter';
+import {StringConverter} from '../converters/StringConverter';
 import {JsonConverterMapper} from '../mapping/JsonConverterMapper';
 import {jsonProperty} from './jsonProperty';
 
 describe('jsonProperty', () => {
 
     class Person {
-        @jsonProperty('name', String)
+        @jsonProperty('name')
         private _name: string;
     }
 
     it('should create type mapping', () => {
         const foundTypeMapping = JsonConverterMapper.getMapping().find((m) => m.type === Person);
-        chai.expect(foundTypeMapping).not.undefined;
+        expect(foundTypeMapping).not.undefined;
     });
 
     it('should add property mapping', () => {
         const foundTypeMapping = JsonConverterMapper.getMapping().find((m) => m.type === Person);
 
         const foundPropertyMapping = foundTypeMapping.properties.find((m) => m.name === '_name');
-        chai.expect(foundPropertyMapping).not.undefined;
-        chai.expect(foundPropertyMapping.serializedName).equal('name');
-        chai.expect(foundPropertyMapping.type).equal(String);
+        expect(foundPropertyMapping).not.undefined;
+        expect(foundPropertyMapping.serializedName).equal('name');
+        expect(foundPropertyMapping.converterDefinition).deep.equal({converter: StringConverter});
 
     });
 
@@ -50,36 +54,36 @@ describe('jsonProperty', () => {
             const foundTypeMapping = JsonConverterMapper.getMapping().find((m) => m.type === Smartphone);
 
             const foundPropertyMapping = foundTypeMapping.properties.find((m) => m.name === '_name');
-            chai.expect(foundPropertyMapping).not.undefined;
-            chai.expect(foundPropertyMapping.serializedName).equal('name');
-            chai.expect(foundPropertyMapping.type).equal(String);
+            expect(foundPropertyMapping).not.undefined;
+            expect(foundPropertyMapping.serializedName).equal('name');
+            expect(foundPropertyMapping.converterDefinition).deep.equal({converter: StringConverter});
         });
 
         it('should add property mapping (number)', () => {
             const foundTypeMapping = JsonConverterMapper.getMapping().find((m) => m.type === Smartphone);
 
             const foundPropertyMapping = foundTypeMapping.properties.find((m) => m.name === '_id');
-            chai.expect(foundPropertyMapping).not.undefined;
-            chai.expect(foundPropertyMapping.serializedName).equal('id');
-            chai.expect(foundPropertyMapping.type).equal(Number);
+            expect(foundPropertyMapping).not.undefined;
+            expect(foundPropertyMapping.serializedName).equal('id');
+            expect(foundPropertyMapping.converterDefinition).deep.equal({converter: NumberConverter});
         });
 
         it('should add property mapping (boolean)', () => {
             const foundTypeMapping = JsonConverterMapper.getMapping().find((m) => m.type === Smartphone);
 
             const foundPropertyMapping = foundTypeMapping.properties.find((m) => m.name === '_active');
-            chai.expect(foundPropertyMapping).not.undefined;
-            chai.expect(foundPropertyMapping.serializedName).equal('active');
-            chai.expect(foundPropertyMapping.type).equal(Boolean);
+            expect(foundPropertyMapping).not.undefined;
+            expect(foundPropertyMapping.serializedName).equal('active');
+            expect(foundPropertyMapping.converterDefinition).deep.equal({converter: BooleanConverter});
         });
 
         it('should add property mapping (class)', () => {
             const foundTypeMapping = JsonConverterMapper.getMapping().find((m) => m.type === Smartphone);
 
             const foundPropertyMapping = foundTypeMapping.properties.find((m) => m.name === '_company');
-            chai.expect(foundPropertyMapping).not.undefined;
-            chai.expect(foundPropertyMapping.serializedName).equal('company');
-            chai.expect(foundPropertyMapping.type).equal(Company);
+            expect(foundPropertyMapping).not.undefined;
+            expect(foundPropertyMapping.serializedName).equal('company');
+            expect(foundPropertyMapping.converterDefinition).deep.equal({converter: ObjectConverter, options: {type: Company}});
         });
     });
 });

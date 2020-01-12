@@ -1,5 +1,5 @@
 import {expect} from 'chai';
-import {createStubInstance, mock} from 'sinon';
+import {createStubInstance} from 'sinon';
 import {JsonConverter} from '../core/JsonConverter';
 import {AnyConverter} from './AnyConverter';
 

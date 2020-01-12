@@ -1,15 +1,15 @@
 import {arrayOf} from '../../converters/ArrayConverter';
-import {mapOf} from '../../converters/MapConverter';
+import {keyValueOf} from '../../converters/KeyValueConverter';
 import {jsonObject} from '../../decorators/jsonObject';
 import {jsonProperty} from '../../decorators/jsonProperty';
 
 @jsonObject()
 export class Planet {
 
-    @jsonProperty('seas', mapOf(String, Number))
+    @jsonProperty('seas', keyValueOf(String, Number))
     private readonly _seas: { [name: string]: number };
 
-    @jsonProperty('seasCoordinates', mapOf(String, arrayOf(Number)))
+    @jsonProperty('seasCoordinates', keyValueOf(String, arrayOf(Number)))
     private readonly _seasCoordinates: { [name: string]: number[] };
 
     get seas(): { [p: string]: number } {

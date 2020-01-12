@@ -1,9 +1,9 @@
-import * as chai from "chai";
+import {expect} from 'chai';
 import {createStubInstance} from 'sinon';
 import {JsonConverter} from '../core/JsonConverter';
 import {JsonConverterError} from '../core/JsonConverterError';
 import {Color} from '../samples/models/Color';
-import {EnumConverter} from './EnumConverter';
+import {EnumConverter, EnumStrategy} from './EnumConverter';
 
 describe('EnumConverter', () => {
 
@@ -18,48 +18,46 @@ describe('EnumConverter', () => {
     describe('deserialize', () => {
 
         it('should return enum value (case index)', () => {
-            const result = converter.processDeserializeEnum(2, Enum(Color));
-            chai.expect(result).equal(Color.BLUE);
+            const result = enumConverter.deserialize(2, {type: Color, strategy: EnumStrategy.NAME});
+            expect(result).equal(Color.BLUE);
         });
 
         it('should return enum value (cas name)', () => {
-            const result = converter.processDeserializeEnum('RED', Enum(Color));
-            chai.expect(result).equal(Color.RED);
+            const result = enumConverter.deserialize('RED', {type: Color, strategy: EnumStrategy.NAME});
+            expect(result).equal(Color.RED);
         });
 
-        it('should throw error E31 when enum value cannot be found (1)', () => {
-            chai.expect(() => converter.processDeserializeEnum(20, Enum(Color)))
-                .throw(JsonConverterError, 'E31');
+        it('when enum value cannot be found should throw an error', () => {
+            expect(() => enumConverter.deserialize(20, {type: Color, strategy: EnumStrategy.NAME}))
+                .throw(JsonConverterError, 'Enum value <20> cannot be found');
         });
 
-        it('should throw error E31 when enum value cannot be found (2)', () => {
-            chai.expect(() => converter.processDeserializeEnum('ORANGE', Enum(Color)))
-                .throw(JsonConverterError, 'E31');
+        it('when enum value cannot be found should throw an error (2)', () => {
+            expect(() => enumConverter.deserialize('ORANGE', {type: Color, strategy: EnumStrategy.NAME}))
+                .throw(JsonConverterError, 'Enum value <ORANGE> cannot be found');
         });
     });
 
     describe('serialize', () => {
 
         it('should return enum as name', () => {
-            const result = (converter as any).processSerializeEnum(Color.BLUE, Enum(Color, EnumStrategy.NAME));
-            chai.expect(result).equal('BLUE');
+            const result = enumConverter.serialize(Color.BLUE, {type: Color, strategy: EnumStrategy.NAME});
+            expect(result).equal('BLUE');
         });
 
         it('should return enum as index', () => {
-            const result = (converter as any).processSerializeEnum(Color.BLUE, Enum(Color, EnumStrategy.INDEX));
-            chai.expect(result).equal(2);
+            const result = enumConverter.serialize(Color.BLUE, {type: Color, strategy: EnumStrategy.INDEX});
+            expect(result).equal(2);
         });
 
-        it('should throw error E12 when strategy is not defined', () => {
-            const options = new EnumOptions(Color);
-            options.strategy = undefined;
-            chai.expect(() => (converter as any).processSerializeEnum(Color.BLUE, options))
-                .throw(JsonConverterError, 'E12');
+        it('when strategy is not defined should throw an error', () => {
+            expect(() => enumConverter.serialize(Color.BLUE, {type: Color, strategy: undefined}))
+                .throw(JsonConverterError, 'Enum strategy is not defined');
         });
 
-        it('should throw error E10 when enum value does not exist (1)', () => {
-            chai.expect(() => (converter as any).processSerializeEnum(14, Enum(Color, EnumStrategy.INDEX)))
-                .throw(JsonConverterError, 'E10');
+        it('when enum value does not exist should throw an error', () => {
+            expect(() => enumConverter.serialize(14, {type: Color, strategy: EnumStrategy.INDEX}))
+                .throw(JsonConverterError, 'Enum value <14> cannot be found');
         });
     });
 });

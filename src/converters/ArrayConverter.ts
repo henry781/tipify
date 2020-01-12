@@ -1,5 +1,6 @@
 import {JsonConverterError} from '../core/JsonConverterError';
-import {ensureConverterDefinition, Type} from '../util/JsonConverterUtil';
+import {ensureConverterDefinition} from '../util/ConverterDefinitionUtil';
+import {Type} from '../util/JsonConverterUtil';
 import {ConverterDefinition, CustomConverter, CustomConverterOptions} from './CustomConverter';
 
 export class ArrayConverter extends CustomConverter<any[], ArrayConverterOptions> {
@@ -7,7 +8,7 @@ export class ArrayConverter extends CustomConverter<any[], ArrayConverterOptions
     public deserialize<T>(json: any, options: ArrayConverterOptions): T[] {
 
         if (!Array.isArray(json)) {
-            const errorMessage = 'Fail to deserialize array, given obj is not an array';
+            const errorMessage = 'Fail to deserialize, given json is not an array';
             throw new JsonConverterError(errorMessage);
         }
 
@@ -16,7 +17,7 @@ export class ArrayConverter extends CustomConverter<any[], ArrayConverterOptions
                 return this.converter.deserialize(entry, options.itemConverter) as T;
             } catch (err) {
                 const errorMessage = `Fail to deserialize index <${index}> of array`;
-                throw new JsonConverterError(errorMessage, err, index);
+                throw new JsonConverterError(errorMessage, index, err);
             }
         });
     }
@@ -28,7 +29,7 @@ export class ArrayConverter extends CustomConverter<any[], ArrayConverterOptions
                 return this.converter.serialize(entry, options.itemConverter);
             } catch (err) {
                 const errorMessage = `Fail to serialize index <${index}> of array`;
-                throw new JsonConverterError(errorMessage, err, index);
+                throw new JsonConverterError(errorMessage, index, err);
             }
         });
     }

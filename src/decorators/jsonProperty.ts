@@ -2,7 +2,8 @@ import 'reflect-metadata';
 import {ConverterDefinition} from '../converters/CustomConverter';
 import {JsonConverterMapper} from '../mapping/JsonConverterMapper';
 import {PropertyMapping} from '../mapping/PropertyMapping';
-import {ensureConverterDefinition, Type} from '../util/JsonConverterUtil';
+import {ensureConverterDefinition} from '../util/ConverterDefinitionUtil';
+import {Type} from '../util/JsonConverterUtil';
 
 export function jsonProperty(serializedName: string, type?: Type | ConverterDefinition) {
 

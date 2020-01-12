@@ -1,11 +1,6 @@
-import {BooleanConverter} from '../converters/BooleanConverter';
-import {ConverterDefinition, CustomConverter} from '../converters/CustomConverter';
-import {NumberConverter} from '../converters/NumberConverter';
-import {ObjectConverter, ObjectJsonConverterOptions} from '../converters/ObjectConverter';
-import {StringConverter} from '../converters/StringConverter';
 import {JsonConverterError} from '../core/JsonConverterError';
 
-export type Instantiable<T = any> = new(...args: any[]) => T;
+export type Instantiable<T> = Function & { prototype: T };
 export type BasicType = typeof Number | typeof String | typeof Boolean;
 export type Type = BasicType | Instantiable<any>;
 
@@ -83,28 +78,3 @@ export function isObject(obj: any): boolean {
     return Object(obj) === obj;
 }
 
-export function ensureConverterDefinition(converterDefinitionOrType: ConverterDefinition | Type): ConverterDefinition {
-
-    const converterDefinition = converterDefinitionOrType as ConverterDefinition;
-
-    const isConverterDefinition = converterDefinition
-        && converterDefinition.converter
-        && converterDefinition.converter.prototype
-        && converterDefinition.converter.prototype instanceof CustomConverter;
-
-    if (isConverterDefinition) {
-        return converterDefinition;
-    }
-
-    const type = converterDefinitionOrType as Type;
-    switch (type) {
-        case String:
-            return {converter: StringConverter};
-        case Boolean:
-            return {converter: BooleanConverter};
-        case Number:
-            return {converter: NumberConverter};
-        default:
-            return {converter: ObjectConverter, options: {type} as ObjectJsonConverterOptions};
-    }
-}

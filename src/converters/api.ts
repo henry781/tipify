@@ -3,7 +3,7 @@ export * from './ArrayConverter';
 export * from './BooleanConverter';
 export * from './CustomConverter';
 export * from './EnumConverter';
-export * from './MapConverter';
+export * from './KeyValueConverter';
 export * from './NumberConverter';
 export * from './ObjectConverter';
 export * from './StringConverter';

@@ -11,7 +11,8 @@ export class BooleanConverter extends CustomConverter<boolean> {
         } else if (this.converter.options.tryParse && isString(json)) {
             return tryParseBoolean(json);
         } else {
-            throw new JsonConverterError('Fail to deserialize boolean, expected type is <Boolean>, but obj is not');
+            const errorMessage = 'Fail to deserialize, expected type is <Boolean>, but json is not';
+            throw new JsonConverterError(errorMessage);
         }
     }
 

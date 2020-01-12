@@ -1,4 +1,4 @@
-import * as chai from 'chai';
+import {expect} from 'chai';
 import {JsonConverterError} from '../core/JsonConverterError';
 import {tryParseBoolean, tryParseNumber} from './JsonConverterUtil';
 
@@ -14,37 +14,37 @@ describe('JsonConverterUtil', () => {
 
         it('should return true when string is true', () => {
             const result = tryParseBoolean('true');
-            chai.expect(result).to.be.true;
+            expect(result).to.be.true;
         });
 
         it('should return false when string is false', () => {
             const result = tryParseBoolean('false');
-            chai.expect(result).to.be.false;
+            expect(result).to.be.false;
         });
 
         it('should return true when string is yes', () => {
             const result = tryParseBoolean('yes');
-            chai.expect(result).to.be.true;
+            expect(result).to.be.true;
         });
 
         it('should return false when string is no', () => {
             const result = tryParseBoolean('no');
-            chai.expect(result).to.be.false;
+            expect(result).to.be.false;
         });
 
         it('should return true when string is 1', () => {
             const result = tryParseBoolean('1');
-            chai.expect(result).to.be.true;
+            expect(result).to.be.true;
         });
 
         it('should return false when string is 0', () => {
             const result = tryParseBoolean('0');
-            chai.expect(result).to.be.false;
+            expect(result).to.be.false;
         });
 
         it('should throw an error when string is unknown', () => {
-            chai.expect(() => tryParseBoolean('something'))
-                .throw(JsonConverterError, 'E03');
+            expect(() => tryParseBoolean('something'))
+                .throw(JsonConverterError, 'Obj cannot be parsed to type <Boolean>');
         });
     });
 
@@ -55,17 +55,17 @@ describe('JsonConverterUtil', () => {
 
         it('should return 12 when string is 12', () => {
             const result = tryParseNumber('12');
-            chai.expect(result).to.equal(12);
+            expect(result).to.equal(12);
         });
 
         it('should return 12.12 when string is 12.12', () => {
             const result = tryParseNumber('12.12');
-            chai.expect(result).to.equal(12.12);
+            expect(result).to.equal(12.12);
         });
 
         it('should return 12.12 when string is 12.12', () => {
-            chai.expect(() => tryParseNumber('something'))
-                .throw(JsonConverterError, 'E03');
+            expect(() => tryParseNumber('something'))
+                .throw(JsonConverterError, 'Obj cannot be parsed to type <Number>');
         });
     });
 });

@@ -17,17 +17,17 @@ describe('BooleanConverter', () => {
 
     describe('deserialize', () => {
 
-        it('when is <true>, should return true', () => {
+        it('when is true (bool), should return true', () => {
             const obj = booleanConverter.deserialize(true, {});
             expect(obj).equal(true);
         });
 
-        it('when is <false>, should return false', () => {
+        it('when is false (bool), should return false', () => {
             const obj = booleanConverter.deserialize(false, {});
             expect(obj).equal(false);
         });
 
-        it('when is <\'true\'> and tryParse is enabled, should return true', () => {
+        it('when is true (string) and tryParse is enabled, should return true', () => {
             stub(converter, 'options').get(() => {
                 return {tryParse: true};
             });
@@ -35,7 +35,7 @@ describe('BooleanConverter', () => {
             expect(obj).equal(true);
         });
 
-        it('when is <\'false\'> and tryParse is enabled, should return true', () => {
+        it('when is false (string) and tryParse is enabled, should return true', () => {
             stub(converter, 'options').get(() => {
                 return {tryParse: true};
             });
@@ -43,7 +43,7 @@ describe('BooleanConverter', () => {
             expect(obj).equal(false);
         });
 
-        it('when is <\'false\'> and tryParse is disabled, should throw an error', () => {
+        it('when is false (string) and tryParse is disabled, should throw an error', () => {
             stub(converter, 'options').get(() => {
                 return {tryParse: false};
             });
@@ -53,7 +53,7 @@ describe('BooleanConverter', () => {
                 fail();
             } catch (err) {
                 expect(err).instanceOf(JsonConverterError);
-                expect(err.message).equal('Fail to deserialize boolean, expected type is <Boolean>, but obj is not');
+                expect(err.message).equal('Fail to deserialize, expected type is <Boolean>, but json is not');
             }
         });
     });
