@@ -43,13 +43,13 @@ export class Passenger {
     @jsonProperty('pid', PidConverter)
     private _pid: Pid;
 
-    @jsonProperty('gender', Enum(Gender, EnumStrategy.INDEX_COMPATIBLE))
+    @jsonProperty('gender', enumOf(Gender, EnumStrategy.INDEX_COMPATIBLE))
     private _gender: Gender;
 
     @jsonProperty('name', String)
     private _name: string;
 
-    @jsonProperty('informations', Any)
+    @jsonProperty('informations', any())
     private _informations: object;
 
     constructor(options?: PassengerOptions) {

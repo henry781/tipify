@@ -1,5 +1,7 @@
+import {ConverterDefinition} from '../converters/CustomConverter';
+
 export interface PropertyMapping {
     name: string;
     serializedName: string;
-    type?: any;
+    converterDefinition: ConverterDefinition;
 }
