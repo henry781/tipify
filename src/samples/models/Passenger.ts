@@ -1,25 +1,24 @@
+import {any} from '../../converters/AnyConverter';
+import {enumOf, EnumStrategy} from '../../converters/EnumConverter';
 import {jsonObject} from '../../decorators/jsonObject';
 import {jsonProperty} from '../../decorators/jsonProperty';
-import {Any} from '../../type/Any';
-import {Enum, EnumStrategy} from '../../type/Enum';
 import {PidConverter} from '../converter/PidConverter';
 import {Gender} from './Gender';
-import {PassengerOptions} from './PassengerOptions';
 import {Pid} from './Pid';
 
 @jsonObject()
 export class Passenger {
 
-    @jsonProperty('pid', PidConverter)
+    @jsonProperty('pid', {converter: PidConverter})
     public _pid: Pid;
 
-    @jsonProperty('gender', Enum(Gender, EnumStrategy.NAME))
+    @jsonProperty('gender', enumOf(Gender, EnumStrategy.NAME))
     public _gender: Gender;
 
-    @jsonProperty('name', String)
+    @jsonProperty('name')
     public _name: string;
 
-    @jsonProperty('informations', Any)
+    @jsonProperty('informations', any())
     public _informations: object;
 
     constructor(options?: PassengerOptions) {
@@ -30,4 +29,11 @@ export class Passenger {
             this._informations = options.informations;
         }
     }
+}
+
+export interface PassengerOptions {
+    pid?: Pid;
+    gender?: Gender;
+    name?: string;
+    informations?: object;
 }

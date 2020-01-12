@@ -1,5 +1,6 @@
 import * as chai from 'chai';
-import {JsonConverter} from '../../JsonConverter';
+import {JsonConverter} from '../../core/JsonConverter';
+import {PidConverter} from '../converter/PidConverter';
 import {Car} from './Car';
 import {Color} from './Color';
 import {Gender} from './Gender';
@@ -9,6 +10,7 @@ import {Vehicle} from './Vehicle';
 describe('Car', () => {
 
     const converter = new JsonConverter();
+    converter.registerConverter(PidConverter);
 
     describe('serialize', () => {
 

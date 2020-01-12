@@ -1,5 +1,5 @@
 import * as chai from 'chai';
-import {JsonConverter} from '../../JsonConverter';
+import {JsonConverter} from '../../core/JsonConverter';
 import {Jet} from './Jet';
 import {Plane} from './Plane';
 
