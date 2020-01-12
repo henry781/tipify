@@ -1,6 +1,6 @@
 import * as chai from 'chai';
 import {expect} from 'chai';
-import {createStubInstance} from 'sinon';
+import {createStubInstance, stub} from 'sinon';
 import {JsonConverter} from '../core/JsonConverter';
 import {JsonConverterError} from '../core/JsonConverterError';
 import {jsonObject} from '../decorators/jsonObject';
@@ -15,23 +15,32 @@ describe('ObjectConverter', () => {
 
     beforeEach(() => {
         converter = createStubInstance(JsonConverter);
+        stub(converter, 'options').get(() => {
+            return {keepObjectFieldValues: false};
+        });
         objectConverter = new ObjectConverter(converter);
     });
 
     @jsonObject()
     class Actor {
-        @jsonProperty('name', String)
-        public _name: string;
 
-        constructor(name: string) {
-            this._name = name;
+        public static init(name?: string) {
+            const a = new Actor();
+            a._name = name;
+            return a;
+        }
+
+        @jsonProperty('name', String)
+        public _name: string = 'TOTO';
+
+        constructor() {
         }
     }
 
     class Movie {
     }
 
-    const actor = new Actor('Steve');
+    const actor = Actor.init('Steve');
     const actorJson = {
         name: 'Steve',
     };
@@ -63,6 +72,28 @@ describe('ObjectConverter', () => {
             const result = objectConverter.deserialize<Actor>(actorJson, {type: Actor});
             expect(result).instanceOf(Actor);
             expect(result._name).equal('Steve1');
+        });
+
+        it('should set name to undefined (keepObjectFieldValues = false)', () => {
+            const actorJson2 = {};
+            converter.deserialize
+                .withArgs(undefined, {converter: StringConverter})
+                .returns(undefined);
+
+            const result = objectConverter.deserialize<Actor>(actorJson2, {type: Actor});
+            expect(result).instanceOf(Actor);
+            expect(result._name).to.be.undefined;
+        });
+
+        it('should keep name TOTO (keepObjectFieldValues = true)', () => {
+            const actorJson2 = {};
+            stub(converter, 'options').get(() => {
+                return {keepObjectFieldValues: true};
+            });
+
+            const result = objectConverter.deserialize<Actor>(actorJson2, {type: Actor});
+            expect(result).instanceOf(Actor);
+            expect(result._name).equal('TOTO');
         });
     });
 

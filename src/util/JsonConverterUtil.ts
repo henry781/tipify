@@ -1,8 +1,9 @@
 import {JsonConverterError} from '../core/JsonConverterError';
 
-export type Instantiable<T> = Function & { prototype: T };
+export type Instantiable<T> = new(...args: any[]) => T;
+export type AbstractType<T> = Function & { prototype: T };
 export type BasicType = typeof Number | typeof String | typeof Boolean;
-export type Type = BasicType | Instantiable<any>;
+export type Type = BasicType | Instantiable<any> | AbstractType<any>;
 
 /**
  * Try parse boolean
@@ -77,4 +78,3 @@ export function isNumber(obj: any): boolean {
 export function isObject(obj: any): boolean {
     return Object(obj) === obj;
 }
-

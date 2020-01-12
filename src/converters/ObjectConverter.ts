@@ -43,7 +43,9 @@ export class ObjectConverter extends CustomConverter<any, ObjectJsonConverterOpt
 
         properties.forEach((property) => {
             try {
-                instance[property.name] = this.converter.deserialize(json[property.serializedName], property.converterDefinition);
+                if (!this.converter.options.keepObjectFieldValues || json.hasOwnProperty(property.serializedName)) {
+                    instance[property.name] = this.converter.deserialize(json[property.serializedName], property.converterDefinition);
+                }
             } catch (err) {
                 const errorMessage = `Fail to deserialize property <${property.serializedName}>`;
                 throw new JsonConverterError(errorMessage, property.serializedName, err);

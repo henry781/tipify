@@ -98,9 +98,11 @@ export class JsonConverter {
 }
 
 const DEFAULT_OPTIONS: JsonConverterOptions = {
+    keepObjectFieldValues: true,
     tryParse: false,
 };
 
 interface JsonConverterOptions {
+    keepObjectFieldValues: boolean;
     tryParse: boolean;
 }
