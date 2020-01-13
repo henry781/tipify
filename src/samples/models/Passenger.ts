@@ -9,7 +9,7 @@ import {Pid} from './Pid';
 @jsonObject()
 export class Passenger {
 
-    @jsonProperty('pid', {converter: PidConverter})
+    @jsonProperty('pid', PidConverter)
     public _pid: Pid;
 
     @jsonProperty('gender', enumOf(Gender, EnumStrategy.NAME))

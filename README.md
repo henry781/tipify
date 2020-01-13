@@ -55,7 +55,7 @@ Type defined with `@jsonProperty()` can be :
 @jsonObject()
 export class Passenger {
 
-    @jsonProperty('pid', {converter: PidConverter})
+    @jsonProperty('pid', PidConverter)
     private _pid: Pid;
 
     @jsonProperty('gender', enumOf(Gender, EnumStrategy.NAME))

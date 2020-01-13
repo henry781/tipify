@@ -3,17 +3,22 @@ import {ConverterDefinition, CustomConverter} from '../converters/CustomConverte
 import {NumberConverter} from '../converters/NumberConverter';
 import {ObjectConverter, ObjectJsonConverterOptions} from '../converters/ObjectConverter';
 import {StringConverter} from '../converters/StringConverter';
-import {Type} from './JsonConverterUtil';
+import {Instantiable, Type} from './JsonConverterUtil';
 
-export function ensureConverterDefinition(converterDefinitionOrType: ConverterDefinition | Type): ConverterDefinition {
+export function ensureConverterDefinition(
+    converterDefinitionOrType: ConverterDefinition | Instantiable<CustomConverter> | Type): ConverterDefinition {
+
+    const converter = converterDefinitionOrType as Instantiable<CustomConverter>;
+    const isConverter = converter && converter.prototype && converter.prototype instanceof CustomConverter;
+    if (isConverter) {
+        return {converter};
+    }
 
     const converterDefinition = converterDefinitionOrType as ConverterDefinition;
-
     const isConverterDefinition = converterDefinition
         && converterDefinition.converter
         && converterDefinition.converter.prototype
         && converterDefinition.converter.prototype instanceof CustomConverter;
-
     if (isConverterDefinition) {
         return converterDefinition;
     }
