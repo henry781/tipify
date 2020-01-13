@@ -56,16 +56,16 @@ Type defined with `@jsonProperty()` can be :
 export class Passenger {
 
     @jsonProperty('pid', {converter: PidConverter})
-    public _pid: Pid;
+    private _pid: Pid;
 
     @jsonProperty('gender', enumOf(Gender, EnumStrategy.NAME))
-    public _gender: Gender;
+    private _gender: Gender;
 
     @jsonProperty('name', String)
-    public _name: string;
+    private _name: string;
 
     @jsonProperty('informations', any())
-    public _informations: object;
+    private _informations: object;
 
     constructor(options?: PassengerOptions) {
         if (options) {
