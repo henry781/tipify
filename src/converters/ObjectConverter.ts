@@ -1,11 +1,12 @@
+import {SerializeOptions} from '../core/JsonConverter';
 import {JsonConverterError} from '../core/JsonConverterError';
 import {JsonConverterMapper} from '../mapping/JsonConverterMapper';
-import {Instantiable, isObject} from '../util/JsonConverterUtil';
+import {AbstractType, Instantiable, isNullOrUndefined, isObject} from '../util/CommonUtil';
 import {CustomConverter} from './CustomConverter';
 
-export class ObjectConverter extends CustomConverter<any, ObjectJsonConverterOptions> {
+export class ObjectConverter extends CustomConverter<any, ObjectConverterOptions> {
 
-    public deserialize<T>(json: any, options: ObjectJsonConverterOptions): T {
+    public deserialize<T>(json: any, options: ObjectConverterOptions): T {
 
         if (!isObject(json)) {
             const errorMessage = `Cannot deserialize to <${options.type.name}>, given json is not an object`;
@@ -46,7 +47,7 @@ export class ObjectConverter extends CustomConverter<any, ObjectJsonConverterOpt
                 if (!this.converter.options.keepObjectFieldValues || json.hasOwnProperty(property.serializedName)) {
                     instance[property.name] = this.converter.processDeserialize(
                         json[property.serializedName],
-                        property.converterDefinition);
+                        property.converterWithOptions);
                 }
             } catch (err) {
                 const errorMessage = `Fail to deserialize property <${property.serializedName}>`;
@@ -56,36 +57,51 @@ export class ObjectConverter extends CustomConverter<any, ObjectJsonConverterOpt
         return instance;
     }
 
-    public serialize<T>(obj: T, options: ObjectJsonConverterOptions): any {
+    public serialize<T>(obj: T, converter: ObjectConverterOptions, serializeOptions: SerializeOptions): any {
 
         const typeMapping = JsonConverterMapper.getMappingForType(obj.constructor);
-        if (!typeMapping) {
+        const instance: any = {};
+
+        if (!typeMapping && !serializeOptions.unsafe) {
             const errorMessage = `Cannot get mapping <${obj.constructor.name}>, `
                 + 'this may occur when decorator @jsonObject is missing';
             throw new JsonConverterError(errorMessage);
         }
 
-        const properties = JsonConverterMapper.getAllPropertiesForTypeMapping(typeMapping);
+        if (typeMapping) {
+            const properties = JsonConverterMapper.getAllPropertiesForTypeMapping(typeMapping);
 
-        const instance: any = {};
-
-        // processSerialize each property
-        properties.forEach((property) => {
-            try {
-                const value = this.converter.processSerialize(obj[property.name], property.converterDefinition);
-                if (value !== undefined && value !== null) {
-                    instance[property.serializedName] = value;
+            properties.forEach((property) => {
+                try {
+                    const value = this.converter.processSerialize(obj[property.name], property.converterWithOptions);
+                    if (!isNullOrUndefined(value)) {
+                        instance[property.serializedName] = value;
+                    }
+                } catch (err) {
+                    const errorMessage = `Fail to serialize property <${property.serializedName}>`;
+                    throw new JsonConverterError(errorMessage, property.serializedName, err);
                 }
-            } catch (err) {
-                const errorMessage = `Fail to serialize property <${property.serializedName}>`;
-                throw new JsonConverterError(errorMessage, property.serializedName, err);
-            }
-        });
+            });
+
+        } else {
+
+            Object.keys(obj).forEach((property) => {
+                try {
+                    const value = this.converter.processSerialize(obj[property], undefined, serializeOptions);
+                    if (!isNullOrUndefined(value)) {
+                        instance[property] = value;
+                    }
+                } catch (err) {
+                    const errorMessage = `Fail to serialize property <${property}>`;
+                    throw new JsonConverterError(errorMessage, property, err);
+                }
+            });
+        }
 
         return instance;
     }
 }
 
-export interface ObjectJsonConverterOptions {
-    type?: Instantiable<any>;
+export interface ObjectConverterOptions {
+    type?: Instantiable<any> | AbstractType<any>;
 }

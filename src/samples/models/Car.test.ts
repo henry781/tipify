@@ -56,6 +56,14 @@ describe('Car', () => {
 
             expect(actualJson).deep.equal(expectedJson);
         });
+
+        it('should serialize even when mapping cannot be found (unsafe)', () => {
+            const car = new Car({brand: 'audi', name: 'a1'});
+            const obj = [{a1: [car]}];
+
+            const result = converter.serialize(obj, undefined, {unsafe: true});
+            expect(result).deep.equal([{a1: [{brand: 'audi', type: 'car', name: 'a1'}]}]);
+        });
     });
 
     describe('deserialize', () => {
