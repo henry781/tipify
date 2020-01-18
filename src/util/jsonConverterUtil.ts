@@ -4,7 +4,7 @@ import {ConverterWithOptions, CustomConverter} from '../converters/CustomConvert
 import {NumberConverter} from '../converters/NumberConverter';
 import {ObjectConverter, ObjectConverterOptions} from '../converters/ObjectConverter';
 import {StringConverter} from '../converters/StringConverter';
-import {Instantiable, isBoolean, isNullOrUndefined, isNumber, isObject, isString, Type} from './CommonUtil';
+import {Instantiable, isBoolean, isNullOrUndefined, isNumber, isObject, isString, Type} from './commonUtil';
 
 export type TypeOrConverter = Type | Instantiable<CustomConverter> | ConverterWithOptions;
 
@@ -20,13 +20,13 @@ export function normalizeConverter(typeOrConverter: TypeOrConverter): ConverterW
         return {converter};
     }
 
-    const converterDefinition = typeOrConverter as ConverterWithOptions;
-    const isConverterDefinition = converterDefinition
-        && converterDefinition.converter
-        && converterDefinition.converter.prototype
-        && converterDefinition.converter.prototype instanceof CustomConverter;
-    if (isConverterDefinition) {
-        return converterDefinition;
+    const converterWithOptions = typeOrConverter as ConverterWithOptions;
+    const isConverterWithOptions = converterWithOptions
+        && converterWithOptions.converter
+        && converterWithOptions.converter.prototype
+        && converterWithOptions.converter.prototype instanceof CustomConverter;
+    if (isConverterWithOptions) {
+        return converterWithOptions;
     }
 
     const type = typeOrConverter as Type;
@@ -56,6 +56,6 @@ export function autodetectConverter<T>(obj: T): ConverterWithOptions {
         return {converter: NumberConverter};
 
     } else if (isObject(obj)) {
-        return {converter: ObjectConverter, options: {}};
+        return {converter: ObjectConverter, options: {type: obj.constructor}};
     }
 }
