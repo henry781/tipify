@@ -1,5 +1,5 @@
 import {JsonConverter, SerializeOptions} from '../core/JsonConverter';
-import {Instantiable} from '../util/CommonUtil';
+import {Instantiable} from '../util/commonUtil';
 
 export abstract class CustomConverter<T = any, K extends CustomConverterOptions = CustomConverterOptions> {
 

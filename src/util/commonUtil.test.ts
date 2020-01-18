@@ -1,8 +1,8 @@
 import {expect} from 'chai';
 import {JsonConverterError} from '../core/JsonConverterError';
-import {isBoolean, isNullOrUndefined, isNumber, isObject, isString, tryParseBoolean, tryParseNumber} from './CommonUtil';
+import {isBoolean, isNullOrUndefined, isNumber, isObject, isString, tryParseBoolean, tryParseNumber} from './commonUtil';
 
-describe('CommonUtil', () => {
+describe('commonUtil', () => {
 
     /**
      * Try to parse a string to a boolean

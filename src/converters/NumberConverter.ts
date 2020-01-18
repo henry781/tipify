@@ -1,5 +1,5 @@
 import {JsonConverterError} from '../core/JsonConverterError';
-import {isNumber, isString, tryParseNumber} from '../util/CommonUtil';
+import {isNumber, isString, tryParseNumber} from '../util/commonUtil';
 import {CustomConverter, CustomConverterOptions} from './CustomConverter';
 
 export class NumberConverter extends CustomConverter<number> {

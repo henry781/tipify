@@ -1,5 +1,5 @@
 import {JsonConverterError} from '../core/JsonConverterError';
-import {isNullOrUndefined, isNumber} from '../util/CommonUtil';
+import {isNullOrUndefined, isNumber} from '../util/commonUtil';
 import {ConverterWithOptions, CustomConverter, CustomConverterOptions} from './CustomConverter';
 
 type StringOrNumber = string | number;

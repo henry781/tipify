@@ -1,5 +1,5 @@
 import {JsonConverterError} from '../core/JsonConverterError';
-import {isString} from '../util/CommonUtil';
+import {isString} from '../util/commonUtil';
 import {CustomConverter, CustomConverterOptions} from './CustomConverter';
 
 export class StringConverter extends CustomConverter<string> {

@@ -1,7 +1,7 @@
 import {SerializeOptions} from '../core/JsonConverter';
 import {JsonConverterError} from '../core/JsonConverterError';
 import {JsonConverterMapper} from '../mapping/JsonConverterMapper';
-import {AbstractType, Instantiable, isNullOrUndefined, isObject} from '../util/CommonUtil';
+import {AbstractType, Instantiable, isNullOrUndefined, isObject} from '../util/commonUtil';
 import {CustomConverter} from './CustomConverter';
 
 export class ObjectConverter extends CustomConverter<any, ObjectConverterOptions> {

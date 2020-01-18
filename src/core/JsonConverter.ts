@@ -10,8 +10,8 @@ import {
     ObjectConverter,
     StringConverter,
 } from '../converters/api';
-import {Instantiable, isNullOrUndefined, Type} from '../util/CommonUtil';
-import {autodetectConverter, normalizeConverter} from '../util/JsonConverterUtil';
+import {Instantiable, isNullOrUndefined, Type} from '../util/commonUtil';
+import {autodetectConverter, normalizeConverter} from '../util/jsonConverterUtil';
 import {JsonConverterError} from './JsonConverterError';
 
 export class JsonConverter {

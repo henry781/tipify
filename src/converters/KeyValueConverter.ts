@@ -1,7 +1,7 @@
 import {SerializeOptions} from '../core/JsonConverter';
 import {JsonConverterError} from '../core/JsonConverterError';
-import {isObject, Type} from '../util/CommonUtil';
-import {normalizeConverter} from '../util/JsonConverterUtil';
+import {isObject, Type} from '../util/commonUtil';
+import {normalizeConverter} from '../util/jsonConverterUtil';
 import {ConverterWithOptions, CustomConverter, CustomConverterOptions} from './CustomConverter';
 
 export class KeyValueConverter extends CustomConverter<object, MapConverterOptions> {

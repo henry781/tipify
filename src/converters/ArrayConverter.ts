@@ -1,7 +1,7 @@
 import {SerializeOptions} from '../core/JsonConverter';
 import {JsonConverterError} from '../core/JsonConverterError';
-import {Type} from '../util/CommonUtil';
-import {normalizeConverter} from '../util/JsonConverterUtil';
+import {Type} from '../util/commonUtil';
+import {normalizeConverter} from '../util/jsonConverterUtil';
 import {ConverterWithOptions, CustomConverter, CustomConverterOptions} from './CustomConverter';
 
 export class ArrayConverter extends CustomConverter<any[], ArrayConverterOptions> {

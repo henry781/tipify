@@ -2,8 +2,8 @@ import 'reflect-metadata';
 import {ConverterWithOptions, CustomConverter} from '../converters/CustomConverter';
 import {JsonConverterMapper} from '../mapping/JsonConverterMapper';
 import {PropertyMapping} from '../mapping/PropertyMapping';
-import {Instantiable, Type} from '../util/CommonUtil';
-import {normalizeConverter} from '../util/JsonConverterUtil';
+import {Instantiable, Type} from '../util/commonUtil';
+import {normalizeConverter} from '../util/jsonConverterUtil';
 
 export function jsonProperty(serializedName: string, type?: Type | Instantiable<CustomConverter> | ConverterWithOptions) {
 
