@@ -156,5 +156,24 @@ describe('ObjectConverter', () => {
             chai.expect(result).deep.equal(expectedJson);
             chai.expect(serialize.calledOnce).to.be.true;
         });
+
+        it('should serialize each field when unsafe is true', () => {
+
+            const serializeOptions = {unsafe: true};
+            const serialize = converter.processSerialize
+                .withArgs(actor, undefined, serializeOptions)
+                .returns({name: 'Steve'});
+
+            const obj = {actor};
+
+            const expectedJson = {
+                actor: {name: 'Steve'},
+            };
+
+            const result = objectConverter.serialize(obj, {}, serializeOptions);
+
+            chai.expect(result).deep.equal(expectedJson);
+            chai.expect(serialize.calledOnce).to.be.true;
+        });
     });
 });
