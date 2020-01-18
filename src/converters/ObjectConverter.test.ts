@@ -101,7 +101,7 @@ describe('ObjectConverter', () => {
 
         it('when type mapping is missing should throw an error', () => {
 
-            expect(() => objectConverter.serialize(movie, {}))
+            expect(() => objectConverter.serialize(movie, {}, {unsafe: false}))
                 .throw(JsonConverterError, 'Cannot get mapping <Movie>');
         });
 
@@ -111,7 +111,7 @@ describe('ObjectConverter', () => {
                 .withArgs('Steve', {converter: StringConverter})
                 .throws(new JsonConverterError(''));
 
-            expect(() => objectConverter.serialize(actor, {}))
+            expect(() => objectConverter.serialize(actor, {}, {unsafe: false}))
                 .throw(JsonConverterError, 'Fail to serialize property <name>');
             expect(serialize.calledOnce).to.be.true;
         });
@@ -126,7 +126,7 @@ describe('ObjectConverter', () => {
                 name: 'Steve',
             };
 
-            const result = objectConverter.serialize(actor, {});
+            const result = objectConverter.serialize(actor, {}, {unsafe: false});
             chai.expect(result).deep.equal(expectedJson);
             chai.expect(serialize.calledOnce).to.be.true;
         });
@@ -139,7 +139,7 @@ describe('ObjectConverter', () => {
 
             const expectedJson = {};
 
-            const result = objectConverter.serialize(actor, {});
+            const result = objectConverter.serialize(actor, {}, {unsafe: false});
             chai.expect(result).deep.equal(expectedJson);
             chai.expect(serialize.calledOnce).to.be.true;
         });
@@ -152,7 +152,7 @@ describe('ObjectConverter', () => {
 
             const expectedJson = {};
 
-            const result = objectConverter.serialize(actor, {});
+            const result = objectConverter.serialize(actor, {}, {unsafe: false});
             chai.expect(result).deep.equal(expectedJson);
             chai.expect(serialize.calledOnce).to.be.true;
         });

@@ -1,5 +1,5 @@
-import {JsonConverter} from '../core/JsonConverter';
-import {Instantiable} from '../util/JsonConverterUtil';
+import {JsonConverter, SerializeOptions} from '../core/JsonConverter';
+import {Instantiable} from '../util/CommonUtil';
 
 export abstract class CustomConverter<T = any, K extends CustomConverterOptions = CustomConverterOptions> {
 
@@ -13,15 +13,15 @@ export abstract class CustomConverter<T = any, K extends CustomConverterOptions 
         this._converter = converter;
     }
 
-    public abstract serialize(obj: T, options: K): any;
+    public abstract serialize(obj: T, converterOptions: K, serializeOptions?: SerializeOptions): any;
 
-    public abstract deserialize(json: any, options: K): T;
+    public abstract deserialize(json: any, converterOptions: K): T;
 }
 
 export interface CustomConverterOptions {
 }
 
-export interface ConverterDefinition {
+export interface ConverterWithOptions {
     converter: Instantiable<CustomConverter>;
     options?: CustomConverterOptions;
 }

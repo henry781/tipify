@@ -24,7 +24,7 @@ describe('jsonProperty', () => {
         const foundPropertyMapping = foundTypeMapping.properties.find((m) => m.name === '_name');
         expect(foundPropertyMapping).not.undefined;
         expect(foundPropertyMapping.serializedName).equal('name');
-        expect(foundPropertyMapping.converterDefinition).deep.equal({converter: StringConverter});
+        expect(foundPropertyMapping.converterWithOptions).deep.equal({converter: StringConverter});
 
     });
 
@@ -56,7 +56,7 @@ describe('jsonProperty', () => {
             const foundPropertyMapping = foundTypeMapping.properties.find((m) => m.name === '_name');
             expect(foundPropertyMapping).not.undefined;
             expect(foundPropertyMapping.serializedName).equal('name');
-            expect(foundPropertyMapping.converterDefinition).deep.equal({converter: StringConverter});
+            expect(foundPropertyMapping.converterWithOptions).deep.equal({converter: StringConverter});
         });
 
         it('should add property mapping (number)', () => {
@@ -65,7 +65,7 @@ describe('jsonProperty', () => {
             const foundPropertyMapping = foundTypeMapping.properties.find((m) => m.name === '_id');
             expect(foundPropertyMapping).not.undefined;
             expect(foundPropertyMapping.serializedName).equal('id');
-            expect(foundPropertyMapping.converterDefinition).deep.equal({converter: NumberConverter});
+            expect(foundPropertyMapping.converterWithOptions).deep.equal({converter: NumberConverter});
         });
 
         it('should add property mapping (boolean)', () => {
@@ -74,7 +74,7 @@ describe('jsonProperty', () => {
             const foundPropertyMapping = foundTypeMapping.properties.find((m) => m.name === '_active');
             expect(foundPropertyMapping).not.undefined;
             expect(foundPropertyMapping.serializedName).equal('active');
-            expect(foundPropertyMapping.converterDefinition).deep.equal({converter: BooleanConverter});
+            expect(foundPropertyMapping.converterWithOptions).deep.equal({converter: BooleanConverter});
         });
 
         it('should add property mapping (class)', () => {
@@ -83,7 +83,7 @@ describe('jsonProperty', () => {
             const foundPropertyMapping = foundTypeMapping.properties.find((m) => m.name === '_company');
             expect(foundPropertyMapping).not.undefined;
             expect(foundPropertyMapping.serializedName).equal('company');
-            expect(foundPropertyMapping.converterDefinition).deep.equal({converter: ObjectConverter, options: {type: Company}});
+            expect(foundPropertyMapping.converterWithOptions).deep.equal({converter: ObjectConverter, options: {type: Company}});
         });
     });
 });

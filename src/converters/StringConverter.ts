@@ -1,5 +1,5 @@
 import {JsonConverterError} from '../core/JsonConverterError';
-import {isString} from '../util/JsonConverterUtil';
+import {isString} from '../util/CommonUtil';
 import {CustomConverter, CustomConverterOptions} from './CustomConverter';
 
 export class StringConverter extends CustomConverter<string> {
@@ -7,7 +7,8 @@ export class StringConverter extends CustomConverter<string> {
     public deserialize(json: any, options: CustomConverterOptions): string {
 
         if (!isString(json)) {
-            throw new JsonConverterError('Fail to deserialize string, expected type is <String>, but json is not');
+            const errorMessage = 'Fail to deserialize string, expected type is <String>, but json is not';
+            throw new JsonConverterError(errorMessage);
         }
         return json as string;
     }

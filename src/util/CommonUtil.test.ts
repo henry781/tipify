@@ -1,6 +1,6 @@
 import {expect} from 'chai';
 import {JsonConverterError} from '../core/JsonConverterError';
-import {tryParseBoolean, tryParseNumber} from './JsonConverterUtil';
+import {tryParseBoolean, tryParseNumber} from './CommonUtil';
 
 /**
  * JsonConverterUtil

@@ -1,5 +1,5 @@
 import {CustomConverter, CustomConverterOptions} from '../../converters/CustomConverter';
-import {isNullOrUndefined} from '../../util/JsonConverterUtil';
+import {isNullOrUndefined} from '../../util/CommonUtil';
 import {Pid} from '../models/Pid';
 
 export class PidConverter extends CustomConverter<Pid, CustomConverterOptions> {

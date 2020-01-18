@@ -1,7 +1,8 @@
+import {SerializeOptions} from '../core/JsonConverter';
 import {JsonConverterError} from '../core/JsonConverterError';
-import {ensureConverterDefinition} from '../util/ConverterDefinitionUtil';
-import {Type} from '../util/JsonConverterUtil';
-import {ConverterDefinition, CustomConverter, CustomConverterOptions} from './CustomConverter';
+import {Type} from '../util/CommonUtil';
+import {normalizeConverter} from '../util/JsonConverterUtil';
+import {ConverterWithOptions, CustomConverter, CustomConverterOptions} from './CustomConverter';
 
 export class ArrayConverter extends CustomConverter<any[], ArrayConverterOptions> {
 
@@ -22,11 +23,11 @@ export class ArrayConverter extends CustomConverter<any[], ArrayConverterOptions
         });
     }
 
-    public serialize<T>(obj: T[], options: ArrayConverterOptions): any {
+    public serialize<T>(obj: T[], converterOptions: ArrayConverterOptions, serializeOptions: SerializeOptions): any {
 
         return obj.map((entry, index) => {
             try {
-                return this.converter.processSerialize(entry, options.itemConverter);
+                return this.converter.processSerialize(entry, converterOptions.itemConverter, serializeOptions);
             } catch (err) {
                 const errorMessage = `Fail to serialize index <${index}> of array`;
                 throw new JsonConverterError(errorMessage, index, err);
@@ -36,12 +37,12 @@ export class ArrayConverter extends CustomConverter<any[], ArrayConverterOptions
 }
 
 export interface ArrayConverterOptions extends CustomConverterOptions {
-    itemConverter: ConverterDefinition;
+    itemConverter: ConverterWithOptions;
 }
 
-export function arrayOf(itemTypeOrConverter: Type | ConverterDefinition): ConverterDefinition {
+export function arrayOf(itemTypeOrConverter: Type | ConverterWithOptions): ConverterWithOptions {
     return {
         converter: ArrayConverter,
-        options: {itemConverter: ensureConverterDefinition(itemTypeOrConverter)} as ArrayConverterOptions,
+        options: {itemConverter: normalizeConverter(itemTypeOrConverter)} as ArrayConverterOptions,
     };
 }

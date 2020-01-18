@@ -1,7 +1,8 @@
+import {SerializeOptions} from '../core/JsonConverter';
 import {JsonConverterError} from '../core/JsonConverterError';
-import {ensureConverterDefinition} from '../util/ConverterDefinitionUtil';
-import {isObject, Type} from '../util/JsonConverterUtil';
-import {ConverterDefinition, CustomConverter, CustomConverterOptions} from './CustomConverter';
+import {isObject, Type} from '../util/CommonUtil';
+import {normalizeConverter} from '../util/JsonConverterUtil';
+import {ConverterWithOptions, CustomConverter, CustomConverterOptions} from './CustomConverter';
 
 export class KeyValueConverter extends CustomConverter<object, MapConverterOptions> {
 
@@ -37,12 +38,12 @@ export class KeyValueConverter extends CustomConverter<object, MapConverterOptio
         return instance;
     }
 
-    public serialize(obj: object, options: MapConverterOptions): any {
+    public serialize(obj: object, converterOptions: MapConverterOptions, serializeOptions: SerializeOptions): any {
 
         const instance = {};
         Object.keys(obj).forEach((key) => {
             try {
-                instance[key] = this.converter.processSerialize(obj[key], options.valueConverter);
+                instance[key] = this.converter.processSerialize(obj[key], converterOptions.valueConverter, serializeOptions);
             } catch (err) {
                 const errorMessage = `Fail to serialize map value with key <${key}>`;
                 throw new JsonConverterError(errorMessage, key, err);
@@ -56,13 +57,13 @@ type StringOrNumberType = typeof String | typeof Number;
 
 export interface MapConverterOptions extends CustomConverterOptions {
     keyType: StringOrNumberType;
-    valueConverter: ConverterDefinition;
+    valueConverter: ConverterWithOptions;
 }
 
 export function keyValueOf(keyType: StringOrNumberType,
-                           valueTypeOrConverter: Type | ConverterDefinition): ConverterDefinition {
+                           valueTypeOrConverter: Type | ConverterWithOptions): ConverterWithOptions {
     return {
         converter: KeyValueConverter,
-        options: {keyType, valueConverter: ensureConverterDefinition(valueTypeOrConverter)},
+        options: {keyType, valueConverter: normalizeConverter(valueTypeOrConverter)},
     };
 }

@@ -1,4 +1,4 @@
-import {ConverterDefinition, CustomConverter, CustomConverterOptions} from './CustomConverter';
+import {ConverterWithOptions, CustomConverter, CustomConverterOptions} from './CustomConverter';
 
 export class AnyConverter extends CustomConverter {
 
@@ -16,6 +16,6 @@ export class AnyConverter extends CustomConverter {
     }
 }
 
-export function any(): ConverterDefinition {
+export function any(): ConverterWithOptions {
     return {converter: AnyConverter};
 }

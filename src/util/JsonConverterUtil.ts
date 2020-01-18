@@ -1,80 +1,61 @@
-import {JsonConverterError} from '../core/JsonConverterError';
+import {ArrayConverter} from '../converters/ArrayConverter';
+import {BooleanConverter} from '../converters/BooleanConverter';
+import {ConverterWithOptions, CustomConverter} from '../converters/CustomConverter';
+import {NumberConverter} from '../converters/NumberConverter';
+import {ObjectConverter, ObjectConverterOptions} from '../converters/ObjectConverter';
+import {StringConverter} from '../converters/StringConverter';
+import {Instantiable, isBoolean, isNullOrUndefined, isNumber, isObject, isString, Type} from './CommonUtil';
 
-export type Instantiable<T> = new(...args: any[]) => T;
-export type AbstractType<T> = Function & { prototype: T };
-export type BasicType = typeof Number | typeof String | typeof Boolean;
-export type Type = BasicType | Instantiable<any> | AbstractType<any>;
+export type TypeOrConverter = Type | Instantiable<CustomConverter> | ConverterWithOptions;
 
-/**
- * Try parse boolean
- * @param value
- */
-export function tryParseBoolean(value: string): boolean {
+export function normalizeConverter(typeOrConverter: TypeOrConverter): ConverterWithOptions {
 
-    switch (value.toLowerCase()) {
-        case 'true':
-        case 'yes':
-        case '1':
-            return true;
-        case 'false':
-        case 'no':
-        case '0':
-            return false;
+    if (isNullOrUndefined(typeOrConverter)) {
+        return undefined;
+    }
+
+    const converter = typeOrConverter as Instantiable<CustomConverter>;
+    const isConverter = converter && converter.prototype && converter.prototype instanceof CustomConverter;
+    if (isConverter) {
+        return {converter};
+    }
+
+    const converterDefinition = typeOrConverter as ConverterWithOptions;
+    const isConverterDefinition = converterDefinition
+        && converterDefinition.converter
+        && converterDefinition.converter.prototype
+        && converterDefinition.converter.prototype instanceof CustomConverter;
+    if (isConverterDefinition) {
+        return converterDefinition;
+    }
+
+    const type = typeOrConverter as Type;
+    switch (type) {
+        case String:
+            return {converter: StringConverter};
+        case Boolean:
+            return {converter: BooleanConverter};
+        case Number:
+            return {converter: NumberConverter};
         default:
-            const errorMessage = 'Obj cannot be parsed to type <Boolean>';
-            throw new JsonConverterError(errorMessage);
+            return {converter: ObjectConverter, options: {type} as ObjectConverterOptions};
     }
 }
 
-/**
- * Try parse number
- * @param value
- */
-export function tryParseNumber(value: string): number {
-    const n = Number(value);
-    if (isNaN(n)) {
-        const errorMessage = 'Obj cannot be parsed to type <Number>';
-        throw new JsonConverterError(errorMessage);
+export function autodetectConverter<T>(obj: T): ConverterWithOptions {
+    if (Array.isArray(obj)) {
+        return {converter: ArrayConverter, options: {}};
+
+    } else if (isString(obj)) {
+        return {converter: StringConverter};
+
+    } else if (isBoolean(obj)) {
+        return {converter: BooleanConverter};
+
+    } else if (isNumber(obj)) {
+        return {converter: NumberConverter};
+
+    } else if (isObject(obj)) {
+        return {converter: ObjectConverter, options: {}};
     }
-    return n;
-}
-
-/**
- * Is object null or undefined
- * @param obj
- */
-export function isNullOrUndefined(obj: any) {
-    return typeof obj === 'undefined' || obj === null;
-}
-
-/**
- * Is obj a string
- * @param obj
- */
-export function isString(obj: any): boolean {
-    return typeof obj === 'string' || obj instanceof String;
-}
-
-/**
- * Is obj a boolean
- * @param obj
- */
-export function isBoolean(obj: any): boolean {
-    return typeof obj === 'boolean' || obj instanceof Boolean;
-}
-
-/**
- * Is obj a number
- * @param obj
- */
-export function isNumber(obj: any): boolean {
-    return typeof obj === 'number' || obj instanceof Number;
-}
-
-/**
- * is obj an object
- * @param obj
- */
-export function isObject(obj: any): boolean {
-    return Object(obj) === obj;
 }

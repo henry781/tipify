@@ -1,6 +1,6 @@
 import {JsonConverterError} from '../core/JsonConverterError';
-import {isNullOrUndefined, isNumber} from '../util/JsonConverterUtil';
-import {ConverterDefinition, CustomConverter, CustomConverterOptions} from './CustomConverter';
+import {isNullOrUndefined, isNumber} from '../util/CommonUtil';
+import {ConverterWithOptions, CustomConverter, CustomConverterOptions} from './CustomConverter';
 
 type StringOrNumber = string | number;
 
@@ -54,6 +54,6 @@ interface Enum {
     [key: number]: string | number;
 }
 
-export function enumOf(type: Enum, strategy = EnumStrategy.NAME): ConverterDefinition {
+export function enumOf(type: Enum, strategy = EnumStrategy.NAME): ConverterWithOptions {
     return {converter: EnumConverter, options: {type, strategy}};
 }

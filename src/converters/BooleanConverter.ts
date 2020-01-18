@@ -1,5 +1,5 @@
 import {JsonConverterError} from '../core/JsonConverterError';
-import {isBoolean, isString, tryParseBoolean} from '../util/JsonConverterUtil';
+import {isBoolean, isString, tryParseBoolean} from '../util/CommonUtil';
 import {CustomConverter, CustomConverterOptions} from './CustomConverter';
 
 export class BooleanConverter extends CustomConverter<boolean> {
