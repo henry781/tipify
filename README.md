@@ -176,7 +176,7 @@ export class PidConverter extends CustomConverter<Pid, CustomConverterOptions> {
 }
 ```
 
-## Parsing
+## Boolean and number parsing
 
 Tipify can parse boolean and numbers when option `tryParse` is enabled.
 
@@ -185,4 +185,17 @@ Tipify can parse boolean and numbers when option `tryParse` is enabled.
 ```
 const converter = new JsonConverter({ tryParse: true });
 const result = converter.deserialize('true', Boolean);
+```
+
+## Unsafe serialize mode
+
+To serialize objects wrapped into non typed objects, use options `unsafe: true`.
+
+```
+const car = new Car({brand: 'dodge', name: 'charger'});
+const obj = [{charger: [car]}];
+
+const result = converter.serialize(obj, undefined, {unsafe: true});
+console.log(result);
+// [{"charger":[{"brand":"dodge","type":"car","name":"charger"}]}]
 ```
