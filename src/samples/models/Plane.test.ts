@@ -1,5 +1,5 @@
-import * as chai from 'chai';
-import {JsonConverter} from '../../JsonConverter';
+import {expect} from 'chai';
+import {JsonConverter} from '../../core/JsonConverter';
 import {Jet} from './Jet';
 import {Plane} from './Plane';
 
@@ -24,7 +24,7 @@ describe('Plane', () => {
 
             const plane = converter.deserialize<Plane>(json, Plane);
 
-            chai.expect(plane).instanceOf(Jet);
+            expect(plane).instanceOf(Jet);
         });
 
     });

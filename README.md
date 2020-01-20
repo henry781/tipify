@@ -3,6 +3,7 @@
 
 ## Usage
 
+Install _tipify_ dependency.
 ```
 npm install --save tipify
 ```
@@ -18,13 +19,12 @@ Enable experimental decorators in tsconfig.
 
 Instantiate a new converter.
 ```
-const car = new Car();
-
 const converter = new JsonConverter();
 
-const json = converter.serialize(car);
+const car = new Car();
 
-const car2 = converter.deserialize(car, Car);
+const json = converter.serialize(car);
+const car2 = converter.deserialize(json, Car);
 ```
 
 ## Mapping
@@ -33,6 +33,21 @@ const car2 = converter.deserialize(car, Car);
 
 `@jsonProperty('name', String)` should be set on each class field;
 
+Type defined with `@jsonProperty()` can be :
+* A class decorated with `@jsonObject()`
+* A custom converter
+* A type defined below
+
+| @jsonObject(#)                     | Type                     |
+|------------------------------------|--------------------------|
+| String                             | string                   |
+| Number                             | number                   |
+| Boolean                            | boolean                  |
+| arrayOf(Passenger)                 | Passenger[]              |
+| arrayOf(array(String))             | string[][]               |
+| enumOf(Color)                      | Color                    |
+| any()                              | any                      |
+| keyValueOf(String, Passenger)      | {[key:string]: Passenger}|
 
 ### Example
 
@@ -43,13 +58,13 @@ export class Passenger {
     @jsonProperty('pid', PidConverter)
     private _pid: Pid;
 
-    @jsonProperty('gender', Enum(Gender, EnumStrategy.INDEX_COMPATIBLE))
+    @jsonProperty('gender', enumOf(Gender, EnumStrategy.NAME))
     private _gender: Gender;
 
     @jsonProperty('name', String)
     private _name: string;
 
-    @jsonProperty('informations', Any)
+    @jsonProperty('informations', any())
     private _informations: object;
 
     constructor(options?: PassengerOptions) {
@@ -63,25 +78,10 @@ export class Passenger {
 }
 ```
 
-Type defined with `@jsonProperty()` can be :
-* A class with `@jsonObject()`
-* A custom converter
-* A standard type defined below
-* An array of class, custom converter or standard type, like `[String]`
-
-
-|                | 
-|----------------|
-| String         |
-| Number         |
-| Boolean        |
-| Any            |
-| Enum(...)      |
-
-
-## Implicit type mapping
+### Implicit type mapping
 When type is not specified in `@jsonProperty` decorator, mapper will try to get type information from emitted metadata.
-_Warning_ : It does not works with array and generics.
+
+**Warning** : It does not works with array and generics.
 
 ```
 @jsonObject()
@@ -110,7 +110,7 @@ Tipify can manage polymorphism when `discriminatorProperty` and `discriminatorVa
 @jsonObject({discriminatorProperty: 'type'})
 export abstract class Vehicle {
 
-    @jsonProperty('type', String)
+    @jsonProperty('type')
     private _type: string;
     
     constructor(type?: string) {
@@ -138,7 +138,7 @@ chai.expect(result).instanceof(Car);
 ## Enum
 
 ```
-@jsonProperty('color', Enum(Color, EnumStrategy.NAME_COMPATIBLE))
+@jsonProperty('color', enumOf(Color, EnumStrategy.NAME_COMPATIBLE))
 private _color: Color;
 ```
 
@@ -152,23 +152,50 @@ private _color: Color;
 ## Custom converter
 
 ```
-@jsonCustomConverter()
-export class PidConverter implements JsonCustomConverter<Pid> {
+export class PidConverter extends CustomConverter<Pid, CustomConverterOptions> {
 
-    public deserialize(obj: any): Pid {
-        return undefined;
+    public deserialize(obj: any, options: CustomConverterOptions): Pid {
+
+        if (isNullOrUndefined(obj)) {
+            return obj;
+        }
+
+        return {
+            id: parseInt(obj, 10),
+        } as Pid;
     }
 
-    public serialize(obj: Pid): any {
-        return undefined;
+    public serialize(obj: Pid, options: CustomConverterOptions): any {
+
+        if (isNullOrUndefined(obj)) {
+            return obj;
+        }
+
+        return obj.id;
     }
 }
 ```
 
-## Parsing
+## Boolean and number parsing
 
-Tipify can parse boolean and numbers when option `tryParse` is enabed.
+Tipify can parse boolean and numbers when option `tryParse` is enabled.
+
+**Note**: Parsing is enabled by default;
 
 ```
-const result = converter.deserialize('true', Boolean, {tryParse: true});
+const converter = new JsonConverter({ tryParse: true });
+const result = converter.deserialize('true', Boolean);
+```
+
+## Unsafe serialize mode
+
+To serialize objects wrapped into non typed objects, use options `unsafe: true`.
+
+```
+const car = new Car({brand: 'dodge', name: 'charger'});
+const obj = [{charger: [car]}];
+
+const result = converter.serialize(obj, undefined, {unsafe: true});
+console.log(result);
+// [{"charger":[{"brand":"dodge","type":"car","name":"charger"}]}]
 ```

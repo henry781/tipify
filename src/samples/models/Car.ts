@@ -1,12 +1,11 @@
 import {jsonObject} from '../../decorators/jsonObject';
 import {jsonProperty} from '../../decorators/jsonProperty';
-import {CarOptions} from './CarOptions';
-import {Vehicle} from './Vehicle';
+import {Vehicle, VehicleOptions} from './Vehicle';
 
 @jsonObject({discriminatorValue: 'car'})
 export class Car extends Vehicle {
 
-    @jsonProperty('brand', String)
+    @jsonProperty('brand')
     public _brand: string;
 
     constructor(options?: CarOptions) {
@@ -16,4 +15,8 @@ export class Car extends Vehicle {
             this._brand = options.brand;
         }
     }
+}
+
+export interface CarOptions extends VehicleOptions {
+    brand?: string;
 }

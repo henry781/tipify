@@ -1,18 +1,12 @@
-import {JsonCustomConverter} from '../../converter/JsonCustomConverter';
-import {jsonCustomConverter} from '../../decorators/jsonCustomConverter';
-import {JsonConverterUtil} from '../../JsonConverterUtil';
+import {CustomConverter, CustomConverterOptions} from '../../converters/CustomConverter';
+import {isNullOrUndefined} from '../../util/commonUtil';
 import {Pid} from '../models/Pid';
 
-@jsonCustomConverter()
-export class PidConverter extends JsonCustomConverter<Pid> {
+export class PidConverter extends CustomConverter<Pid, CustomConverterOptions> {
 
-    /**
-     * Deserialize
-     * @param obj
-     */
-    public deserialize(obj: any): Pid {
+    public deserialize(obj: any, options: CustomConverterOptions): Pid {
 
-        if (JsonConverterUtil.isNullOrUndefined(obj)) {
+        if (isNullOrUndefined(obj)) {
             return obj;
         }
 
@@ -21,13 +15,9 @@ export class PidConverter extends JsonCustomConverter<Pid> {
         } as Pid;
     }
 
-    /**
-     * Serialize
-     * @param obj
-     */
-    public serialize(obj: Pid): any {
+    public serialize(obj: Pid, options: CustomConverterOptions): any {
 
-        if (JsonConverterUtil.isNullOrUndefined(obj)) {
+        if (isNullOrUndefined(obj)) {
             return obj;
         }
 

@@ -1,6 +1,6 @@
 {
   "name": "tipify",
-  "version": "2.0.1",
+  "version": "3.0.0",
   "description": "",
   "main": "dist/tipify.bundle.js",
   "module": "dist/tipify.es.js",
@@ -23,21 +23,21 @@
   },
   "homepage": "https://github.com/henry781/tipify#readme",
   "dependencies": {
-    "typescript": "3.1.6"
+    "typescript": "3.7.4"
   },
   "devDependencies": {
-    "@types/chai": "4.1.4",
-    "@types/mocha": "5.2.5",
-    "@types/sinon": "5.0.2",
-    "chai": "4.1.2",
-    "cross-env": "^5.2.0",
-    "mocha": "5.2.0",
-    "reflect-metadata": "0.1.12",
-    "rollup": "^1.26.3",
-    "rollup-plugin-typescript2": "^0.25.2",
-    "sinon": "5.1.1",
-    "ts-loader": "5.3.0",
-    "ts-node": "7.0.1",
-    "tslint": "^5.12.1"
+    "@types/chai": "4.2.7",
+    "@types/mocha": "5.2.7",
+    "@types/sinon": "7.5.1",
+    "chai": "4.2.0",
+    "cross-env": "^6.0.3",
+    "mocha": "7.0.0",
+    "reflect-metadata": "0.1.13",
+    "rollup": "^1.29.0",
+    "rollup-plugin-typescript2": "^0.25.3",
+    "sinon": "8.0.4",
+    "ts-loader": "6.2.1",
+    "ts-node": "8.6.2",
+    "tslint": "^5.20.1"
   }
 }

@@ -1,26 +1,26 @@
+import {arrayOf} from '../../converters/ArrayConverter';
+import {enumOf, EnumStrategy} from '../../converters/EnumConverter';
 import {jsonObject} from '../../decorators/jsonObject';
 import {jsonProperty} from '../../decorators/jsonProperty';
-import {Enum, EnumStrategy} from '../../type/Enum';
 import {Color} from './Color';
 import {Passenger} from './Passenger';
-import {VehicleOptions} from './VehicleOptions';
 
 @jsonObject({discriminatorProperty: 'type'})
 export abstract class Vehicle {
 
-    @jsonProperty('type', String)
+    @jsonProperty('type')
     public _type: string;
 
-    @jsonProperty('id', Number)
+    @jsonProperty('id')
     public _id: number;
 
-    @jsonProperty('name', String)
+    @jsonProperty('name')
     public _name: string;
 
-    @jsonProperty('passengers', [Passenger])
+    @jsonProperty('passengers', arrayOf(Passenger))
     public _passengers: Passenger[];
 
-    @jsonProperty('color', Enum(Color, EnumStrategy.NAME))
+    @jsonProperty('color', enumOf(Color, EnumStrategy.NAME))
     public _color: Color;
 
     protected constructor(type?: string, options?: VehicleOptions) {
@@ -33,4 +33,11 @@ export abstract class Vehicle {
             this._color = options.color;
         }
     }
+}
+
+export interface VehicleOptions {
+    id?: number;
+    name?: string;
+    passengers?: Passenger[];
+    color?: Color;
 }
