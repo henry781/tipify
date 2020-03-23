@@ -12,18 +12,18 @@ describe('NumberConverter', () => {
 
     beforeEach(() => {
         converter = createStubInstance(JsonConverter);
-        numberConverter = new NumberConverter(converter);
+        numberConverter = new NumberConverter();
     });
 
     describe('deserialize', () => {
 
         it('when is 10 (number), should return 10', () => {
-            const obj = numberConverter.deserialize(10, {});
+            const obj = numberConverter.deserialize(10, {}, undefined, converter);
             expect(obj).equal(10);
         });
 
         it('when is 0 (number), should return 0', () => {
-            const obj = numberConverter.deserialize(0, {});
+            const obj = numberConverter.deserialize(0, {}, undefined, converter);
             expect(obj).equal(0);
         });
 
@@ -31,7 +31,7 @@ describe('NumberConverter', () => {
             stub(converter, 'options').get(() => {
                 return {tryParse: true};
             });
-            const obj = numberConverter.deserialize('10', {});
+            const obj = numberConverter.deserialize('10', {}, undefined, converter);
             expect(obj).equal(10);
         });
 
@@ -41,7 +41,7 @@ describe('NumberConverter', () => {
             });
 
             try {
-                numberConverter.deserialize('10', {});
+                numberConverter.deserialize('10', {}, undefined, converter);
                 fail();
             } catch (err) {
                 expect(err).instanceOf(JsonConverterError);

@@ -1,5 +1,7 @@
+import {customConverter} from '../decorators/customConverter';
 import {ConverterWithOptions, CustomConverter, CustomConverterOptions} from './CustomConverter';
 
+@customConverter()
 export class AnyConverter extends CustomConverter {
 
     public deserialize(json: any, options: CustomConverterOptions): any {

@@ -1,9 +1,11 @@
 import {JsonConverterError} from '../core/JsonConverterError';
+import {customConverter} from '../decorators/customConverter';
 import {isNullOrUndefined, isNumber} from '../util/commonUtil';
 import {ConverterWithOptions, CustomConverter, CustomConverterOptions} from './CustomConverter';
 
 type StringOrNumber = string | number;
 
+@customConverter()
 export class EnumConverter extends CustomConverter<StringOrNumber, EnumJsonConverterOptions> {
 
     public deserialize(json: any, options: EnumJsonConverterOptions): StringOrNumber {

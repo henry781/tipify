@@ -18,7 +18,7 @@ describe('ObjectConverter', () => {
         stub(converter, 'options').get(() => {
             return {keepObjectFieldValues: false};
         });
-        objectConverter = new ObjectConverter(converter);
+        objectConverter = new ObjectConverter();
     });
 
     @jsonObject()
@@ -50,7 +50,7 @@ describe('ObjectConverter', () => {
 
         it('when type mapping is missing should throw an error', () => {
 
-            expect(() => objectConverter.deserialize(movie, {type: Movie}))
+            expect(() => objectConverter.deserialize(movie, {type: Movie}, undefined, converter))
                 .throw(JsonConverterError, 'Cannot get mapping <Movie>');
         });
 
@@ -59,7 +59,7 @@ describe('ObjectConverter', () => {
                 .withArgs('Steve', {converter: StringConverter})
                 .throws(new JsonConverterError(''));
 
-            expect(() => objectConverter.deserialize(actorJson, {type: Actor}))
+            expect(() => objectConverter.deserialize(actorJson, {type: Actor}, undefined, converter))
                 .throw(JsonConverterError, 'Fail to deserialize property <name>');
             expect(deserialize.calledOnce).to.be.true;
         });
@@ -69,7 +69,7 @@ describe('ObjectConverter', () => {
                 .withArgs('Steve', {converter: StringConverter})
                 .returns('Steve1');
 
-            const result = objectConverter.deserialize<Actor>(actorJson, {type: Actor});
+            const result = objectConverter.deserialize<Actor>(actorJson, {type: Actor}, undefined, converter);
             expect(result).instanceOf(Actor);
             expect(result._name).equal('Steve1');
         });
@@ -80,7 +80,7 @@ describe('ObjectConverter', () => {
                 .withArgs(undefined, {converter: StringConverter})
                 .returns(undefined);
 
-            const result = objectConverter.deserialize<Actor>(actorJson2, {type: Actor});
+            const result = objectConverter.deserialize<Actor>(actorJson2, {type: Actor}, undefined, converter);
             expect(result).instanceOf(Actor);
             expect(result._name).to.be.undefined;
         });
@@ -91,7 +91,7 @@ describe('ObjectConverter', () => {
                 return {keepObjectFieldValues: true};
             });
 
-            const result = objectConverter.deserialize<Actor>(actorJson2, {type: Actor});
+            const result = objectConverter.deserialize<Actor>(actorJson2, {type: Actor}, undefined, converter);
             expect(result).instanceOf(Actor);
             expect(result._name).equal('TOTO');
         });
@@ -101,7 +101,7 @@ describe('ObjectConverter', () => {
 
         it('when type mapping is missing should throw an error', () => {
 
-            expect(() => objectConverter.serialize(movie, {}, {unsafe: false}))
+            expect(() => objectConverter.serialize(movie, {}, {unsafe: false}, converter))
                 .throw(JsonConverterError, 'Cannot get mapping <Movie>');
         });
 
@@ -111,7 +111,7 @@ describe('ObjectConverter', () => {
                 .withArgs('Steve', {converter: StringConverter})
                 .throws(new JsonConverterError(''));
 
-            expect(() => objectConverter.serialize(actor, {}, {unsafe: false}))
+            expect(() => objectConverter.serialize(actor, {}, {unsafe: false}, converter))
                 .throw(JsonConverterError, 'Fail to serialize property <name>');
             expect(serialize.calledOnce).to.be.true;
         });
@@ -126,7 +126,7 @@ describe('ObjectConverter', () => {
                 name: 'Steve',
             };
 
-            const result = objectConverter.serialize(actor, {}, {unsafe: false});
+            const result = objectConverter.serialize(actor, {}, {unsafe: false}, converter);
             chai.expect(result).deep.equal(expectedJson);
             chai.expect(serialize.calledOnce).to.be.true;
         });
@@ -139,7 +139,7 @@ describe('ObjectConverter', () => {
 
             const expectedJson = {};
 
-            const result = objectConverter.serialize(actor, {}, {unsafe: false});
+            const result = objectConverter.serialize(actor, {}, {unsafe: false}, converter);
             chai.expect(result).deep.equal(expectedJson);
             chai.expect(serialize.calledOnce).to.be.true;
         });
@@ -152,7 +152,7 @@ describe('ObjectConverter', () => {
 
             const expectedJson = {};
 
-            const result = objectConverter.serialize(actor, {}, {unsafe: false});
+            const result = objectConverter.serialize(actor, {}, {unsafe: false}, converter);
             chai.expect(result).deep.equal(expectedJson);
             chai.expect(serialize.calledOnce).to.be.true;
         });
@@ -170,7 +170,7 @@ describe('ObjectConverter', () => {
                 actor: {name: 'Steve'},
             };
 
-            const result = objectConverter.serialize(obj, {}, serializeOptions);
+            const result = objectConverter.serialize(obj, {}, serializeOptions, converter);
 
             chai.expect(result).deep.equal(expectedJson);
             chai.expect(serialize.calledOnce).to.be.true;

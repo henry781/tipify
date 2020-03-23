@@ -13,20 +13,20 @@ describe('KeyValueConverter', () => {
 
     beforeEach(() => {
         converter = createStubInstance(JsonConverter);
-        mapConverter = new KeyValueConverter(converter);
+        mapConverter = new KeyValueConverter();
     });
 
     describe('deserialize', () => {
 
         it('when json is not an object, should throw an error', () => {
             const json = [];
-            expect(() => mapConverter.deserialize(json, {keyType: String, valueConverter: stringConverterDefinition}))
+            expect(() => mapConverter.deserialize(json, {keyType: String, valueConverter: stringConverterDefinition}, undefined, converter))
                 .throws(JsonConverterError, 'Fail to deserialize map, given json is not an object');
         });
 
         it('when key is a string and expecting a number, should throw an error', () => {
             const json = {titi: 'toto'};
-            expect(() => mapConverter.deserialize(json, {keyType: Number, valueConverter: stringConverterDefinition}))
+            expect(() => mapConverter.deserialize(json, {keyType: Number, valueConverter: stringConverterDefinition}, undefined, converter))
                 .throws(JsonConverterError, 'Fail to parse map key <titi> should be a <Number>');
         });
 
@@ -36,7 +36,7 @@ describe('KeyValueConverter', () => {
                 .withArgs('toto', stringConverterDefinition)
                 .throws(new JsonConverterError(''));
 
-            expect(() => mapConverter.deserialize(json, {keyType: String, valueConverter: stringConverterDefinition}))
+            expect(() => mapConverter.deserialize(json, {keyType: String, valueConverter: stringConverterDefinition}, undefined, converter))
                 .throws(JsonConverterError, 'Fail to deserialize map value with key <titi>');
         });
 
@@ -46,7 +46,10 @@ describe('KeyValueConverter', () => {
                 .withArgs('toto', stringConverterDefinition)
                 .returns('toto1');
 
-            const result = mapConverter.deserialize(json, {keyType: String, valueConverter: stringConverterDefinition});
+            const result = mapConverter.deserialize(json, {
+                keyType: String,
+                valueConverter: stringConverterDefinition,
+            }, undefined, converter);
             expect(result).deep.equal({titi: 'toto1'});
         });
     });
@@ -59,7 +62,7 @@ describe('KeyValueConverter', () => {
                 .withArgs('toto', stringConverterDefinition)
                 .throws(new JsonConverterError(''));
 
-            expect(() => mapConverter.serialize(json, {keyType: String, valueConverter: stringConverterDefinition}))
+            expect(() => mapConverter.serialize(json, {keyType: String, valueConverter: stringConverterDefinition}, undefined, converter))
                 .throws(JsonConverterError, 'Fail to serialize map value with key <titi>');
         });
 
@@ -69,7 +72,7 @@ describe('KeyValueConverter', () => {
                 .withArgs('toto', stringConverterDefinition)
                 .returns('toto1');
 
-            const result = mapConverter.serialize(json, {keyType: String, valueConverter: stringConverterDefinition});
+            const result = mapConverter.serialize(json, {keyType: String, valueConverter: stringConverterDefinition}, undefined, converter);
             expect(result).deep.equal({titi: 'toto1'});
         });
     });

@@ -1,7 +1,9 @@
 import {CustomConverter, CustomConverterOptions} from '../../converters/CustomConverter';
+import {customConverter} from '../../decorators/customConverter';
 import {isNullOrUndefined} from '../../util/commonUtil';
 import {Pid} from '../models/Pid';
 
+@customConverter()
 export class PidConverter extends CustomConverter<Pid, CustomConverterOptions> {
 
     public deserialize(obj: any, options: CustomConverterOptions): Pid {

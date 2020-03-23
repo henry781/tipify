@@ -10,7 +10,6 @@ import {Vehicle} from './Vehicle';
 describe('Car', () => {
 
     const converter = new JsonConverter();
-    converter.registerConverter(PidConverter);
 
     describe('serialize', () => {
 

@@ -1,16 +1,12 @@
 import {expect} from 'chai';
-import {createStubInstance} from 'sinon';
-import {JsonConverter} from '../core/JsonConverter';
 import {AnyConverter} from './AnyConverter';
 
 describe('AnyConverter', () => {
 
-    let converter;
     let anyConverter: AnyConverter;
 
     beforeEach(() => {
-        converter = createStubInstance(JsonConverter);
-        anyConverter = new AnyConverter(converter);
+        anyConverter = new AnyConverter();
     });
 
     describe('deserialize', () => {

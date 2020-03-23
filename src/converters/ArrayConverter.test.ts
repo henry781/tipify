@@ -14,7 +14,7 @@ describe('ArrayConverter', () => {
 
     beforeEach(() => {
         converter = createStubInstance(JsonConverter);
-        arrayConverter = new ArrayConverter(converter);
+        arrayConverter = new ArrayConverter();
     });
 
     describe('deserialize', () => {
@@ -23,7 +23,7 @@ describe('ArrayConverter', () => {
 
             const json = {};
             try {
-                arrayConverter.deserialize(json, {itemConverter: stringConverterDefinition});
+                arrayConverter.deserialize(json, {itemConverter: stringConverterDefinition}, undefined, converter);
                 fail();
             } catch (err) {
                 expect(err).instanceOf(JsonConverterError);
@@ -37,7 +37,7 @@ describe('ArrayConverter', () => {
             converter.processDeserialize.withArgs('toto', stringConverterDefinition).returns('toto1');
             converter.processDeserialize.withArgs('titi', stringConverterDefinition).returns('titi1');
 
-            const obj = arrayConverter.deserialize(json, {itemConverter: stringConverterDefinition});
+            const obj = arrayConverter.deserialize(json, {itemConverter: stringConverterDefinition}, undefined, converter);
 
             expect(obj).length(2);
             expect(obj[0]).equal('toto1');
@@ -51,7 +51,7 @@ describe('ArrayConverter', () => {
             converter.processDeserialize.withArgs('titi', stringConverterDefinition).throws(new Error('unexpected'));
 
             try {
-                arrayConverter.deserialize(json, {itemConverter: stringConverterDefinition});
+                arrayConverter.deserialize(json, {itemConverter: stringConverterDefinition}, undefined, converter);
                 fail();
             } catch (err) {
                 expect(err).instanceOf(JsonConverterError);
@@ -68,7 +68,7 @@ describe('ArrayConverter', () => {
             converter.processSerialize.withArgs('toto', stringConverterDefinition).returns('toto1');
             converter.processSerialize.withArgs('titi', stringConverterDefinition).returns('titi1');
 
-            const json = arrayConverter.serialize(obj, {itemConverter: stringConverterDefinition});
+            const json = arrayConverter.serialize(obj, {itemConverter: stringConverterDefinition}, undefined, converter);
 
             expect(json).length(2);
             expect(json[0]).equal('toto1');
@@ -82,7 +82,7 @@ describe('ArrayConverter', () => {
             converter.processSerialize.withArgs('titi', stringConverterDefinition).throws(new Error('unexpected'));
 
             try {
-                arrayConverter.serialize(obj, {itemConverter: stringConverterDefinition});
+                arrayConverter.serialize(obj, {itemConverter: stringConverterDefinition}, undefined, converter);
                 fail();
             } catch (err) {
                 expect(err).instanceOf(JsonConverterError);

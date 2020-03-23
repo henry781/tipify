@@ -1,51 +1,16 @@
-import {
-    AnyConverter,
-    ArrayConverter,
-    BooleanConverter,
-    ConverterWithOptions,
-    CustomConverter,
-    EnumConverter,
-    KeyValueConverter,
-    NumberConverter,
-    ObjectConverter,
-    StringConverter,
-} from '../converters/api';
-import {Instantiable, isNullOrUndefined, Type} from '../util/commonUtil';
+import {ConverterWithOptions} from '../converters/api';
+import {CustomConverters} from '../converters/CustomConverters';
+import {isNullOrUndefined, Type} from '../util/commonUtil';
 import {autodetectConverter, normalizeConverter} from '../util/jsonConverterUtil';
 import {JsonConverterError} from './JsonConverterError';
 
 export class JsonConverter {
 
-    private _converters: Array<CustomConverter<any>> = [];
-
-    constructor(private _options = DEFAULT_OPTIONS) {
-        this.registerDefaultConverters();
-    }
-
     public get options() {
         return this._options;
     }
 
-    /**
-     * Register a converterWithOptions
-     * @param converterType
-     */
-    public registerConverter(converterType: Instantiable<CustomConverter<any>>) {
-        this._converters.push(new converterType(this));
-    }
-
-    /**
-     * Register all default converters
-     */
-    public registerDefaultConverters() {
-        this.registerConverter(AnyConverter);
-        this.registerConverter(ArrayConverter);
-        this.registerConverter(EnumConverter);
-        this.registerConverter(KeyValueConverter);
-        this.registerConverter(ObjectConverter);
-        this.registerConverter(BooleanConverter);
-        this.registerConverter(StringConverter);
-        this.registerConverter(NumberConverter);
+    constructor(private _options = DEFAULT_OPTIONS) {
     }
 
     /**
@@ -93,7 +58,7 @@ export class JsonConverter {
             throw new JsonConverterError(errorMessage);
         }
 
-        const converterInstance = this.getConverterInstance(converterWithOptions.converter);
+        const converterInstance = CustomConverters.getConverterInstance(converterWithOptions.converter);
         if (!converterInstance) {
             const errorMessage = 'Cannot get instance of converter'
                 + ` <${converterWithOptions.converter.name}>,`
@@ -101,7 +66,7 @@ export class JsonConverter {
             throw new JsonConverterError(errorMessage);
         }
 
-        return converterInstance.serialize(obj, converterWithOptions.options, serializeOptions);
+        return converterInstance.serialize(obj, converterWithOptions.options, serializeOptions, this);
     }
 
     public processDeserialize<T>(json: any, type?: Type | ConverterWithOptions): T {
@@ -111,7 +76,7 @@ export class JsonConverter {
         }
 
         const converterWithOptions = normalizeConverter(type);
-        const converterInstance = this.getConverterInstance(converterWithOptions.converter);
+        const converterInstance = CustomConverters.getConverterInstance(converterWithOptions.converter);
 
         if (!converterInstance) {
             const errorMessage = 'Cannot get instance of converter'
@@ -120,7 +85,7 @@ export class JsonConverter {
             throw new JsonConverterError(errorMessage);
         }
 
-        return converterInstance.deserialize(json, converterWithOptions.options);
+        return converterInstance.deserialize(json, converterWithOptions.options, undefined, this);
     }
 
     private buildErrorMessage(message: string, err: Error) {
@@ -142,14 +107,6 @@ export class JsonConverter {
 
         return message + segment + errorMessage;
     }
-
-    /**
-     * Get converter instance
-     * @param converterType
-     */
-    private getConverterInstance(converterType: Instantiable<CustomConverter>): CustomConverter {
-        return this._converters.find((c) => c instanceof converterType);
-    }
 }
 
 const DEFAULT_OPTIONS: JsonConverterOptions = {
@@ -164,6 +121,9 @@ interface JsonConverterOptions {
 
 export interface SerializeOptions {
     unsafe: boolean;
+}
+
+export interface DeserializeOptions {
 }
 
 const DEFAULT_SERIALIZE_OPTIONS: SerializeOptions = {

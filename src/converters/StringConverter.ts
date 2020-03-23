@@ -1,7 +1,9 @@
 import {JsonConverterError} from '../core/JsonConverterError';
+import {customConverter} from '../decorators/customConverter';
 import {isString} from '../util/commonUtil';
 import {CustomConverter, CustomConverterOptions} from './CustomConverter';
 
+@customConverter()
 export class StringConverter extends CustomConverter<string> {
 
     public deserialize(json: any, options: CustomConverterOptions): string {

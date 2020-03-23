@@ -12,7 +12,7 @@ describe('StringConverter', () => {
 
     beforeEach(() => {
         converter = createStubInstance(JsonConverter);
-        stringConverter = new StringConverter(converter);
+        stringConverter = new StringConverter();
     });
 
     describe('deserialize', () => {

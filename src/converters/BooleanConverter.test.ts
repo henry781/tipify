@@ -12,18 +12,18 @@ describe('BooleanConverter', () => {
 
     beforeEach(() => {
         converter = createStubInstance(JsonConverter);
-        booleanConverter = new BooleanConverter(converter);
+        booleanConverter = new BooleanConverter();
     });
 
     describe('deserialize', () => {
 
         it('when is true (bool), should return true', () => {
-            const obj = booleanConverter.deserialize(true, {});
+            const obj = booleanConverter.deserialize(true, {}, undefined, converter);
             expect(obj).equal(true);
         });
 
         it('when is false (bool), should return false', () => {
-            const obj = booleanConverter.deserialize(false, {});
+            const obj = booleanConverter.deserialize(false, {}, undefined, converter);
             expect(obj).equal(false);
         });
 
@@ -31,7 +31,7 @@ describe('BooleanConverter', () => {
             stub(converter, 'options').get(() => {
                 return {tryParse: true};
             });
-            const obj = booleanConverter.deserialize('true', {});
+            const obj = booleanConverter.deserialize('true', {}, undefined, converter);
             expect(obj).equal(true);
         });
 
@@ -39,7 +39,7 @@ describe('BooleanConverter', () => {
             stub(converter, 'options').get(() => {
                 return {tryParse: true};
             });
-            const obj = booleanConverter.deserialize('false', {});
+            const obj = booleanConverter.deserialize('false', {}, undefined, converter);
             expect(obj).equal(false);
         });
 
@@ -49,7 +49,7 @@ describe('BooleanConverter', () => {
             });
 
             try {
-                booleanConverter.deserialize('false', {});
+                booleanConverter.deserialize('false', {}, undefined, converter);
                 fail();
             } catch (err) {
                 expect(err).instanceOf(JsonConverterError);
