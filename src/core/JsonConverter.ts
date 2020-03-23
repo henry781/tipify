@@ -5,6 +5,10 @@ import {JsonConverterError} from './JsonConverterError';
 
 export class JsonConverter {
 
+    constructor(private _serializeOptions = DEFAULT_SERIALIZE_OPTIONS,
+                private _deserializeOptions = DEFAULT_DESERIALIZE_OPTIONS) {
+    }
+
     /**
      * Serialize an object
      * @param obj
@@ -13,7 +17,7 @@ export class JsonConverter {
      */
     public serialize<T>(obj: T,
                         type?: Type | ConverterAndArgs,
-                        options: SerializeOptions = DEFAULT_SERIALIZE_OPTIONS): any {
+                        options: SerializeOptions = this._serializeOptions): any {
 
         if (isNullOrUndefined(obj)) {
             return obj;
@@ -31,7 +35,7 @@ export class JsonConverter {
 
     public deserialize<T>(json: any,
                           type: Type | ConverterAndArgs,
-                          options: DeserializeOptions = DEFAULT_DESERIALIZE_OPTIONS): T {
+                          options: DeserializeOptions = this._deserializeOptions): T {
         if (isNullOrUndefined(json)) {
             return json;
         }
