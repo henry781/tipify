@@ -1,26 +1,30 @@
-import {DeserializeOptions, JsonConverter, SerializeOptions} from '../core/JsonConverter';
+import {CustomConverter} from '../core/CustomConverter';
+import {DeserializeOptions, SerializeOptions} from '../core/JsonConverter';
 import {JsonConverterError} from '../core/JsonConverterError';
-import {customConverter} from '../decorators/customConverter';
 import {JsonConverterMapper} from '../mapping/JsonConverterMapper';
 import {AbstractType, Instantiable, isNullOrUndefined, isObject} from '../util/commonUtil';
-import {CustomConverter} from './CustomConverter';
+import {autodetectConverterAndArgs} from '../util/jsonConverterUtil';
 
-@customConverter()
-export class ObjectConverter extends CustomConverter<any, ObjectConverterOptions> {
+type ObjectConverter = CustomConverter<any, ObjectConverterArgs>;
 
-    public deserialize<T>(json: any,
-                          converterOptions: ObjectConverterOptions,
-                          deserializeOptions: DeserializeOptions,
-                          jsonConverter: JsonConverter): T {
+export const objectConverter: ObjectConverter = {
+
+    deserialize<T>(json: any,
+                   args: ObjectConverterArgs,
+                   deserializeOptions: DeserializeOptions): T {
+
+        if (isNullOrUndefined(json)) {
+            return json;
+        }
 
         if (!isObject(json)) {
-            const errorMessage = `Cannot deserialize to <${converterOptions.type.name}>, given json is not an object`;
+            const errorMessage = `Cannot deserialize to <${args.type.name}>, given json is not an object`;
             throw new JsonConverterError(errorMessage);
         }
 
-        const typeMapping = JsonConverterMapper.getMappingForType(converterOptions.type);
+        const typeMapping = JsonConverterMapper.getMappingForType(args.type);
         if (!typeMapping) {
-            const errorMessage = `Cannot get mapping <${converterOptions.type.name}>, `
+            const errorMessage = `Cannot get mapping <${args.type.name}>, `
                 + 'this may occur when decorator @jsonObject is missing';
             throw new JsonConverterError(errorMessage);
         }
@@ -29,16 +33,16 @@ export class ObjectConverter extends CustomConverter<any, ObjectConverterOptions
         const discriminatorProperty = JsonConverterMapper.getDiscriminatorPropertyForTypeMapping(typeMapping);
         if (discriminatorProperty) {
             const discriminatorValue = json[discriminatorProperty];
-            const subTypes = JsonConverterMapper.listMappingForExtendingType(converterOptions.type);
+            const subTypes = JsonConverterMapper.listMappingForExtendingType(args.type);
             const subType = subTypes.find((m) => m.options && m.options.discriminatorValue === discriminatorValue);
 
             if (!subType) {
-                const errorMessage = `Polymorphism error : Cannot get subtype for <${converterOptions.type.name}> `
+                const errorMessage = `Polymorphism error : Cannot get subtype for <${args.type.name}> `
                     + `got only subtypes <${subTypes.map((t) => t.options ? t.options.discriminatorValue : t.type.name).toString()}>`;
                 throw new JsonConverterError(errorMessage);
             }
 
-            return this.deserialize(json, {type: subType.type}, deserializeOptions, jsonConverter);
+            return this.deserialize(json, {type: subType.type}, deserializeOptions);
         }
 
         // new instance of type
@@ -49,10 +53,11 @@ export class ObjectConverter extends CustomConverter<any, ObjectConverterOptions
 
         properties.forEach((property) => {
             try {
-                if (!jsonConverter.options.keepObjectFieldValues || json.hasOwnProperty(property.serializedName)) {
-                    instance[property.name] = jsonConverter.processDeserialize(
+                if (!deserializeOptions.keepObjectFieldValues || json.hasOwnProperty(property.serializedName)) {
+                    instance[property.name] = property.converter.deserialize(
                         json[property.serializedName],
-                        property.converterWithOptions);
+                        property.args,
+                        deserializeOptions);
                 }
             } catch (err) {
                 const errorMessage = `Fail to deserialize property <${property.serializedName}>`;
@@ -60,12 +65,15 @@ export class ObjectConverter extends CustomConverter<any, ObjectConverterOptions
             }
         });
         return instance;
-    }
+    },
 
-    public serialize<T>(obj: T,
-                        converter: ObjectConverterOptions,
-                        serializeOptions: SerializeOptions,
-                        jsonConverter: JsonConverter): any {
+    serialize<T>(obj: T,
+                 args: ObjectConverterArgs,
+                 serializeOptions: SerializeOptions): any {
+
+        if (isNullOrUndefined(obj)) {
+            return obj;
+        }
 
         const typeMapping = JsonConverterMapper.getMappingForType(obj.constructor);
         const instance: any = {};
@@ -81,7 +89,7 @@ export class ObjectConverter extends CustomConverter<any, ObjectConverterOptions
 
             properties.forEach((property) => {
                 try {
-                    const value = jsonConverter.processSerialize(obj[property.name], property.converterWithOptions);
+                    const value = property.converter.serialize(obj[property.name], property.args, serializeOptions);
                     if (!isNullOrUndefined(value)) {
                         instance[property.serializedName] = value;
                     }
@@ -95,7 +103,8 @@ export class ObjectConverter extends CustomConverter<any, ObjectConverterOptions
 
             Object.keys(obj).forEach((property) => {
                 try {
-                    const value = jsonConverter.processSerialize(obj[property], undefined, serializeOptions);
+                    const converterAndArgs = autodetectConverterAndArgs(obj[property]);
+                    const value = converterAndArgs.converter.serialize(obj[property], converterAndArgs.args, serializeOptions);
                     if (!isNullOrUndefined(value)) {
                         instance[property] = value;
                     }
@@ -107,9 +116,9 @@ export class ObjectConverter extends CustomConverter<any, ObjectConverterOptions
         }
 
         return instance;
-    }
-}
+    },
+};
 
-export interface ObjectConverterOptions {
+export interface ObjectConverterArgs {
     type?: Instantiable<any> | AbstractType<any>;
 }

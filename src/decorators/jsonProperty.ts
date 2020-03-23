@@ -1,11 +1,11 @@
 import 'reflect-metadata';
-import {ConverterWithOptions, CustomConverter} from '../converters/CustomConverter';
+import {ConverterAndArgs, CustomConverter} from '../core/CustomConverter';
 import {JsonConverterMapper} from '../mapping/JsonConverterMapper';
 import {PropertyMapping} from '../mapping/PropertyMapping';
-import {Instantiable, Type} from '../util/commonUtil';
-import {normalizeConverter} from '../util/jsonConverterUtil';
+import {Type} from '../util/commonUtil';
+import {normalizeConverterAndArgs} from '../util/jsonConverterUtil';
 
-export function jsonProperty(serializedName: string, type?: Type | Instantiable<CustomConverter> | ConverterWithOptions) {
+export function jsonProperty(serializedName: string, type?: Type | CustomConverter | ConverterAndArgs) {
 
     return (cls: any, property: string) => {
 
@@ -13,11 +13,12 @@ export function jsonProperty(serializedName: string, type?: Type | Instantiable<
             type = Reflect.getMetadata('design:type', cls, property);
         }
 
-        const converterWithOptions = normalizeConverter(type);
-        const typeMapping = JsonConverterMapper.createMappingForType(cls.constructor);
+        const {converter, args} = normalizeConverterAndArgs(type);
 
+        const typeMapping = JsonConverterMapper.createMappingForType(cls.constructor);
         const propertyMapping: PropertyMapping = {
-            converterWithOptions,
+            args,
+            converter,
             name: property,
             serializedName,
         };

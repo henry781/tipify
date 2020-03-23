@@ -1,47 +1,31 @@
 import {fail} from 'assert';
 import {expect} from 'chai';
-import {createStubInstance, stub} from 'sinon';
-import {JsonConverter} from '../core/JsonConverter';
 import {JsonConverterError} from '../core/JsonConverterError';
-import {NumberConverter} from './NumberConverter';
+import {numberConverter} from './numberConverter';
 
 describe('NumberConverter', () => {
-
-    let converter;
-    let numberConverter: NumberConverter;
-
-    beforeEach(() => {
-        converter = createStubInstance(JsonConverter);
-        numberConverter = new NumberConverter();
-    });
 
     describe('deserialize', () => {
 
         it('when is 10 (number), should return 10', () => {
-            const obj = numberConverter.deserialize(10, {}, undefined, converter);
+            const obj = numberConverter.deserialize(10, undefined, {tryParse: false});
             expect(obj).equal(10);
         });
 
         it('when is 0 (number), should return 0', () => {
-            const obj = numberConverter.deserialize(0, {}, undefined, converter);
+            const obj = numberConverter.deserialize(0, undefined, {tryParse: false});
             expect(obj).equal(0);
         });
 
         it('when is 10 (string) and tryParse is enabled, should return 10', () => {
-            stub(converter, 'options').get(() => {
-                return {tryParse: true};
-            });
-            const obj = numberConverter.deserialize('10', {}, undefined, converter);
+            const obj = numberConverter.deserialize('10', undefined, {tryParse: true});
             expect(obj).equal(10);
         });
 
         it('when is 10 (string) and tryParse is disabled, should throw an error', () => {
-            stub(converter, 'options').get(() => {
-                return {tryParse: false};
-            });
 
             try {
-                numberConverter.deserialize('10', {}, undefined, converter);
+                numberConverter.deserialize('10', undefined, {tryParse: false});
                 fail();
             } catch (err) {
                 expect(err).instanceOf(JsonConverterError);

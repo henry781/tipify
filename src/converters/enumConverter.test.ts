@@ -1,15 +1,9 @@
 import {expect} from 'chai';
 import {JsonConverterError} from '../core/JsonConverterError';
 import {Color} from '../samples/models/Color';
-import {EnumConverter, EnumStrategy} from './EnumConverter';
+import {enumConverter, EnumStrategy} from './enumConverter';
 
 describe('EnumConverter', () => {
-
-    let enumConverter: EnumConverter;
-
-    beforeEach(() => {
-        enumConverter = new EnumConverter();
-    });
 
     describe('deserialize', () => {
 

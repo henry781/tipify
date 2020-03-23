@@ -1,15 +1,15 @@
-import {any} from '../../converters/AnyConverter';
-import {enumOf, EnumStrategy} from '../../converters/EnumConverter';
+import {any} from '../../converters/anyConverter';
+import {enumOf, EnumStrategy} from '../../converters/enumConverter';
 import {jsonObject} from '../../decorators/jsonObject';
 import {jsonProperty} from '../../decorators/jsonProperty';
-import {PidConverter} from '../converter/PidConverter';
+import {pidConverter} from '../converter/pidConverter';
 import {Gender} from './Gender';
 import {Pid} from './Pid';
 
 @jsonObject()
 export class Passenger {
 
-    @jsonProperty('pid', PidConverter)
+    @jsonProperty('pid', pidConverter)
     public _pid: Pid;
 
     @jsonProperty('gender', enumOf(Gender, EnumStrategy.NAME))

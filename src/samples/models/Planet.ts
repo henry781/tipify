@@ -1,5 +1,5 @@
-import {arrayOf} from '../../converters/ArrayConverter';
-import {keyValueOf} from '../../converters/KeyValueConverter';
+import {arrayOf} from '../../converters/arrayConverter';
+import {keyValueOf} from '../../converters/keyValueConverter';
 import {jsonObject} from '../../decorators/jsonObject';
 import {jsonProperty} from '../../decorators/jsonProperty';
 

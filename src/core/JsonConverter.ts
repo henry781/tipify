@@ -1,17 +1,9 @@
-import {ConverterWithOptions} from '../converters/api';
-import {CustomConverters} from '../converters/CustomConverters';
 import {isNullOrUndefined, Type} from '../util/commonUtil';
-import {autodetectConverter, normalizeConverter} from '../util/jsonConverterUtil';
+import {autodetectConverterAndArgs, normalizeConverterAndArgs} from '../util/jsonConverterUtil';
+import {ConverterAndArgs} from './CustomConverter';
 import {JsonConverterError} from './JsonConverterError';
 
 export class JsonConverter {
-
-    public get options() {
-        return this._options;
-    }
-
-    constructor(private _options = DEFAULT_OPTIONS) {
-    }
 
     /**
      * Serialize an object
@@ -20,72 +12,45 @@ export class JsonConverter {
      * @param options
      */
     public serialize<T>(obj: T,
-                        type?: Type | ConverterWithOptions,
+                        type?: Type | ConverterAndArgs,
                         options: SerializeOptions = DEFAULT_SERIALIZE_OPTIONS): any {
+
+        if (isNullOrUndefined(obj)) {
+            return obj;
+        }
+
         try {
-            return this.processSerialize<T>(obj, type, options);
+            const {converter, args} = type ? normalizeConverterAndArgs(type) : autodetectConverterAndArgs(obj);
+            if (!converter) {
+                const errorMessage = 'Cannot get converter or detect type of given obj';
+                throw new JsonConverterError(errorMessage);
+            }
+            return converter.serialize(obj, args, options);
+
         } catch (err) {
             const errorMessage = this.buildErrorMessage('Fail to serialize json at ', err);
             throw new JsonConverterError(errorMessage);
         }
     }
 
-    /**
-     * Deserialize json
-     * @param json
-     * @param type
-     */
-    public deserialize<T>(json: any, type?: Type | ConverterWithOptions): T {
-        try {
-            return this.processDeserialize<T>(json, type);
-        } catch (err) {
-            const errorMessage = this.buildErrorMessage('Fail to deserialize json at ', err);
-            throw new JsonConverterError(errorMessage);
-        }
-    }
-
-    public processSerialize<T>(obj: T,
-                               type?: Type | ConverterWithOptions,
-                               serializeOptions: SerializeOptions = DEFAULT_SERIALIZE_OPTIONS): any {
-
-        if (isNullOrUndefined(obj)) {
-            return obj;
-        }
-
-        const converterWithOptions = normalizeConverter(type) || autodetectConverter<T>(obj);
-        if (!converterWithOptions) {
-            const errorMessage = 'Cannot get converter or detect type of given obj';
-            throw new JsonConverterError(errorMessage);
-        }
-
-        const converterInstance = CustomConverters.getConverterInstance(converterWithOptions.converter);
-        if (!converterInstance) {
-            const errorMessage = 'Cannot get instance of converter'
-                + ` <${converterWithOptions.converter.name}>,`
-                + ` use jsonConverter.register(${converterWithOptions.converter.name}) to register converter`;
-            throw new JsonConverterError(errorMessage);
-        }
-
-        return converterInstance.serialize(obj, converterWithOptions.options, serializeOptions, this);
-    }
-
-    public processDeserialize<T>(json: any, type?: Type | ConverterWithOptions): T {
-
+    public deserialize<T>(json: any,
+                          type?: Type | ConverterAndArgs,
+                          options: DeserializeOptions = DEFAULT_DESERIALIZE_OPTIONS): T {
         if (isNullOrUndefined(json)) {
             return json;
         }
 
-        const converterWithOptions = normalizeConverter(type);
-        const converterInstance = CustomConverters.getConverterInstance(converterWithOptions.converter);
-
-        if (!converterInstance) {
-            const errorMessage = 'Cannot get instance of converter'
-                + ` <${converterWithOptions.converter.name}>,`
-                + ` use jsonConverter.register(${converterWithOptions.converter.name}) to register converter`;
+        try {
+            const {converter, args} = normalizeConverterAndArgs(type);
+            if (!converter) {
+                const errorMessage = 'Cannot get converter or detect type of given obj';
+                throw new JsonConverterError(errorMessage);
+            }
+            return converter.deserialize(json, args, options);
+        } catch (err) {
+            const errorMessage = this.buildErrorMessage('Fail to deserialize json at ', err);
             throw new JsonConverterError(errorMessage);
         }
-
-        return converterInstance.deserialize(json, converterWithOptions.options, undefined, this);
     }
 
     private buildErrorMessage(message: string, err: Error) {
@@ -109,23 +74,20 @@ export class JsonConverter {
     }
 }
 
-const DEFAULT_OPTIONS: JsonConverterOptions = {
-    keepObjectFieldValues: true,
-    tryParse: false,
-};
-
-interface JsonConverterOptions {
-    keepObjectFieldValues: boolean;
-    tryParse: boolean;
-}
-
 export interface SerializeOptions {
     unsafe: boolean;
 }
 
 export interface DeserializeOptions {
+    keepObjectFieldValues?: boolean;
+    tryParse?: boolean;
 }
 
 const DEFAULT_SERIALIZE_OPTIONS: SerializeOptions = {
     unsafe: false,
+};
+
+const DEFAULT_DESERIALIZE_OPTIONS: DeserializeOptions = {
+    keepObjectFieldValues: true,
+    tryParse: false,
 };

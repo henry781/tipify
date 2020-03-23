@@ -1,61 +1,57 @@
-import {ArrayConverter} from '../converters/ArrayConverter';
-import {BooleanConverter} from '../converters/BooleanConverter';
-import {ConverterWithOptions, CustomConverter} from '../converters/CustomConverter';
-import {NumberConverter} from '../converters/NumberConverter';
-import {ObjectConverter, ObjectConverterOptions} from '../converters/ObjectConverter';
-import {StringConverter} from '../converters/StringConverter';
-import {Instantiable, isBoolean, isNullOrUndefined, isNumber, isObject, isString, Type} from './commonUtil';
+import {arrayConverter} from '../converters/arrayConverter';
+import {booleanConverter} from '../converters/booleanConverter';
+import {numberConverter} from '../converters/numberConverter';
+import {objectConverter, ObjectConverterArgs} from '../converters/objectConverter';
+import {stringConverter} from '../converters/stringConverter';
+import {ConverterAndArgs, CustomConverter} from '../core/CustomConverter';
+import {isBoolean, isNumber, isObject, isString, Type} from './commonUtil';
 
-export type TypeOrConverter = Type | Instantiable<CustomConverter> | ConverterWithOptions;
+export type TypeOrConverter = Type | CustomConverter | ConverterAndArgs;
 
-export function normalizeConverter(typeOrConverter: TypeOrConverter): ConverterWithOptions {
+export function normalizeConverterAndArgs(typeOrConverter: TypeOrConverter): ConverterAndArgs {
 
-    if (isNullOrUndefined(typeOrConverter)) {
-        return undefined;
-    }
-
-    const converter = typeOrConverter as Instantiable<CustomConverter>;
-    const isConverter = converter && converter.prototype && converter.prototype instanceof CustomConverter;
-    if (isConverter) {
+    const converter = typeOrConverter as CustomConverter;
+    if (converter
+        && typeof converter.serialize === 'function'
+        && typeof converter.deserialize === 'function') {
         return {converter};
     }
 
-    const converterWithOptions = typeOrConverter as ConverterWithOptions;
-    const isConverterWithOptions = converterWithOptions
-        && converterWithOptions.converter
-        && converterWithOptions.converter.prototype
-        && converterWithOptions.converter.prototype instanceof CustomConverter;
-    if (isConverterWithOptions) {
-        return converterWithOptions;
+    const converterWithArgs = typeOrConverter as ConverterAndArgs;
+    if (converterWithArgs
+        && converterWithArgs.converter
+        && typeof converterWithArgs.converter.serialize === 'function'
+        && typeof converterWithArgs.converter.deserialize === 'function') {
+        return converterWithArgs;
     }
 
     const type = typeOrConverter as Type;
     switch (type) {
         case String:
-            return {converter: StringConverter};
+            return {converter: stringConverter};
         case Boolean:
-            return {converter: BooleanConverter};
+            return {converter: booleanConverter};
         case Number:
-            return {converter: NumberConverter};
+            return {converter: numberConverter};
         default:
-            return {converter: ObjectConverter, options: {type} as ObjectConverterOptions};
+            return {converter: objectConverter, args: {type} as ObjectConverterArgs};
     }
 }
 
-export function autodetectConverter<T>(obj: T): ConverterWithOptions {
+export function autodetectConverterAndArgs<T>(obj: T): ConverterAndArgs {
     if (Array.isArray(obj)) {
-        return {converter: ArrayConverter, options: {}};
+        return {converter: arrayConverter, args: {}};
 
     } else if (isString(obj)) {
-        return {converter: StringConverter};
+        return {converter: stringConverter};
 
     } else if (isBoolean(obj)) {
-        return {converter: BooleanConverter};
+        return {converter: booleanConverter};
 
     } else if (isNumber(obj)) {
-        return {converter: NumberConverter};
+        return {converter: numberConverter};
 
     } else if (isObject(obj)) {
-        return {converter: ObjectConverter, options: {type: obj.constructor}};
+        return {converter: objectConverter, args: {type: obj.constructor}};
     }
 }

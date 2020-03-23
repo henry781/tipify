@@ -1,6 +1,5 @@
 import {expect} from 'chai';
 import {JsonConverter} from '../../core/JsonConverter';
-import {PidConverter} from '../converter/PidConverter';
 import {Car} from './Car';
 import {Color} from './Color';
 import {Gender} from './Gender';

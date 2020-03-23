@@ -1,5 +1,5 @@
-import {arrayOf} from '../../converters/ArrayConverter';
-import {enumOf, EnumStrategy} from '../../converters/EnumConverter';
+import {arrayOf} from '../../converters/arrayConverter';
+import {enumOf, EnumStrategy} from '../../converters/enumConverter';
 import {jsonObject} from '../../decorators/jsonObject';
 import {jsonProperty} from '../../decorators/jsonProperty';
 import {Color} from './Color';
