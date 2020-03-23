@@ -4,6 +4,7 @@ import {numberConverter} from '../converters/numberConverter';
 import {objectConverter, ObjectConverterArgs} from '../converters/objectConverter';
 import {stringConverter} from '../converters/stringConverter';
 import {ConverterAndArgs, CustomConverter} from '../core/CustomConverter';
+import {JsonConverterError} from '../core/JsonConverterError';
 import {isBoolean, isNumber, isObject, isString, Type} from './commonUtil';
 
 export type TypeOrConverter = Type | CustomConverter | ConverterAndArgs;
@@ -53,5 +54,8 @@ export function autodetectConverterAndArgs<T>(obj: T): ConverterAndArgs {
 
     } else if (isObject(obj)) {
         return {converter: objectConverter, args: {type: obj.constructor}};
+    } else {
+        const errorMessage = 'Cannot get detect type of given obj';
+        throw new JsonConverterError(errorMessage);
     }
 }

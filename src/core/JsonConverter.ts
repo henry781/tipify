@@ -21,10 +21,6 @@ export class JsonConverter {
 
         try {
             const {converter, args} = type ? normalizeConverterAndArgs(type) : autodetectConverterAndArgs(obj);
-            if (!converter) {
-                const errorMessage = 'Cannot get converter or detect type of given obj';
-                throw new JsonConverterError(errorMessage);
-            }
             return converter.serialize(obj, args, options);
 
         } catch (err) {
@@ -34,18 +30,19 @@ export class JsonConverter {
     }
 
     public deserialize<T>(json: any,
-                          type?: Type | ConverterAndArgs,
+                          type: Type | ConverterAndArgs,
                           options: DeserializeOptions = DEFAULT_DESERIALIZE_OPTIONS): T {
         if (isNullOrUndefined(json)) {
             return json;
         }
 
         try {
-            const {converter, args} = normalizeConverterAndArgs(type);
-            if (!converter) {
-                const errorMessage = 'Cannot get converter or detect type of given obj';
+            if (!type) {
+                const errorMessage = 'Type is required';
                 throw new JsonConverterError(errorMessage);
             }
+
+            const {converter, args} = normalizeConverterAndArgs(type);
             return converter.deserialize(json, args, options);
         } catch (err) {
             const errorMessage = this.buildErrorMessage('Fail to deserialize json at ', err);
