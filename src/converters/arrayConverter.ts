@@ -1,8 +1,8 @@
 import {ConverterAndArgs, CustomConverter, CustomConverterArgs} from '../core/CustomConverter';
 import {DeserializeOptions, SerializeOptions} from '../core/JsonConverter';
 import {JsonConverterError} from '../core/JsonConverterError';
-import {isNullOrUndefined, Type} from '../util/commonUtil';
-import {autodetectConverterAndArgs, normalizeConverterAndArgs} from '../util/jsonConverterUtil';
+import {isNullOrUndefined} from '../util/commonUtil';
+import {autodetectConverterAndArgs, normalizeConverterAndArgs, TypeOrConverter} from '../util/jsonConverterUtil';
 
 type ArrayConverter = CustomConverter<any[], ArrayConverterArgs>;
 
@@ -74,7 +74,7 @@ export interface ArrayConverterArgs extends CustomConverterArgs {
     itemConverterArgs: CustomConverterArgs;
 }
 
-export function arrayOf(itemTypeOrConverter: Type | ConverterAndArgs): ConverterAndArgs {
+export function arrayOf(itemTypeOrConverter: TypeOrConverter): ConverterAndArgs {
     const {converter, args} = normalizeConverterAndArgs(itemTypeOrConverter);
     return {
         args: {itemConverter: converter, itemConverterArgs: args} as ArrayConverterArgs,

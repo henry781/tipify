@@ -1,8 +1,8 @@
 import {ConverterAndArgs, CustomConverter, CustomConverterArgs} from '../core/CustomConverter';
 import {DeserializeOptions, SerializeOptions} from '../core/JsonConverter';
 import {JsonConverterError} from '../core/JsonConverterError';
-import {isNullOrUndefined, isObject, Type} from '../util/commonUtil';
-import {normalizeConverterAndArgs} from '../util/jsonConverterUtil';
+import {isNullOrUndefined, isObject} from '../util/commonUtil';
+import {normalizeConverterAndArgs, TypeOrConverter} from '../util/jsonConverterUtil';
 
 type KeyValueConverter = CustomConverter<object, KeyValueConverterArgs>;
 
@@ -76,7 +76,7 @@ export interface KeyValueConverterArgs extends CustomConverterArgs {
 }
 
 export function keyValueOf(keyType: StringOrNumberType,
-                           valueTypeOrConverter: Type | ConverterAndArgs): ConverterAndArgs {
+                           valueTypeOrConverter: TypeOrConverter): ConverterAndArgs {
     const {converter, args} = normalizeConverterAndArgs(valueTypeOrConverter);
     return {
         args: {keyType, valueConverter: converter, valueConverterArgs: args} as KeyValueConverterArgs,

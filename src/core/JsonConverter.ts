@@ -1,6 +1,5 @@
-import {isNullOrUndefined, Type} from '../util/commonUtil';
-import {autodetectConverterAndArgs, normalizeConverterAndArgs} from '../util/jsonConverterUtil';
-import {ConverterAndArgs} from './CustomConverter';
+import {isNullOrUndefined} from '../util/commonUtil';
+import {autodetectConverterAndArgs, normalizeConverterAndArgs, TypeOrConverter} from '../util/jsonConverterUtil';
 import {JsonConverterError} from './JsonConverterError';
 
 export class JsonConverter {
@@ -15,7 +14,7 @@ export class JsonConverter {
      * @param options
      */
     public serialize<T>(obj: T,
-                        type?: Type | ConverterAndArgs,
+                        type?: TypeOrConverter,
                         options: SerializeOptions = this._options.serialize): any {
 
         if (isNullOrUndefined(obj)) {
@@ -33,7 +32,7 @@ export class JsonConverter {
     }
 
     public deserialize<T>(json: any,
-                          type: Type | ConverterAndArgs,
+                          type: TypeOrConverter,
                           options: DeserializeOptions = this._options.deserialize): T {
         if (isNullOrUndefined(json)) {
             return json;
