@@ -5,8 +5,7 @@ import {JsonConverterError} from './JsonConverterError';
 
 export class JsonConverter {
 
-    constructor(private _serializeOptions = DEFAULT_SERIALIZE_OPTIONS,
-                private _deserializeOptions = DEFAULT_DESERIALIZE_OPTIONS) {
+    constructor(private _options = DEFAULT_JSON_CONVERTER_OPTIONS) {
     }
 
     /**
@@ -17,7 +16,7 @@ export class JsonConverter {
      */
     public serialize<T>(obj: T,
                         type?: Type | ConverterAndArgs,
-                        options: SerializeOptions = this._serializeOptions): any {
+                        options: SerializeOptions = this._options.serialize): any {
 
         if (isNullOrUndefined(obj)) {
             return obj;
@@ -35,7 +34,7 @@ export class JsonConverter {
 
     public deserialize<T>(json: any,
                           type: Type | ConverterAndArgs,
-                          options: DeserializeOptions = this._deserializeOptions): T {
+                          options: DeserializeOptions = this._options.deserialize): T {
         if (isNullOrUndefined(json)) {
             return json;
         }
@@ -84,6 +83,11 @@ export interface DeserializeOptions {
     tryParse?: boolean;
 }
 
+export interface JsonConverterOptions {
+    serialize: SerializeOptions;
+    deserialize: DeserializeOptions;
+}
+
 const DEFAULT_SERIALIZE_OPTIONS: SerializeOptions = {
     unsafe: false,
 };
@@ -91,4 +95,9 @@ const DEFAULT_SERIALIZE_OPTIONS: SerializeOptions = {
 const DEFAULT_DESERIALIZE_OPTIONS: DeserializeOptions = {
     keepObjectFieldValues: true,
     tryParse: false,
+};
+
+const DEFAULT_JSON_CONVERTER_OPTIONS: JsonConverterOptions = {
+    deserialize: DEFAULT_DESERIALIZE_OPTIONS,
+    serialize: DEFAULT_SERIALIZE_OPTIONS,
 };
