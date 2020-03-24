@@ -103,10 +103,12 @@ export const objectConverter: ObjectConverter = {
 
             Object.keys(obj).forEach((property) => {
                 try {
-                    const converterAndArgs = autodetectConverterAndArgs(obj[property]);
-                    const value = converterAndArgs.converter.serialize(obj[property], converterAndArgs.args, serializeOptions);
-                    if (!isNullOrUndefined(value)) {
-                        instance[property] = value;
+                    if (!isNullOrUndefined(obj[property])) {
+                        const converterAndArgs = autodetectConverterAndArgs(obj[property]);
+                        const value = converterAndArgs.converter.serialize(obj[property], converterAndArgs.args, serializeOptions);
+                        if (!isNullOrUndefined(value)) {
+                            instance[property] = value;
+                        }
                     }
                 } catch (err) {
                     const errorMessage = `Fail to serialize property <${property}>`;
