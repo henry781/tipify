@@ -1,4 +1,4 @@
-import {arrayConverter} from '../converters/arrayConverter';
+import {arrayConverter, arrayOf} from '../converters/arrayConverter';
 import {booleanConverter} from '../converters/booleanConverter';
 import {numberConverter} from '../converters/numberConverter';
 import {objectConverter, ObjectConverterArgs} from '../converters/objectConverter';
@@ -24,6 +24,10 @@ export function normalizeConverterAndArgs(typeOrConverter: TypeOrConverter): Con
         && typeof converterWithArgs.converter.serialize === 'function'
         && typeof converterWithArgs.converter.deserialize === 'function') {
         return converterWithArgs;
+    }
+
+    if (typeOrConverter && Array.isArray(typeOrConverter) && typeOrConverter.length) {
+        return arrayOf(typeOrConverter[0]);
     }
 
     const type = typeOrConverter as Type;
