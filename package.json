@@ -1,6 +1,6 @@
 {
   "name": "tipify",
-  "version": "3.1.1-beta.6",
+  "version": "3.1.1",
   "description": "",
   "main": "dist/tipify.bundle.js",
   "module": "dist/tipify.es.js",
@@ -22,8 +22,7 @@
     "url": "https://github.com/henry781/tipify/issues"
   },
   "homepage": "https://github.com/henry781/tipify#readme",
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "typescript": "3.7.4",
     "@types/chai": "4.2.7",
