@@ -44,7 +44,7 @@ Type defined with `@jsonProperty()` can be :
 | Number                             | number                   |
 | Boolean                            | boolean                  |
 | arrayOf(Passenger)                 | Passenger[]              |
-| arrayOf(array(String))             | string[][]               |
+| arrayOf(arrayOf(String))           | string[][]               |
 | enumOf(Color)                      | Color                    |
 | any()                              | any                      |
 | keyValueOf(String, Passenger)      | {[key:string]: Passenger}|
