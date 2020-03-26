@@ -1,25 +1,14 @@
 import * as chai from 'chai';
 import {expect} from 'chai';
-import {createStubInstance, stub} from 'sinon';
-import {JsonConverter} from '../core/JsonConverter';
+import {createSandbox} from 'sinon';
+import {DeserializeOptions} from '../core/JsonConverter';
 import {JsonConverterError} from '../core/JsonConverterError';
 import {jsonObject} from '../decorators/jsonObject';
 import {jsonProperty} from '../decorators/jsonProperty';
-import {ObjectConverter} from './ObjectConverter';
-import {StringConverter} from './StringConverter';
+import {objectConverter} from './objectConverter';
+import {stringConverter} from './stringConverter';
 
 describe('ObjectConverter', () => {
-
-    let converter;
-    let objectConverter: ObjectConverter;
-
-    beforeEach(() => {
-        converter = createStubInstance(JsonConverter);
-        stub(converter, 'options').get(() => {
-            return {keepObjectFieldValues: false};
-        });
-        objectConverter = new ObjectConverter(converter);
-    });
 
     @jsonObject()
     class Actor {
@@ -30,7 +19,7 @@ describe('ObjectConverter', () => {
             return a;
         }
 
-        @jsonProperty('name', String)
+        @jsonProperty('name')
         public _name: string = 'TOTO';
 
         constructor() {
@@ -46,52 +35,66 @@ describe('ObjectConverter', () => {
     };
     const movie = new Movie();
 
+    const sandbox = createSandbox();
+    const deserializationOptions: DeserializeOptions = {
+        keepObjectFieldValues: true,
+        tryParse: false,
+    };
+
+    afterEach(() => {
+        sandbox.restore();
+    });
+
     describe('deserialize', () => {
 
         it('when type mapping is missing should throw an error', () => {
-
-            expect(() => objectConverter.deserialize(movie, {type: Movie}))
+            expect(() => objectConverter.deserialize(movie, {type: Movie}, deserializationOptions))
                 .throw(JsonConverterError, 'Cannot get mapping <Movie>');
         });
 
         it('when deserialization of one field fail should throw an error', () => {
-            const deserialize = converter.processDeserialize
-                .withArgs('Steve', {converter: StringConverter})
+            const deserialize = sandbox.stub(stringConverter, 'deserialize')
+                .withArgs('Steve', undefined, deserializationOptions)
                 .throws(new JsonConverterError(''));
 
-            expect(() => objectConverter.deserialize(actorJson, {type: Actor}))
+            expect(() => objectConverter.deserialize(actorJson, {type: Actor}, deserializationOptions))
                 .throw(JsonConverterError, 'Fail to deserialize property <name>');
             expect(deserialize.calledOnce).to.be.true;
         });
 
         it('should deserialize', () => {
-            converter.processDeserialize
-                .withArgs('Steve', {converter: StringConverter})
+            sandbox.stub(stringConverter, 'deserialize')
+                .withArgs('Steve', undefined, deserializationOptions)
                 .returns('Steve1');
 
-            const result = objectConverter.deserialize<Actor>(actorJson, {type: Actor});
+            const result = objectConverter.deserialize(actorJson, {type: Actor}, deserializationOptions);
             expect(result).instanceOf(Actor);
             expect(result._name).equal('Steve1');
         });
 
         it('should set name to undefined (keepObjectFieldValues = false)', () => {
+
+            const options: DeserializeOptions = {
+                keepObjectFieldValues: false,
+            };
+
             const actorJson2 = {};
-            converter.processDeserialize
-                .withArgs(undefined, {converter: StringConverter})
+            sandbox.stub(stringConverter, 'deserialize')
+                .withArgs(undefined, undefined, options)
                 .returns(undefined);
 
-            const result = objectConverter.deserialize<Actor>(actorJson2, {type: Actor});
+            const result = objectConverter.deserialize(actorJson2, {type: Actor}, options);
             expect(result).instanceOf(Actor);
             expect(result._name).to.be.undefined;
         });
 
         it('should keep name TOTO (keepObjectFieldValues = true)', () => {
             const actorJson2 = {};
-            stub(converter, 'options').get(() => {
-                return {keepObjectFieldValues: true};
-            });
+            const options: DeserializeOptions = {
+                keepObjectFieldValues: true,
+            };
 
-            const result = objectConverter.deserialize<Actor>(actorJson2, {type: Actor});
+            const result = objectConverter.deserialize(actorJson2, {type: Actor}, options);
             expect(result).instanceOf(Actor);
             expect(result._name).equal('TOTO');
         });
@@ -107,8 +110,8 @@ describe('ObjectConverter', () => {
 
         it('when serializing property fail should throw an error', () => {
 
-            const serialize = converter.processSerialize
-                .withArgs('Steve', {converter: StringConverter})
+            const serialize = sandbox.stub(stringConverter, 'serialize')
+                .withArgs('Steve')
                 .throws(new JsonConverterError(''));
 
             expect(() => objectConverter.serialize(actor, {}, {unsafe: false}))
@@ -118,8 +121,8 @@ describe('ObjectConverter', () => {
 
         it('should return serialized object', () => {
 
-            const serialize = converter.processSerialize
-                .withArgs('Steve', {converter: StringConverter})
+            const serialize = sandbox.stub(stringConverter, 'serialize')
+                .withArgs('Steve')
                 .returns('Steve');
 
             const expectedJson = {
@@ -133,8 +136,8 @@ describe('ObjectConverter', () => {
 
         it('should not return null properties', () => {
 
-            const serialize = converter.processSerialize
-                .withArgs('Steve', {converter: StringConverter})
+            const serialize = sandbox.stub(stringConverter, 'serialize')
+                .withArgs('Steve')
                 .returns(null);
 
             const expectedJson = {};
@@ -146,8 +149,8 @@ describe('ObjectConverter', () => {
 
         it('should not return undefined properties', () => {
 
-            const serialize = converter.processSerialize
-                .withArgs('Steve', {converter: StringConverter})
+            const serialize = sandbox.stub(stringConverter, 'serialize')
+                .withArgs('Steve')
                 .returns(undefined);
 
             const expectedJson = {};
@@ -160,9 +163,9 @@ describe('ObjectConverter', () => {
         it('should serialize each field when unsafe is true', () => {
 
             const serializeOptions = {unsafe: true};
-            const serialize = converter.processSerialize
-                .withArgs(actor, undefined, serializeOptions)
-                .returns({name: 'Steve'});
+            const serialize = sandbox.stub(stringConverter, 'serialize')
+                .withArgs('Steve', undefined, serializeOptions)
+                .returns('Steve');
 
             const obj = {actor};
 

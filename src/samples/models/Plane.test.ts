@@ -26,6 +26,5 @@ describe('Plane', () => {
 
             expect(plane).instanceOf(Jet);
         });
-
     });
 });

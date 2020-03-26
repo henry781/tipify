@@ -1,6 +1,5 @@
 import {expect} from 'chai';
 import {JsonConverter} from '../../core/JsonConverter';
-import {PidConverter} from '../converter/PidConverter';
 import {Car} from './Car';
 import {Color} from './Color';
 import {Gender} from './Gender';
@@ -10,7 +9,6 @@ import {Vehicle} from './Vehicle';
 describe('Car', () => {
 
     const converter = new JsonConverter();
-    converter.registerConverter(PidConverter);
 
     describe('serialize', () => {
 
@@ -102,6 +100,5 @@ describe('Car', () => {
             expect(car._passengers[0]._pid.id).equal(12);
             expect((car._passengers[0]._informations as any).age).equal(21);
         });
-
     });
 });

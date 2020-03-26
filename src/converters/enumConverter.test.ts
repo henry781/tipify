@@ -1,19 +1,9 @@
 import {expect} from 'chai';
-import {createStubInstance} from 'sinon';
-import {JsonConverter} from '../core/JsonConverter';
 import {JsonConverterError} from '../core/JsonConverterError';
 import {Color} from '../samples/models/Color';
-import {EnumConverter, EnumStrategy} from './EnumConverter';
+import {enumConverter, EnumStrategy} from './enumConverter';
 
 describe('EnumConverter', () => {
-
-    let converter;
-    let enumConverter: EnumConverter;
-
-    beforeEach(() => {
-        converter = createStubInstance(JsonConverter);
-        enumConverter = new EnumConverter(converter);
-    });
 
     describe('deserialize', () => {
 

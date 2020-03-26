@@ -1,8 +1,8 @@
 import {expect} from 'chai';
-import {BooleanConverter} from '../converters/BooleanConverter';
-import {NumberConverter} from '../converters/NumberConverter';
-import {ObjectConverter} from '../converters/ObjectConverter';
-import {StringConverter} from '../converters/StringConverter';
+import {booleanConverter} from '../converters/booleanConverter';
+import {numberConverter} from '../converters/numberConverter';
+import {objectConverter} from '../converters/objectConverter';
+import {stringConverter} from '../converters/stringConverter';
 import {JsonConverterMapper} from '../mapping/JsonConverterMapper';
 import {jsonProperty} from './jsonProperty';
 
@@ -24,7 +24,7 @@ describe('jsonProperty', () => {
         const foundPropertyMapping = foundTypeMapping.properties.find((m) => m.name === '_name');
         expect(foundPropertyMapping).not.undefined;
         expect(foundPropertyMapping.serializedName).equal('name');
-        expect(foundPropertyMapping.converterWithOptions).deep.equal({converter: StringConverter});
+        expect(foundPropertyMapping.converter).equal(stringConverter);
 
     });
 
@@ -56,7 +56,7 @@ describe('jsonProperty', () => {
             const foundPropertyMapping = foundTypeMapping.properties.find((m) => m.name === '_name');
             expect(foundPropertyMapping).not.undefined;
             expect(foundPropertyMapping.serializedName).equal('name');
-            expect(foundPropertyMapping.converterWithOptions).deep.equal({converter: StringConverter});
+            expect(foundPropertyMapping.converter).equal(stringConverter);
         });
 
         it('should add property mapping (number)', () => {
@@ -65,7 +65,7 @@ describe('jsonProperty', () => {
             const foundPropertyMapping = foundTypeMapping.properties.find((m) => m.name === '_id');
             expect(foundPropertyMapping).not.undefined;
             expect(foundPropertyMapping.serializedName).equal('id');
-            expect(foundPropertyMapping.converterWithOptions).deep.equal({converter: NumberConverter});
+            expect(foundPropertyMapping.converter).equal(numberConverter);
         });
 
         it('should add property mapping (boolean)', () => {
@@ -74,7 +74,7 @@ describe('jsonProperty', () => {
             const foundPropertyMapping = foundTypeMapping.properties.find((m) => m.name === '_active');
             expect(foundPropertyMapping).not.undefined;
             expect(foundPropertyMapping.serializedName).equal('active');
-            expect(foundPropertyMapping.converterWithOptions).deep.equal({converter: BooleanConverter});
+            expect(foundPropertyMapping.converter).equal(booleanConverter);
         });
 
         it('should add property mapping (class)', () => {
@@ -83,7 +83,8 @@ describe('jsonProperty', () => {
             const foundPropertyMapping = foundTypeMapping.properties.find((m) => m.name === '_company');
             expect(foundPropertyMapping).not.undefined;
             expect(foundPropertyMapping.serializedName).equal('company');
-            expect(foundPropertyMapping.converterWithOptions).deep.equal({converter: ObjectConverter, options: {type: Company}});
+            expect(foundPropertyMapping.converter).equal(objectConverter);
+            expect(foundPropertyMapping.args).deep.equal({type: Company});
         });
     });
 });

@@ -152,9 +152,9 @@ private _color: Color;
 ## Custom converter
 
 ```
-export class PidConverter extends CustomConverter<Pid, CustomConverterOptions> {
+export const pidConverter: CustomConverter<Pid, CustomConverterArgs> = {
 
-    public deserialize(obj: any, options: CustomConverterOptions): Pid {
+    deserialize(obj: any): Pid {
 
         if (isNullOrUndefined(obj)) {
             return obj;
@@ -163,17 +163,17 @@ export class PidConverter extends CustomConverter<Pid, CustomConverterOptions> {
         return {
             id: parseInt(obj, 10),
         } as Pid;
-    }
+    },
 
-    public serialize(obj: Pid, options: CustomConverterOptions): any {
+    serialize(obj: Pid): any {
 
         if (isNullOrUndefined(obj)) {
             return obj;
         }
 
         return obj.id;
-    }
-}
+    },
+};
 ```
 
 ## Boolean and number parsing
@@ -183,7 +183,7 @@ Tipify can parse boolean and numbers when option `tryParse` is enabled.
 **Note**: Parsing is enabled by default;
 
 ```
-const converter = new JsonConverter({ tryParse: true });
+const converter = new JsonConverter({ deserialize: { tryParse: true }});
 const result = converter.deserialize('true', Boolean);
 ```
 
@@ -199,3 +199,28 @@ const result = converter.serialize(obj, undefined, {unsafe: true});
 console.log(result);
 // [{"charger":[{"brand":"dodge","type":"car","name":"charger"}]}]
 ```
+
+## Keep initialized field value
+
+Tipify will keep value initialized by class by default:
+```
+@jsonProperty('name', String)
+public _name = 'titi';
+```
+
+A given JSON:
+```
+{}
+```
+
+is deserialized into:
+```
+{ _name: 'titi' }
+```
+
+This feature can be disabled with:
+```
+const converter = new JsonConverter({ deserialize: { keepObjectFieldValues: false } })
+```
+
+*Note*: Tipify use the constructor to create an instance.

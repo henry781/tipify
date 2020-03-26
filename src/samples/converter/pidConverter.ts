@@ -1,10 +1,10 @@
-import {CustomConverter, CustomConverterOptions} from '../../converters/CustomConverter';
+import {CustomConverter, CustomConverterArgs} from '../../core/CustomConverter';
 import {isNullOrUndefined} from '../../util/commonUtil';
 import {Pid} from '../models/Pid';
 
-export class PidConverter extends CustomConverter<Pid, CustomConverterOptions> {
+export const pidConverter: CustomConverter<Pid, CustomConverterArgs> = {
 
-    public deserialize(obj: any, options: CustomConverterOptions): Pid {
+    deserialize(obj: any): Pid {
 
         if (isNullOrUndefined(obj)) {
             return obj;
@@ -13,14 +13,14 @@ export class PidConverter extends CustomConverter<Pid, CustomConverterOptions> {
         return {
             id: parseInt(obj, 10),
         } as Pid;
-    }
+    },
 
-    public serialize(obj: Pid, options: CustomConverterOptions): any {
+    serialize(obj: Pid): any {
 
         if (isNullOrUndefined(obj)) {
             return obj;
         }
 
         return obj.id;
-    }
-}
+    },
+};

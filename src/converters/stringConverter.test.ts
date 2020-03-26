@@ -1,19 +1,9 @@
 import {fail} from 'assert';
 import {expect} from 'chai';
-import {createStubInstance, stub} from 'sinon';
-import {JsonConverter} from '../core/JsonConverter';
 import {JsonConverterError} from '../core/JsonConverterError';
-import {StringConverter} from './StringConverter';
+import {stringConverter} from './stringConverter';
 
 describe('StringConverter', () => {
-
-    let converter;
-    let stringConverter: StringConverter;
-
-    beforeEach(() => {
-        converter = createStubInstance(JsonConverter);
-        stringConverter = new StringConverter(converter);
-    });
 
     describe('deserialize', () => {
 
@@ -23,10 +13,6 @@ describe('StringConverter', () => {
         });
 
         it('when value is 10 (number), should throw an error', () => {
-            stub(converter, 'options').get(() => {
-                return {tryParse: false};
-            });
-
             try {
                 stringConverter.deserialize(10, {});
                 fail();

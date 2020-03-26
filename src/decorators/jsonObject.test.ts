@@ -17,7 +17,7 @@ describe('jsonObject', () => {
         chai.expect(foundMapping).not.undefined;
     });
 
-    it('should set options', () => {
+    it('should set args', () => {
         const foundMapping = JsonConverterMapper.getMapping().find((m) => m.type === City);
         chai.expect(foundMapping.options.discriminatorValue).equal('city');
     });
