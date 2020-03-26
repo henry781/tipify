@@ -100,6 +100,5 @@ describe('Car', () => {
             expect(car._passengers[0]._pid.id).equal(12);
             expect((car._passengers[0]._informations as any).age).equal(21);
         });
-
     });
 });

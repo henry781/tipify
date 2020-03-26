@@ -31,7 +31,7 @@ export class Passenger {
     }
 }
 
-export interface PassengerOptions {
+interface PassengerOptions {
     pid?: Pid;
     gender?: Gender;
     name?: string;

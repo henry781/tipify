@@ -33,7 +33,35 @@ describe('Planet', () => {
             expect(planet.seasCoordinates.atlantic.length).equal(2);
             expect(planet.seasCoordinates.pacific.length).equal(2);
         });
-
     });
 
+    describe('serialize', () => {
+
+        it('should return planet json', () => {
+
+            const object = new Planet({
+                seas: {
+                    atlantic: 1,
+                    pacific: 2,
+                },
+                seasCoordinates: {
+                    atlantic: [12, 11],
+                    pacific: [21, 22],
+                },
+            });
+
+            const json = converter.serialize(object);
+
+            expect(json).deep.equal({
+                seas: {
+                    atlantic: 1,
+                    pacific: 2,
+                },
+                seasCoordinates: {
+                    atlantic: [12, 11],
+                    pacific: [21, 22],
+                },
+            });
+        });
+    });
 });

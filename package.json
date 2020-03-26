@@ -23,9 +23,9 @@
   },
   "homepage": "https://github.com/henry781/tipify#readme",
   "dependencies": {
-    "typescript": "3.7.4"
   },
   "devDependencies": {
+    "typescript": "3.7.4",
     "@types/chai": "4.2.7",
     "@types/mocha": "5.2.7",
     "@types/sinon": "7.5.1",

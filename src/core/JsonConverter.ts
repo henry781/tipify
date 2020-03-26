@@ -15,7 +15,7 @@ export class JsonConverter {
      */
     public serialize<T>(obj: T,
                         type?: TypeOrConverter,
-                        options: SerializeOptions = this._options.serialize): any {
+                        options = this._options.serialize || DEFAULT_SERIALIZE_OPTIONS): any {
 
         if (isNullOrUndefined(obj)) {
             return obj;
@@ -33,7 +33,7 @@ export class JsonConverter {
 
     public deserialize<T>(json: any,
                           type: TypeOrConverter,
-                          options: DeserializeOptions = this._options.deserialize): T {
+                          options: DeserializeOptions = this._options.deserialize || DEFAULT_DESERIALIZE_OPTIONS): T {
         if (isNullOrUndefined(json)) {
             return json;
         }
@@ -83,8 +83,8 @@ export interface DeserializeOptions {
 }
 
 export interface JsonConverterOptions {
-    serialize: SerializeOptions;
-    deserialize: DeserializeOptions;
+    serialize?: SerializeOptions;
+    deserialize?: DeserializeOptions;
 }
 
 const DEFAULT_SERIALIZE_OPTIONS: SerializeOptions = {
